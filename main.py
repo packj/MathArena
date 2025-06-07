@@ -45,7 +45,7 @@ def render_register_form(error_message=None, username=""):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
+        username = request.form.get('username')
         password = request.form['password']
         grade = request.form['grade']
         email = request.form.get('email', '')  # Email is optional
@@ -55,13 +55,13 @@ def register():
         if email and not is_13_or_older:
             return render_register_form(
                 error_message='If you supply an email address, you must affirm that the email owner is 13 or older.',
-                username=username
+                username=username if username is not None else ""
             )
 
-        if not username.isalnum():
+        if not username or not username.isalnum():
             return render_register_form(
-                error_message=f'The username "{username}" contains invalid characters. Please use only letters and numbers.',
-                username=username
+                error_message=f'The username "{username}" contains invalid characters or is empty. Please use only letters and numbers.',
+                username=username if username is not None else ""
             )
 
         try:
@@ -804,11 +804,12 @@ def award_points(button_factor):
             try:
                 with sql_db.connect() as conn:
                     # Validate table name
-                    if not session.get('username').isalnum():
-                        raise ValueError("Invalid username")
+                    username_from_session = session.get('username')
+                    if not username_from_session or not username_from_session.isalnum():
+                        raise ValueError("Invalid username in session")
 
                     # Create user-specific results table if it doesn't exist
-                    table_name = f"results_{session.get('username')}"
+                    table_name = f"results_{username_from_session}"
                     conn.execute(sqlalchemy.text(f'''
                         CREATE TABLE IF NOT EXISTS {table_name} (
                             id INT AUTO_INCREMENT PRIMARY KEY,
