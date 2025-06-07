@@ -1,15 +1,40 @@
 import sqlalchemy
 from connect_connector import connect_with_connector
-import yaml # Import yaml
+#import yaml # Import yaml
 
-# Load sensitive information from math_arena.yaml
-with open('math_arena.yaml', 'r') as file:
-    config = yaml.safe_load(file)
 
-connection_name = config['connection_name']
-db_user = config['db_user']
-db_pass = config['db_pass']
-db_name = config['db_name']
+from google.cloud import secretmanager # Import Secret Manager client
+
+# Initialize Secret Manager client
+client = secretmanager.SecretManagerServiceClient()
+
+# Replace with your Google Cloud Project ID
+PROJECT_ID = "enduring-maxim-453423-h4"
+
+def get_secret_value(secret_name):
+    """Fetches a secret from Google Secret Manager."""
+    try:
+        name = f"projects/{PROJECT_ID}/secrets/{secret_name}/versions/latest"
+        response = client.access_secret_version(request={"name": name})
+        return response.payload.data.decode("UTF-8")
+    except Exception as e:
+        print(f"Error accessing secret '{secret_name}': {e}")
+        # Depending on your application's needs, you might want to raise an exception
+        # or return a default/fallback value. For critical credentials, raising is better.
+        raise
+
+
+# Retrieve credentials from Secret Manager
+try:
+    connection_name = get_secret_value("mathArena-connection-name")
+    db_user = get_secret_value("mathArena-db-user")
+    db_pass = get_secret_value("mathArena-db-pass")
+    db_name = get_secret_value("mathArena-db-name")
+except Exception as e:
+    print(f"Failed to retrieve database credentials from Secret Manager: {e}")
+    print("Please ensure the service account running the application has 'Secret Manager Secret Accessor' role and the secrets exist with correct names.")
+    raise # Re-raise the exception as credentials are critical
+
 
 sql_db = None
 sql_connector = None # New global variable for the connector
@@ -20,7 +45,7 @@ def init_connection_pool() -> sqlalchemy.engine.base.Engine:
     try:
         if not connection_name:
             raise ValueError(
-                "Missing database connection name in math_arena.yaml"
+                "Missing database connection name"
             )
         
         # The connect_with_connector function now returns both the engine and the connector
