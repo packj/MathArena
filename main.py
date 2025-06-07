@@ -13,10 +13,19 @@ from admin_routes import admin_bp  # Import the Blueprint
 from arena import arena_bp, update_in_lobby_flag  # Import the Blueprint
 from contributions import contrib_bp
 from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set  # Import from utils
-from db import sql_db  # Import the SQLAlchemy engine
+from db import sql_db, sql_connector  # Import the SQLAlchemy engine and connector
 
 
 app = Flask(__name__)
+
+@app.teardown_appcontext
+def close_sql_connector(exception=None):
+    """Closes the Cloud SQL Python Connector when the application context ends."""
+    global sql_connector
+    if sql_connector:
+        sql_connector.close()
+        sql_connector = None # Clear the global reference
+        print("Cloud SQL Connector closed.")
 
 # Load sensitive information from math_arena.yaml
 with open('math_arena.yaml', 'r') as file:
