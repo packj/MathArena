@@ -1,0 +1,8 @@
+Instructions to deploy:
+
+Open a powershell window as administrator
+
+
+cd C:\Users\packj\OneDrive\Code\py\Mathcounts\MathArena
+Set-ExecutionPolicy -Scope Process RemoteSigned -Force
+gcloud app deploy
