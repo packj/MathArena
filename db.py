@@ -7,7 +7,6 @@ with open('math_arena.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
 connection_name = config['connection_name']
-sqlCredentials = config['sql_credentials_path']
 db_user = config['db_user']
 db_pass = config['db_pass']
 db_name = config['db_name']
