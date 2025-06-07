@@ -1,0 +1,116 @@
+body {
+    background-color: #dce6f1; /* Light greyish blue */
+    font-family: Arial, sans-serif;
+}
+.filter-button.sprint {
+    background-color: #ff9999; /* Light red */
+}
+.filter-button.target {
+    background-color: #99ccff; /* Light blue */
+}
+.filter-button.team {
+    background-color: #d39ff0; /* purple-gray */
+}
+.filter-button.other {
+    background-color: #cccccc; /* Gray */
+}
+table {
+    width: 100%;
+}
+td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.top-button {
+    background-color: #555; /* Dark gray */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease-in-out;
+    font-size: 16px; /* Increased font size */
+}
+
+.top-button:hover {
+    transform: scale(1.1);
+}
+
+#custom-filter-button {
+    background-color: #216bbb;
+}
+
+.register-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    margin: 40px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+.prominent-button, .score-buttons button, .bottom-buttons button, .tags-button button, .video-button button, .recommend-buttons button {
+    font-weight: normal;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease-in-out;
+    background-color: #a2b9bc; /* Muted blue-gray */
+    color: #333;
+    font-size: 16px;
+}
+
+.nav-buttons button {
+    background-color: #7da6d0; /* Darker blue-gray */
+}
+
+.prominent-button:hover, .score-buttons button:hover, .bottom-buttons button:hover, .tags-button button:hover, .video-button button:hover, .recommend-buttons button:hover {
+    transform: scale(1.1);
+}
+
+.prominent-button:disabled {
+    background-color: #cccccc; /* Light gray */
+    color: #666666; /* Dark gray */
+    cursor: not-allowed;
+}
+
+.score-buttons .right {
+    background-color: #6acf8b; /* Muted green */
+    color: #333;
+}
+.score-buttons .figured {
+    background-color: #f0e2a9; /* Muted yellow */
+    color: #333;
+}
+.score-buttons .wrong {
+    background-color: #f69090; /* Muted red */
+    color: #333;
+}
+
+.centered-info {
+    text-align: center;
+}
+
+.info-section {
+    padding: 5px;
+}
+
+.info-section span {
+    margin: 0 15px;
+}
+
+.bottom-buttons button {
+    margin: 0 40px;
+}

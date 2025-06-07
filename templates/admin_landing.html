@@ -1,0 +1,55 @@
+<!doctype html>
+<title>Admin Landing Page</title>
+<h1>Welcome, Admin</h1>
+<div style="text-align: left;">
+    <button onclick="window.location.href='/logout'">Logout</button>
+</div>
+<h2>Action Required</h2>
+<table border="1" style="border-collapse: collapse; width: 50%; margin-bottom: 20px;">
+    <thead>
+        <tr>
+            <th>Action</th>
+            <th>Pending Items</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><button onclick="window.location.href='/admin/approve'">Approve Users</button></td>
+            <td>{{ pending_users_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/review_tag_recommendations'">Review Tag Recommendations</button></td>
+            <td>{{ tag_recommendations_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/review_classification_recommendations'">Review Classification Recommendations</button></td>
+            <td>{{ classification_recommendations_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/review_problem_reports'">Review Problem Reports</button></td>
+            <td>{{ problem_reports_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/review_videos'">Video Review</button></td>
+            <td>{{ video_suggestions_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/review_suggestions'">Review Suggestions</button></td>
+            <td>{{ suggestions_count }}</td>
+        </tr>
+        <tr>
+            <td><button onclick="window.location.href='/admin/verify_answers'">Verify Answers</button></td>
+            <td>N/A</td>
+        </tr>
+    </tbody>
+</table>
+<h2>Other Actions</h2>
+<button onclick="window.location.href='/setup_filter'">Setup Filter Criteria</button>
+<button onclick="window.location.href='/admin/list_users'">List Users</button>
+<button onclick="window.location.href='/admin/scoreboard'">Show Scoreboard</button>
+<button onclick="window.location.href='/leaderboard'">Show Leaderboard</button>
+<button onclick="window.location.href='/admin/list_filters'">List Filters</button>
+<button onclick="window.location.href='/admin/list_tags'">List Tags</button>
+<button onclick="window.location.href='/admin/clear_rooms'">Clear Rooms</button>
+<button onclick="window.location.href='/admin/show_live_scores'">Live Scores</button>
+<button onclick="window.location.href='/admin/temp_passwords'">View Temporary Passwords</button>

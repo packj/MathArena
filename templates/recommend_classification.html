@@ -1,0 +1,13 @@
+<!doctype html>
+<title>Recommend Classification</title>
+<h1>Recommend Classification</h1>
+<form method="post">
+    {% for classification in classifications %}
+    <input type="radio" id="{{ classification }}" name="classification" value="{{ classification }}" required>
+    <label for="{{ classification }}">{{ classification }}</label><br>
+    {% endfor %}
+    <br>
+    <input type="submit" value="Submit Recommendation">
+</form>
+<br>
+<button onclick="window.location.href='/display_problem'">Cancel</button>

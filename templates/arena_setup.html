@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arena Setup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/exit_room'" title="Exit Room">Exit Room</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/leave_room_and_logout'">Logout</div>
+    </div>
+<div style="background-color: {{ room_color }}; padding: 20px; text-align: center;">
+    <h1>{{ room_name }} Room Setup</h1>
+</div>
+
+<table>
+    <tr>
+        <td style="width: 50%;">
+            <h2>Problem Filter Criteria:</h2>
+            {% if session['filter_criteria'] %}
+                <ul>
+                    <li><strong>Year Range:</strong> {{ session['filter_criteria']['start_year'] }} - {{ session['filter_criteria']['end_year'] }}</li>
+                    <li><strong>Formats:</strong> {{ ', '.join(session['filter_criteria']['formats']) }}</li>
+                    <li><strong>Levels:</strong> {{ ', '.join(session['filter_criteria']['levels']) }}</li>
+                    <li><strong>Classifications:</strong> {{ ', '.join(session['filter_criteria']['classifications']) }}</li>
+                    <li><strong>Tags:</strong> {{ ', '.join(session['filter_criteria']['tags']) }}</li>
+                    <li><strong>Question Range:</strong> {{ session['filter_criteria']['start_question'] }} - {{ session['filter_criteria']['end_question'] }}</li>
+                    <li><strong>Shuffle:</strong> {{ 'Yes' if session['filter_criteria']['shuffle'] else 'No' }}</li>
+                </ul>
+            {% else %}
+                <p>Please select a filter.</p>
+            {% endif %}
+            <br>
+            <button id="custom-filter-button" class="top-button" onclick="window.location.href='/setup_filter'">Custom Filter</button>
+            <br>
+            
+            <h2>Load Filters</h2>
+            {% for filter in filters %}
+                {% set category = 'other' %}
+                {% if 'sprint' in filter[0].lower() %}
+                    {% set category = 'sprint' %}
+                {% elif 'target' in filter[0].lower() %}
+                    {% set category = 'target' %}
+                {% elif 'team' in filter[0].lower() %}
+                    {% set category = 'team' %}
+                {% endif %}
+                <button class="filter-button {{ category }}" onclick="window.location.href='/load_filter/{{ filter[0] }}'">{{ filter[0][1:] }}</button>
+            {% endfor %}
+        </td>
+        <td style="width: 50%;">
+            <form method="post">
+                <label for="num_problems">Number of Problems (Max 30):</label>
+                <input type="number" id="num_problems" name="num_problems" min="1" max="30" value="30" required>
+
+                <br><br>
+
+                <label>Select Time Limit:</label><br>
+                <div>
+                {% for time in [5, 10, 15, 20] %}
+                    <input type="radio" id="time_{{ time }}" name="time_limit" value="{{ time }}" {% if time == 30 %}checked{% endif %}>
+                    <label for="time_{{ time }}">{{ time }} minutes</label>
+                {% endfor %}
+                </div>
+                <div>
+                {% for time in [25, 30, 35, 40] %}
+                    <input type="radio" id="time_{{ time }}" name="time_limit" value="{{ time }}" {% if time == 30 %}checked{% endif %}>
+                    <label for="time_{{ time }}">{{ time }} minutes</label>
+                {% endfor %}
+                </div>
+
+                <br><br>
+
+                <label>Select Mode:</label><br>
+                <input type="radio" id="mode_competitive" name="mode" value="competitive" checked>
+                <label for="mode_competitive">Competitive</label>
+                <input type="radio" id="mode_collaborative" name="mode" value="collaborative">
+                <label for="mode_collaborative">Collaborative (not implemented yet)</label>
+
+                <br><br>
+
+                <div id="live_score_visibility" style="display: none;">
+                    <input type="checkbox" id="show_live_score" name="show_live_score">
+                    <label for="show_live_score">Show Live Scoreboard (not yet available)</label>
+                </div>
+
+                <button 
+                    type="submit" 
+                    style="margin-top: 10px; font-size: 18px; 
+                    {% if session['filter_name'] %}
+                        background-color: #4CAF50;
+                        cursor: pointer;
+                        color: white;
+                    {% else %}
+                        background-color: gray;
+                        cursor: not-allowed;
+                        color: white;
+                    {% endif %}
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 5px;" {% if not session['filter_name'] %} disabled {% endif %}>Proceed
+            </form>
+        </td>
+    </tr>
+</table>
+
+    <script>
+        const competitiveMode = document.getElementById('mode_competitive');
+        const collaborativeMode = document.getElementById('mode_collaborative');
+        const liveScoreVisibility = document.getElementById('live_score_visibility');
+
+        function toggleLiveScoreVisibility() {
+            if (competitiveMode.checked) {
+                liveScoreVisibility.style.display = 'block';
+            } else {
+                liveScoreVisibility.style.display = 'none';
+            }
+        }
+
+        competitiveMode.addEventListener('change', toggleLiveScoreVisibility);
+        collaborativeMode.addEventListener('change', toggleLiveScoreVisibility);
+
+        // Initialize visibility on page load
+        toggleLiveScoreVisibility();
+    </script>
+
+    <br><br>
+</body>
+</html>

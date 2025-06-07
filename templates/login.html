@@ -1,0 +1,38 @@
+<!doctype html>
+<head>
+    <meta name="google-site-verification" content="qvAz-Ui9tXoDfSWopsEvuz9_IaPfI4gsFASNNv-rlQI" />
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin-top: 0px; text-align: center;">
+        <h1>Iroquois Math Trainer</h1>
+        <h2>Welcome! Please login or register to begin:</h3>
+        <form method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <br><br>
+            <div style="text-align: center;">
+                <input type="submit" value="Login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            </div>
+            <br>
+            <a href="/forgot_password" style="margin-top: 5px !important;">Forgot password?</a>
+        </form>
+        <br>
+        <div style="display: inline-flex; flex-direction: row; justify-content: center; margin: 15px 0; width: 200px;">
+            <div style="width: 40%; height: 1px; background-color: black !important; vertical-align: top; margin-top: 8px;"></div>
+            <span style="padding: 0 10px; vertical-align: top;">or</span>
+            <div style="width: 40%; height: 1px; background-color: black !important; vertical-align: top; margin-top: 8px;"></div>
+        </div>
+        <br>
+        <button onclick="window.location.href='/register'" style="background-color: #dce6f1; color: #008CBA; padding: 10px 20px; border: 2px solid #008CBA; border-radius: 5px; cursor: pointer;"><b>Register</b></button>
+    </div>
+</body>

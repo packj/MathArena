@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <title>Arena Problem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/exit_room'" title="Exit Room">Exit Room</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/leave_room_and_logout'">Logout</div>
+    </div>
+    <div style="background-color: {{ room_color }}; padding: 20px; text-align: center;">
+        <h1>{{ room_name }} Contest Room</h1>
+    </div>
+    <div class="info-section centered-info">
+        <span>Year: <strong>{{ current_year }}</strong></span>
+        <span>Format: <strong>{{ current_format.capitalize() }}</strong></span>
+        <span>Level: <strong>{{ current_level.capitalize() }}</strong></span>
+        <span>Question Number: <strong>{{ question_number }}</strong></span>
+        <span>Classification: <strong>{{ current_classification }}</strong></span>
+        <span>Problem: <strong>{{ problem_index_display }}</strong></span>
+    </div>
+    <div class="info-section centered-info">
+        <span>Time Limit: <strong id="time">{{ time_limit }}</strong> minutes</span>&nbsp;
+        <span>Total Points: <strong>{{ points }}</strong></span>
+    </div>
+    <div class="image-section" style="text-align: center;">
+        <img id="Qimage" src="{{ Q_url }}" alt="QImage" style="max-height: 100%; max-width: 100%; margin-bottom: 10px;">
+        {% if show_answer %}
+        <p style="text-align: center; font-weight: bold;">Correct answer is:</p>
+        {% endif %}
+        <img id="Aimage" src="{{ A_url }}" alt="AImage" style="max-height: 100%; max-width: 100%; margin-top: 10px;" {% if not show_answer %}hidden{% endif %}>
+    </div>
+    {% if show_answer %}
+    <div class="user-answer" style="text-align: center;">
+        <p>Your answer was: <strong>{{ user_answer }}</strong></p>
+    </div>
+    {% endif %}
+    {% if show_answer %}
+    <div class="score-buttons" style="text-align: center;">
+        <button class="wrong" onclick="window.location.href='/award_points/0'">I got it wrong</button>
+        <button class="figured" onclick="window.location.href='/award_points/1'">I figured it out after seeing the answer</button>
+        <button class="right" onclick="window.location.href='/award_points/2'">I got it right</button>
+    </div>
+    {% else %}
+    <form method="post" action="/submit_answer">
+        <label for="user-answer">Your Answer:</label>
+        <input type="text" id="user-answer" name="user_answer" placeholder="Enter your answer here">
+        <button type="submit" id="submit-answer" class="prominent-button" disabled>Submit</button>
+    </form>
+    <script>
+        const userAnswerInput = document.getElementById('user-answer');
+        const submitAnswerButton = document.getElementById('submit-answer');
+        userAnswerInput.addEventListener('input', () => {
+            submitAnswerButton.disabled = userAnswerInput.value.trim() === '';
+        });
+    </script>
+    {% endif %}
+    <div class="bottom-buttons nav-buttons" style="text-align: center; margin-top: 30px;">
+        <button id="prev-problem" onclick="window.location.href='/decrement_problem'">Previous Problem</button>
+        <button id="next-problem" onclick="window.location.href='/increment_problem'">Next Problem</button>
+    </div>
+
+    <script>
+        var timeLimit = {{ time_limit|float }};
+        var timerDisplay = document.getElementById("time");
+
+        function updateTimer() {
+            var minutes = Math.floor(timeLimit / 60);
+            var seconds = timeLimit % 60;
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timerDisplay.textContent = minutes + ":" + seconds;
+
+            timeLimit = timeLimit - 1;
+
+            if (timeLimit < 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Time's up!";
+            }
+        }
+
+        updateTimer();
+        var timerInterval = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>

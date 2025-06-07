@@ -1,0 +1,15 @@
+Flask==2.2.2
+google-api-core==2.24.2
+google-auth==2.38.0
+google-cloud-core==2.4.3
+google-cloud-storage==3.1.0
+google-crc32c==1.7.0
+google-resumable-media==2.7.2
+googleapis-common-protos==1.69.2
+SQLAlchemy==2.0.36
+PyMySQL==1.1.1
+gunicorn==23.0.0
+cloud-sql-python-connector==1.16.0
+functions-framework==3.8.2
+Werkzeug==2.3.8
+

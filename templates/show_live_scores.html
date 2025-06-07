@@ -1,0 +1,41 @@
+<!doctype html>
+<title>Arena Scores</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+<meta http-equiv="refresh" content="3">
+<h1>Arena Scores</h1>
+{% if room_scores %}
+    <table border="0" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+        <tr>
+            {% for room in room_scores %}
+                <td style="width: 20%; vertical-align: top;">
+                    <div style="background-color: {{ room['color'] }}; color: white; padding: 1px; text-align: center; border-radius: 5px; margin-bottom: 5px;">
+                        <h2>{{ room['heading'] }}</h2>
+                    </div>
+                    {% if room['scores'] %}
+                        <table border="3" style="border-collapse: collapse; width: 92%; margin: auto; font-size: 20px;">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in room['scores'] %}
+                                <tr style="text-align: center;">
+                                    <td style="font-size: 18px; padding: 3px;">{{ score['username'] }}</td>
+                                    <td style="font-size: 18px; padding: 3px;">{{ score['score'] }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No users in this room.</p>
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+{% else %}
+    <p>No rooms are currently active.</p>
+{% endif %}
+<button onclick="javascript:history.back()">Back</button>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+    <title>Problem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .top-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 20px;
+        }
+        .points-section, .attempt-history {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .score-buttons, .bottom-buttons, .tags-button, .video-button, .recommend-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+
+        .nav-buttons {
+            gap: 250px;
+        }
+        .prominent-button, .score-buttons button, .bottom-buttons button, .tags-button button, .video-button button, .recommend-buttons button {
+            font-weight: normal;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out;
+            background-color: #a2b9bc; /* Muted blue-gray */
+            color: #333;
+            font-size: 16px;
+        }
+
+        .nav-buttons button {
+            background-color: #7da6d0; /* Darker blue-gray */
+        }
+
+        .prominent-button:hover, .score-buttons button:hover, .bottom-buttons button:hover, .tags-button button:hover, .video-button button:hover, .recommend-buttons button:hover {
+            transform: scale(1.1);
+        }
+
+        .prominent-button:disabled {
+            background-color: #cccccc; /* Light gray */
+            color: #666666; /* Dark gray */
+            cursor: not-allowed;
+        }
+
+        .score-buttons .right {
+            background-color: #6acf8b; /* Muted green */
+            color: #333;
+        }
+        .score-buttons .figured {
+            background-color: #f0e2a9; /* Muted yellow */
+            color: #333;
+        }
+        .score-buttons .wrong {
+            background-color: #f69090; /* Muted red */
+            color: #333;
+        }
+        .square {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            border-radius: 3px;
+        }
+        .square.green { background-color: #4CAF50; }
+        .square.yellow { background-color: #FFC107; }
+        .square.orange { background-color: #FF5722; }
+    </style>
+</head>
+<body>
+<div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
+    <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
+    <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
+</div>
+<div class="top-buttons">
+        <span style="display:flex; align-items: center;">
+        <span style="margin-right: 20px;">Year: <strong>{{ current_year }}</strong></span>
+        <span style="margin-right: 20px;">Format: <strong>{{ current_format.capitalize() }}</strong></span>
+        <span style="margin-right: 20px;">Level: <strong>{{ current_level.capitalize() }}</strong></span>
+        <span style="margin-right: 20px;">Question Number: <strong>{{ question_number }}</strong></span>
+        <span style="margin-right: 20px;">Classification: <strong>{{ current_classification }}</strong></span>
+        <span style="margin-right: 20px;">Problem: <strong>{{ problem_index_display }}</strong></span></span>
+</div>
+    {% if display_tags and current_tags %}
+    <div class="top-buttons" style="justify-content: center;">
+        <span>Tags: <strong>{{ current_tags.replace('[', '').replace(']', '').replace("`", '') }}</strong></span>
+    </div>
+    {% endif %}
+    <div class="points-section">
+        <span>Total Points: <strong>{{ points }}</strong></span>
+    </div>
+    <div class="image-section">
+        <img id="Qimage" src="{{ Q_url }}" alt="QImage" style="max-height: 100%; max-width: 100%; margin-bottom: 10px;">
+        {% if show_answer %}
+        <p style="text-align: center; font-weight: bold;">Correct answer is:</p>
+        {% endif %}
+        <img id="Aimage" src="{{ A_url }}" alt="AImage" style="max-height: 100%; max-width: 100%; margin-top: 10px;" {% if not show_answer %}hidden{% endif %}>
+    </div>
+    {% if show_answer %}
+    <div class="user-answer" style="text-align: center;">
+        <p>Your answer was: <strong>{{ user_answer }}</strong></p>
+    </div>
+    {% endif %}
+
+    {% if invalid_response_message %}
+    <p style="color: red; text-align: center; font-weight: bold;">{{ invalid_response_message }}</p>
+    {% endif %}
+
+    {% if show_answer %}
+    <div class="score-buttons">
+        <button class="wrong" onclick="window.location.href='/award_points/0'">I got it wrong</button>
+        <button class="figured" onclick="window.location.href='/award_points/1'">I figured it out after seeing the answer</button>
+        <button class="right" onclick="window.location.href='/award_points/2'">I got it right</button>
+    </div>
+    <br>
+    {% else %}
+    <form method="post" action="/submit_answer">
+        <label for="user-answer">Your Answer:</label>
+        <input type="text" id="user-answer" name="user_answer" placeholder="Enter your answer here">
+        <button type="submit" id="submit-answer" class="prominent-button" disabled>Submit</button>
+    </form>
+    <script>
+        const userAnswerInput = document.getElementById('user-answer');
+        const submitAnswerButton = document.getElementById('submit-answer');
+        userAnswerInput.addEventListener('input', () => {
+            submitAnswerButton.disabled = userAnswerInput.value.trim() === '';
+        });
+    </script>
+    {% endif %}
+    {% if attempt_history %}
+    <div class="attempt-history">
+        <span>Attempt History: {{ attempt_history|safe }}</span>
+    </div>
+    {% endif %}
+    <div class="bottom-buttons nav-buttons">
+        <button id="prev-problem" onclick="window.location.href='/decrement_problem'">Previous Problem</button>
+        <button id="next-problem" onclick="window.location.href='/increment_problem'">Next Problem</button>
+    </div>
+    {% if current_tags and current_tags != '[]' and current_tags.strip() %}
+    <div class="tags-button">
+        <button onclick="window.location.href='/toggle_tags'">{{ 'Hide Tags' if display_tags else 'Show Tags' }}</button>
+    </div>
+    {% endif %}
+    {% if current_link %}
+    <div class="video-button">
+        <button onclick="window.open('{{ current_link }}', '_blank')">Open Video</button>
+    </div>
+    <div class="video-section" style="margin-top: 20px; text-align: center;">
+        <h3>Video Solution</h3>
+        <iframe width="560" height="315" src="{{ embed_link }}" frameborder="0" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+    <div class="recommend-buttons" style="margin-top: 25px">
+        <button onclick="window.location.href='/contrib/recommend_tags/{{ my_id }}'">Recommend Tags</button>
+        <button onclick="window.location.href='/contrib/recommend_classification/{{ my_id }}'">Recommend Classification</button>
+        <button onclick="window.location.href='/contrib/report_problem/{{ my_id }}'">Report Problem</button>
+        <button onclick="window.location.href='/contrib/recommend_link/{{ my_id }}'">Recommend Video Link</button>
+    </div>
+</body>
+</html>

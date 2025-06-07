@@ -1,0 +1,21 @@
+<!doctype html>
+<title>Recommend Tags</title>
+<h1>Recommend Tags</h1>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <img id="Qimage" src="{{ Q_url }}" alt="QImage" style="max-height: 100%; max-width: 100%; margin-bottom: 10px;">
+</div>
+<form method="post">
+    <h3>Select Existing Tags:</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for tag in tags %}
+        <label>
+            <input type="checkbox" name="tags" value="{{ tag }}"> {{ tag }}
+        </label>
+        {% endfor %}
+    </div>
+    <h3>Enter New Tags (comma-separated):</h3>
+    <input type="text" name="new_tags" placeholder="Enter new tags here" style="width: 100%;"><br><br>
+    <input type="submit" value="Submit Recommendation">
+</form>
+<br>
+<button onclick="window.location.href='/display_problem'">Cancel</button>

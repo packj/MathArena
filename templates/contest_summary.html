@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contest Summary</title>
+    <style>
+.arena-button {
+    width: 150px;
+    height: 50px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+.room1 {
+    background-color: #3498db;
+}
+.room2 {
+    background-color: #e74c3c;
+}
+.room3 {
+    background-color: #9b59b6;
+}
+.room4 {
+    background-color: #f39c12;
+}
+.room5 {
+    background-color: #16823e;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+    <div style="background-color: {{ room_color }}; text-align: center; padding: 5px; color: white;">
+        <h1>Contest Summary - {{ room_name }} Room</h1>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="window.location.href='/arena/exit_room'">Exit to Arena</button>
+        <button onclick="window.location.href='/logout'">Logout</button>
+    </div>
+    <h2>Scores:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for username, score in scores %}
+                <tr>
+                    <td>{{ username }}</td>
+                    <td>{{ score }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

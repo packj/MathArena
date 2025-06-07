@@ -1,0 +1,128 @@
+<!doctype html>
+<head>
+    <title>User Landing Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .launch-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .launch-button:hover {
+            background-color: #45a049; /* Darker green */
+        }
+        .launch-button:disabled {
+            background-color: #cccccc; /* Gray */
+            cursor: not-allowed;
+        }
+        .filter-button {
+            font-size: 16px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+        .filter-button.sprint {
+            background-color: #cfae5a; /* Vivid red */
+        }
+        .filter-button.target {
+            background-color: #66b3ff; /* Vivid blue */
+        }
+        .filter-button.other {
+            background-color: #aaaaaa; /* Gray */
+        }
+        .arena-button {
+            background-color: #8e44ad; /* Purple */
+        }
+        .arena-button:hover {
+            background-color: #6e248d; /* Purple */
+        }
+    </style>
+</head>
+<body>
+    <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/leaderboard'">View Leaderboards</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/change_password'">Change Password</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
+    </div>
+    <h1 style="text-align: center;">Welcome, {{ session['username'] }}, to Math Arena!</h1>
+    {% if filter_loaded_message %}
+    <p style="color: green; text-align: center;">{{ filter_loaded_message }}</p>
+    {% endif %}
+    <table style="width: 70%; margin: 0 auto;">
+        <tr>
+            <td>
+                <h2>Problem Filter Criteria:</h2>
+                {% if filter_criteria %}
+                    <ul>
+                        <li><strong>Year Range:</strong> {{ filter_criteria['start_year'] }} - {{ filter_criteria['end_year'] }}</li>
+                        <li><strong>Formats:</strong> {{ ', '.join(filter_criteria['formats']) }}</li>
+                        <li><strong>Levels:</strong> {{ ', '.join(filter_criteria['levels']) }}</li>
+                        <li><strong>Classifications:</strong> {{ ', '.join(filter_criteria['classifications']) }}</li>
+                        <li><strong>Tags:</strong> {{ ', '.join(filter_criteria['tags']) }}</li>
+                        <li><strong>Question Range:</strong> {{ filter_criteria['start_question'] }} - {{ filter_criteria['end_question'] }}</li>
+                        <li><strong>Shuffle:</strong> {{ 'Yes' if filter_criteria['shuffle'] else 'No' }}</li>
+                    </ul>
+                    <p><strong>Number of Questions:</strong> {{ question_count }}</p>
+                {% else %}
+                    <p>No filter criteria found.</p>
+                {% endif %}
+                <div style="text-align: center;">
+                    <button id="custom-filter-button" class="top-button" onclick="window.location.href='/setup_filter'">Custom Filter</button>
+                </div>
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <div style="margin-bottom: 30px;">
+                    <label for="codename">Enter Codename:</label>
+                    <input type="text" id="codename" name="codename" value="{{ session['username'] }}" required>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <button type="button" id="launch-solo-button" class="launch-button" {% if question_count == 0 %}disabled{% endif %}>Launch Solo Training</button>
+                </div>
+                <div style="margin-bottom: 0px;">
+                    <button type="button" id="enter-math-arena-button" class="launch-button arena-button" style="text-decoration: none; display: inline-block;">Enter Math Arena</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <h2>Load Preset Filters</h2>
+    {% for filter in filters %}
+    {% set category = 'other' %}
+    {% if 'sprint' in filter[0].lower() %}
+        {% set category = 'sprint' %}
+    {% elif 'target' in filter[0].lower() %}
+        {% set category = 'target' %}
+    {% elif 'team' in filter[0].lower() %}
+        {% set category = 'team' %}
+    {% endif %}
+    <button class="filter-button {{ category }}" onclick="window.location.href='/load_filter/{{ filter[0] }}'">{{ filter[0][1:] }}</button>
+    {% endfor %}
+    <br><br><br>
+    <button class="top-button" onclick="window.location.href='/contrib/suggestions'">Make a Suggestion</button>
+    <script>
+        document.getElementById('enter-math-arena-button').addEventListener('click', function() {
+            var codename = document.getElementById('codename').value;
+            window.location.href = '/arena/math_arena?codename=' + encodeURIComponent(codename);
+        });
+
+        document.getElementById('launch-solo-button').addEventListener('click', function() {
+            var codename = document.getElementById('codename').value;
+            window.location.href = '/launch_training?codename=' + encodeURIComponent(codename);
+        });
+    </script>
+    <br><br>
+</body>

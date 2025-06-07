@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+    <title>Setup Filter Criteria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #dce6f1; /* Light greyish blue */
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .filter-columns {
+            display: flex;
+            flex-wrap: wrap;
+            border: 1px solid black;
+        }
+
+        .filter-column {
+            flex: 1;
+            padding: 10px;
+            min-width: 300px; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/'">Home</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.history.back()">Back</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
+    </div>
+    <h1 style="text-align: center;">Setup Filter Criteria</h1>
+    <form method="post">
+        <div class="filter-columns">
+            <div class="filter-column">
+                {% if session['username'] == 'admin' %}
+                <label for="filter_name">Filter Name:</label>
+                <input type="text" id="filter_name" name="filter_name" required><br><br>
+                {% endif %}
+                <label for="start_year">Start Year:</label>
+                <select name="start_year" id="start_year" onchange="checkYearRange1()">
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if year == filter_criteria['start_year'] %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="end_year">End Year:</label>
+                <select name="end_year" id="end_year" onchange="checkYearRange2()">
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if year == filter_criteria['end_year'] %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label>Formats:</label><br>
+                {% for fmt in formats %}
+                <input type="checkbox" name="formats" value="{{ fmt }}" {% if fmt in filter_criteria['formats'] %}checked{% endif %}> {{ fmt.capitalize() }}<br>
+                {% endfor %}<br>
+
+                <label>Levels:</label><br>
+                {% for lvl in levels %}
+                <input type="checkbox" name="levels" value="{{ lvl }}" {% if lvl in filter_criteria['levels'] %}checked{% endif %}> {{ lvl.capitalize() }}<br>
+                {% endfor %}<br>
+
+                <input type="submit" class="prominent-button" value="Save Criteria">
+            </div>
+            <div class="filter-column">
+                <label>Classifications:</label><br>
+                {% for cls in classifications %}
+                <input type="checkbox" name="classifications" value="{{ cls }}" {% if cls in filter_criteria['classifications'] %}checked{% endif %}> {{ cls }}<br>
+                {% endfor %}<br>
+
+                <label for="start_question">Start Question:</label>
+                <input type="number" name="start_question" id="start_question" value="{{ filter_criteria['start_question'] }}"><br><br>
+
+                <label for="end_question">End Question:</label>
+                <input type="number" name="end_question" id="end_question" value="{{ filter_criteria['end_question'] }}"><br><br>
+
+                <input type="checkbox" name="shuffle" id="shuffle" {% if filter_criteria['shuffle'] %}checked{% endif %}>
+                <label for="shuffle">Shuffle</label><br><br>
+            </div>
+            <div class="filter-column">
+                <button type="button" class="prominent-button" onclick="toggleTags()">Toggle Tags</button><br><br>
+                <div id="tags-section" style="display: {% if session['show_tags'] %}block{% else %}none{% endif %};">
+                    <label>Tags:</label><br>
+                    {% for tag in tags %}
+                    <input type="checkbox" name="tags" value="{{ tag }}" {% if tag in filter_criteria['tags'] %}checked{% endif %}> {{ tag }}<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        function checkYearRange1() {
+            const startYear = document.getElementById('start_year').value;
+            const endYear = document.getElementById('end_year').value;
+            if (parseInt(startYear) > parseInt(endYear)) {
+                document.getElementById('end_year').value = startYear;
+            }
+        }
+        function checkYearRange2() {
+            const startYear = document.getElementById('start_year').value;
+            const endYear = document.getElementById('end_year').value;
+            if (parseInt(startYear) > parseInt(endYear)) {
+                document.getElementById('start_year').value = endYear;
+            }
+        }
+        function toggleTags() {
+            const tagsSection = document.getElementById('tags-section');
+            const isVisible = tagsSection.style.display === 'block';
+            tagsSection.style.display = isVisible ? 'none' : 'block';
+            fetch('/toggle_tags_visibility', { method: 'POST' });
+        }
+    </script>
+    <div style="text-align: center; margin-top: 30px;">
+        <button type="button" class="prominent-button" onclick="refreshCount()">Refresh Count</button>
+        <span id="question-count">Question Count: {{ question_count }}</span>
+    </div>
+    <script>
+        function refreshCount() {
+            const form = document.querySelector('form');
+            const formData = new FormData(form);
+
+            fetch('/refresh_count', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('question-count').innerText = 'Question Count: ' + data.count;
+            });
+        }
+    window.onload = refreshCount;
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+math_arena.yaml
+private.txt
+ideas.txt
+connect_connector.py
+*.json
+# Python pycache:
+__pycache__/
+
