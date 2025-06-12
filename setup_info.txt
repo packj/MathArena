@@ -22,6 +22,7 @@ I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
    - sudo apt-get update
    - sudo apt-get install python3-venv
    - use git to clone MathArena repo
+   - manually transfer config.yaml file
    - create python venv
    - pip install -r requirements.txt
    - install gunicorn
@@ -45,4 +46,5 @@ I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
 12) Modify DNS entries on ionos
 13) Install an SSL certificate
     - google "certbot instructions for Ubuntu" and follow
+
     
