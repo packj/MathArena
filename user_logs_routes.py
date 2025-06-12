@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 import sqlalchemy
 from utils import login_required # Assuming login_required might be needed later, or for consistency
-from db import sql_db
+from db_aws import sql_db
 
 user_logs_bp = Blueprint('user_logs', __name__)
 

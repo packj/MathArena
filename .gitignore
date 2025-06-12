@@ -2,6 +2,8 @@ math_arena.yaml
 private.txt
 ideas.txt
 *.json
+.venv
+*~
 # Python pycache:
 __pycache__/
 

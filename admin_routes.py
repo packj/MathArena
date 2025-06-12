@@ -2,7 +2,7 @@ from flask import Blueprint, render_template_string, render_template, request, r
 import sqlalchemy
 from utils import login_required, award_contribution_points, fetch_problems_by_filter
 admin_bp = Blueprint('admin', __name__)
-from db import sql_db
+from db_aws import sql_db
 
 @admin_bp.route('/show_live_scores', methods=['GET'])
 @login_required
@@ -62,40 +62,46 @@ def convert_image(image_path):
     import numpy as np
     from PIL import Image
     import io
-    from google.cloud import storage
-    if 1:
-        if 1:    
-            bucket_name = "mflashcards"
-            storage_client = storage.Client()
-            bucket = storage_client.bucket(bucket_name)
-            A_name = image_path.replace('Answers/', '')
+    import boto3 # Import boto3 for AWS S3 interaction
 
-            # read the A_url image from the bucket
-            blob_name = f"Answers/{A_name}"
-            blob = bucket.blob(blob_name)
-            img = blob.download_as_bytes()
+    # AWS S3 bucket details
+    aws_bucket_name = "math-arena-bucket" # Your S3 bucket name
 
+    # Initialize S3 client
+    s3_client = boto3.client('s3')
 
-            # Open the image using PIL
-            image = Image.open(io.BytesIO(img))
+    A_name = image_path.replace('Answers/', '')
+    object_key = f"Answers/{A_name}"
 
-            # Convert the image to a NumPy array
-            img_array = np.array(image)
+    try:
+        # Read the image from S3
+        response = s3_client.get_object(Bucket=aws_bucket_name, Key=object_key)
+        img_data = response['Body'].read()
 
-            # Check to see if the first pixel is more red or more blue
-            img1 = img_array[1, 1, :].reshape(1, 1, 3)
-            if img1[0][0][0] > img1[0][0][2]:
-                # if the first pixel is more red, swap the red and blue channels
-                img_array = img_array[:, :, [2, 1, 0]]
-                #convert the numpy array back to a PIL image
-                image2 = Image.fromarray(img_array)
-                # convert PIL image image2 to a byte array
-                img_byte_arr = io.BytesIO()
-                image2.save(img_byte_arr, format='PNG')
-                img_byte_arr = img_byte_arr.getvalue()
+        # Open the image using PIL
+        image = Image.open(io.BytesIO(img_data))
 
-                blob.upload_from_string(img_byte_arr, content_type='image/png')
-                print("Image uploaded successfully.")
+        # Convert the image to a NumPy array
+        img_array = np.array(image)
+
+        # Check to see if the first pixel is more red or more blue
+        img1 = img_array[1, 1, :].reshape(1, 1, 3)
+        if img1[0][0][0] > img1[0][0][2]:
+            # if the first pixel is more red, swap the red and blue channels
+            img_array = img_array[:, :, [2, 1, 0]]
+            #convert the numpy array back to a PIL image
+            image2 = Image.fromarray(img_array)
+            # convert PIL image image2 to a byte array
+            img_byte_arr = io.BytesIO()
+            image2.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
+
+            # Upload the modified image back to S3
+            s3_client.put_object(Bucket=aws_bucket_name, Key=object_key, Body=img_byte_arr, ContentType='image/png')
+            print("Image uploaded successfully to S3.")
+    except Exception as e:
+        print(f"Error processing image with S3: {e}")
+        raise # Re-raise the exception to indicate failure
 
 
 
@@ -213,7 +219,7 @@ def review_tag_recommendations():
                         <td><input type="checkbox" name="recommendation_id" value="{{ rec[0] }}"></td>
                         <td>
                             <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                                <img src="{{ url_for('serve_image', image_type='cards', image_name=rec[5].replace('cards/', '')) }}" 
+                                <img src="{{ url_for('serve_image', image_type='Questions', image_name=rec[5].replace('Questions/', '')) }}" 
                                      alt="Problem Image" 
                                      style="width: 100%; height: auto;">
                             </div>
@@ -304,7 +310,7 @@ def review_classification_recommendations():
                         <td><input type="checkbox" name="recommendation_id" value="{{ rec[0] }}"></td>
                         <td>
                             <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                                <img src="{{ url_for('serve_image', image_type='cards', image_name=rec[5].replace('cards/', '')) }}" 
+                                <img src="{{ url_for('serve_image', image_type='Questions', image_name=rec[5].replace('Questions/', '')) }}" 
                                      alt="Problem Image" 
                                      style="width: 100%; height: auto;">
                             </div>
@@ -395,7 +401,7 @@ def review_videos():
                         <td><input type="checkbox" name="suggested_link_id" value="{{ suggestion[0] }}"></td>
                         <td>
                             <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden; display: flex; justify-content: center; align-items: center;">
-                                <img src="{{ url_for('serve_image', image_type='cards', image_name=suggestion[5].replace('cards/', '')) }}" 
+                                <img src="{{ url_for('serve_image', image_type='Questions', image_name=suggestion[5].replace('Questions/', '')) }}" 
                                      alt="Problem Image" 
                                      style="width: 100%; height: auto;">
                             </div>
