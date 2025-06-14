@@ -1,4 +1,4 @@
-*.yaml
+c*.yaml
 private.txt
 ideas.txt
 *.json
