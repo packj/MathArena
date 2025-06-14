@@ -23,7 +23,8 @@ I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
    - sudo apt-get install python3-venv
    - use git to clone MathArena repo
    - manually transfer config.yaml file
-   - create python venv
+   - create python venv (python3 -m venv .venv)
+   - Activate the environment (source .venv/bin/activate)
    - pip install -r requirements.txt
    - install gunicorn
    - Test run it (I used main:app since my main file is called main.py)
