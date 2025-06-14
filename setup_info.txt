@@ -29,7 +29,7 @@ I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
    - Test run it (I used main:app since my main file is called main.py)
    - create a service file and enable it
    - install nginx
-   - enable the service
+   - enable the nginx service
    - Modify this file: sudo nano /etc/nginx/sites-available/default
    - Restart nginx
    - install mysql CLI client
@@ -45,6 +45,15 @@ I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
     - run mysql to verify the data is there
 12) Modify DNS entries on ionos
 13) Install an SSL certificate
-    - google "certbot instructions for Ubuntu" and follow
+    - google "certbot instructions for Ubuntu ec2" or follow below:
+      sudo apt update
+      sudo apt install snapd
+      sudo snap install core
+      sudo snap refresh core
+      sudo apt remove certbot
+      sudo snap install --classic certbot
+      sudo ln -s /snap/bin/certbot /usr/bin/certbot
+      sudo certbot --nginx
+       <skip email, agree to license, type in domain name>
 
     
