@@ -1,0 +1,59 @@
+Here I will document some of the steps to setting up on AWS.
+
+A lot of what I did followed this guide:
+
+https://medium.com/techfront/step-by-step-visual-guide-on-deploying-a-flask-application-on-aws-ec2-8e3e8b82c4f7
+
+There is also a youtube version:
+
+https://youtu.be/z5XiVh6v4uI?si=kbacfNXZQQxx7ZlG
+
+I also watched this video: https://youtu.be/dam0GPOAvVI?si=xqN9CCYonvcFRNNm
+
+1) Create an AWS account
+2) Create an Ubuntu EC2 instance (making sure to add http, ssh, https access)
+   - Create a key pair and download it to your local machine (in a secure location)
+3) Create an RDS database instance (mysql)
+4) Connect the RDS instance to the EC2 instance (AmazonRDSServiceRolePolicy role?)
+5) Create an elastic IP address
+   - Associate it with your EC2 instance
+6) Setup EC2 instance:
+   - ssh into the EC2 instance (use Connect --> ssh section to find the command)
+   - sudo apt-get update
+   - sudo apt-get install python3-venv
+   - use git to clone MathArena repo
+   - manually transfer config.yaml file
+   - create python venv
+   - pip install -r requirements.txt
+   - install gunicorn
+   - Test run it (I used main:app since my main file is called main.py)
+   - create a service file and enable it
+   - install nginx
+   - enable the nginx service
+   - Modify this file: sudo nano /etc/nginx/sites-available/default
+   - Restart nginx
+   - install mysql CLI client
+   - test connection to database
+7) Create an S3 bucket
+8) Link it to your EC2 in IAM (AmazonS3FullAccess role?)
+9) Upload all Capture images (Questions and Answers)
+10) (optional) go into IAM and set up MFA for root
+11) Get data into your database (if applicable)
+    - Export your database from google cloud
+    - scp your database to EC2
+    - import into mysql using mysql ... < [database_file]
+    - run mysql to verify the data is there
+12) Modify DNS entries on ionos
+13) Install an SSL certificate
+    - google "certbot instructions for Ubuntu ec2" or follow below:
+      sudo apt update
+      sudo apt install snapd
+      sudo snap install core
+      sudo snap refresh core
+      sudo apt remove certbot
+      sudo snap install --classic certbot
+      sudo ln -s /snap/bin/certbot /usr/bin/certbot
+      sudo certbot --nginx
+       <skip email, agree to license, type in domain name>
+
+    

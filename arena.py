@@ -3,7 +3,7 @@ import sqlalchemy
 import time
 import datetime
 from utils import login_required, fetch_problems_by_filter, get_all_filters
-from db import sql_db
+from db_aws import sql_db
 
 arena_bp = Blueprint('arena', __name__)
 
@@ -289,7 +289,7 @@ def waiting_room():
     if not room_color or not room_color.startswith('#') or len(room_color) != 7:
         room_color = '#FFFFFF'
 
-    from db import get_users_in_room  # Import the new function
+    from db_aws import get_users_in_room  # Import the new function
     users = get_users_in_room(sql_db, room_id)  # Fetch the users in the room
     #determine whether the current user is first in the list of users
     username = session.get('username')
@@ -312,7 +312,7 @@ def waiting_room():
 @arena_bp.route('/get_users_in_room/<room_id>')
 @login_required
 def get_users_in_room_api(room_id):
-    from db import get_users_in_room
+    from db_aws import get_users_in_room
     users = get_users_in_room(sql_db, room_id)
     return jsonify(users)
 
@@ -506,9 +506,9 @@ def arena_problem():
             current_level = problem[6]
             question_number = problem[8]
             current_classification = problem[0]
-            Q_name = problem[3].replace('cards/', '')
+            Q_name = problem[3].replace('Questions/', '')
             A_name = problem[4].replace('Answers/', '')
-            Q_url = url_for('serve_image', image_type='cards', image_name=Q_name)
+            Q_url = url_for('serve_image', image_type='Questions', image_name=Q_name)
             A_url = url_for('serve_image', image_type='Answers', image_name=A_name)
             show_answer = session.get('show_answer', False)
             user_answer = session.get('user_answer', '')

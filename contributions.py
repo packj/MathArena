@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template_string, request, redirect, url_for, session, render_template
 import sqlalchemy
 from utils import login_required, get_sorted_tag_set
-from db import sql_db
+from db_aws import sql_db
 
 contrib_bp = Blueprint('contrib', __name__)  # Create a Blueprint 
 
@@ -32,7 +32,6 @@ def recommend_classification(problem_id):
 @contrib_bp.route('/recommend_tags/<int:problem_id>', methods=['GET', 'POST'])
 @login_required
 def recommend_tags(problem_id):
-    from main import sql_db
     try:
         with sql_db.connect() as conn:
             # Fetch the problem details for the current ID
@@ -44,8 +43,8 @@ def recommend_tags(problem_id):
             if not problem:
                 return "Problem not found."
 
-            Q_name = problem[0].replace('cards/', '')
-            Q_url = url_for('serve_image', image_type='cards', image_name=Q_name)
+            Q_name = problem[0].replace('Questions/', '')
+            Q_url = url_for('serve_image', image_type='Questions', image_name=Q_name)
 
             tags = get_sorted_tag_set(sql_db)
 

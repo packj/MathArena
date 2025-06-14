@@ -1,37 +1,25 @@
 from flask import Flask, send_file, abort, render_template_string, request, redirect, url_for, session, render_template, jsonify
-from google.cloud import storage
 from datetime import timedelta
-from google.cloud.storage import Blob
 from io import BytesIO
 import sqlalchemy
 import random
 import yaml # Import yaml
+import boto3 # Import boto3 for AWS S3 interaction
+from botocore.exceptions import ClientError # Import ClientError for S3 error handling
+
 #from connect_connector import connect_with_connector
-from db import init_connection_pool  # Import the database setup function
+from db_aws import init_connection_pool  # Import the database setup function
 from user_logs_routes import user_logs_bp
 from admin_routes import admin_bp  # Import the Blueprint
 from arena import arena_bp, update_in_lobby_flag  # Import the Blueprint
 from contributions import contrib_bp
 from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set  # Import from utils
-from db import sql_db, sql_connector  # Import the SQLAlchemy engine and connector
+from db_aws import sql_db  # Import the SQLAlchemy engine
 
 
 app = Flask(__name__)
 
-@app.teardown_appcontext
-def close_sql_connector(exception=None):
-    """Closes the Cloud SQL Python Connector when the application context ends."""
-    global sql_connector
-    if sql_connector:
-        sql_connector.close()
-        sql_connector = None # Clear the global reference
-        print("Cloud SQL Connector closed.")
-
-# Load sensitive information from math_arena.yaml
-with open('math_arena.yaml', 'r') as file:
-    config = yaml.safe_load(file)
-
-app.secret_key = config['secret_key']  # Secret key for session management
+app.secret_key = 'jdskdj393ueweh33238rhht3o'
 
 @app.before_request
 def init_sql_db() -> None:
@@ -230,26 +218,43 @@ def forgot_password():
 @login_required
 def serve_image(image_type, image_name):
     """
-    Serve images (questions or answers) from Google Cloud Storage to avoid CORB issues.
+    Serve images (questions or answers) from AWS S3 to avoid CORB issues.
     """
-    bucket_name = "mflashcards"
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob_name = f"{image_type}/{image_name}"
-    blob = bucket.blob(blob_name)
+    aws_bucket_name = "math-arena-bucket" # Your S3 bucket name
+    s3_client = boto3.client('s3')
 
-    if not blob.exists(storage_client):
-        # Serve the backup image if the requested image does not exist
-        backup_blob_name = "cards/noImage.png"
-        backup_blob = bucket.blob(backup_blob_name)
-        if not backup_blob.exists(storage_client):
-            return abort(404)  # Return 404 if the backup image also does not exist
-        image_data = backup_blob.download_as_bytes()
+    image_name = image_name.replace('cards/','')
+
+    object_key = f"{image_type}/{image_name}"
+
+    print('\n\nobject_key: \n\n', object_key)
+    print('\n\nimage_name: \n\n', image_name)
+
+    try:
+        # Check if the object exists
+        s3_client.head_object(Bucket=aws_bucket_name, Key=object_key)
+        # If it exists, download and serve it
+        response = s3_client.get_object(Bucket=aws_bucket_name, Key=object_key)
+        image_data = response['Body'].read()
         return send_file(BytesIO(image_data), mimetype='image/png')
-
-    # Fetch the requested image content
-    image_data = blob.download_as_bytes()
-    return send_file(BytesIO(image_data), mimetype='image/png')
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            # If the requested image does not exist, serve the backup image
+            backup_object_key = "Questions/noImage.png"
+            try:
+                s3_client.head_object(Bucket=aws_bucket_name, Key=backup_object_key)
+                backup_response = s3_client.get_object(Bucket=aws_bucket_name, Key=backup_object_key)
+                backup_image_data = backup_response['Body'].read()
+                return send_file(BytesIO(backup_image_data), mimetype='image/png')
+            except ClientError as backup_e:
+                if backup_e.response['Error']['Code'] == '404':
+                    return abort(404) # Return 404 if the backup image also does not exist
+                else:
+                    print(f"Error accessing backup image from S3: {backup_e}")
+                    return "An error occurred while accessing the backup image.", 500
+        else:
+            print(f"Error accessing image from S3: {e}")
+            return "An error occurred while accessing the image.", 500
 
 @app.route('/')
 @login_required
@@ -666,7 +671,7 @@ def display_problem():
             current_classification = problem[0]
             current_link = problem[1]
             current_tags = problem[2]
-            Q_name = problem[3].replace('cards/', '')
+            Q_name = problem[3].replace('Questions/', '')
             A_name = problem[4].replace('Answers/', '')
             current_year = problem[5]
             current_level = problem[6]
@@ -674,7 +679,7 @@ def display_problem():
             question_number = problem[8]
 
             # Display the image referenced by question_ref
-            Q_url = url_for('serve_image', image_type='cards', image_name=Q_name)
+            Q_url = url_for('serve_image', image_type='Questions', image_name=Q_name)
             A_url = url_for('serve_image', image_type='Answers', image_name=A_name)
 
             # Toggle answer and tags visibility
