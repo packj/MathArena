@@ -120,7 +120,7 @@ def convert_images():
             ''')).fetchall()
             problems = [{'id': row[0], 'answer_ref': row[1]} for row in problems]
             print(len(problems))
-            for problem in problems[850:]:
+            for problem in problems[:850]:
                 # Fetch the answer image from the database
                 print(problem)
                 answer_ref = problem['answer_ref']
@@ -1379,3 +1379,47 @@ def temp_passwords():
         return "An error occurred while fetching temporary passwords."
 
     return render_template('temp_passwords.html', temp_passwords=temp_passwords)
+
+@admin_bp.route('/grant_points', methods=['POST'])
+@login_required
+def grant_points():
+    """Grant points to a specified user."""
+    if session.get('username') != 'admin':
+        return redirect(url_for('login'))
+
+    username = request.form.get('username')
+    points_str = request.form.get('points')
+
+    if not username or not points_str:
+        return "Missing username or points.", 400
+
+    try:
+        points = int(points_str)
+        if points <= 0:
+            return "Points must be a positive number.", 400
+    except ValueError:
+        return "Invalid points value. Must be a number.", 400
+
+    try:
+        with sql_db.connect() as conn:
+            # Check if the user exists in the users table
+            user_exists = conn.execute(sqlalchemy.text('''
+                SELECT 1 FROM users WHERE username = :username
+            '''), {'username': username}).fetchone()
+
+            if not user_exists:
+                return f"User '{username}' not found.", 404
+
+            # Update points in the scoreboard table
+            # If the user is not in the scoreboard, insert them with the given points
+            conn.execute(sqlalchemy.text('''
+                INSERT INTO scoreboard (username, codename, points)
+                VALUES (:username, :username, :points)
+                ON DUPLICATE KEY UPDATE points = points + :points
+            '''), {'username': username, 'points': points})
+            conn.commit()
+    except Exception as e:
+        print(f"Error granting points: {e}")
+        return "An error occurred while granting points.", 500
+
+    return redirect(url_for('admin.admin_landing'))

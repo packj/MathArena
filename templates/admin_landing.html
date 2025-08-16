@@ -53,3 +53,12 @@
 <button onclick="window.location.href='/admin/clear_rooms'">Clear Rooms</button>
 <button onclick="window.location.href='/admin/show_live_scores'">Live Scores</button>
 <button onclick="window.location.href='/admin/temp_passwords'">View Temporary Passwords</button>
+
+<h2>Grant Points to User</h2>
+<form action="/admin/grant_points" method="post">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="points">Points:</label><br>
+    <input type="number" id="points" name="points" required><br><br>
+    <input type="submit" value="Grant Points">
+</form>
