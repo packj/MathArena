@@ -8,5 +8,5 @@ Here are instructions for how to make updates:
 3) change directory to ~/MathArena
 4) Do a git pull to git the latest code in the production tree
 5) Restart the server:
-      sudo systemctl reload mathArena
-      
+      sudo systemctl stop mathArena
+      sudo systemctl start mathArena
