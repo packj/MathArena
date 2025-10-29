@@ -1,0 +1,12 @@
+Here are instructions for how to make updates:
+
+0) Activate the virtual env 
+    cd ~/dev/MathArena && source .venv/bin/activate
+1) Modify the code in development tree (~/dev/MathArena)
+2) Test it in the same directory (./dev_run)
+2) push to git (add, commit, push)
+3) change directory to ~/MathArena
+4) Do a git pull to git the latest code in the production tree
+5) Restart the server:
+      sudo systemctl reload mathArena
+      

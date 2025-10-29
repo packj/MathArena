@@ -1395,8 +1395,8 @@ def grant_points():
 
     try:
         points = int(points_str)
-        if points <= 0:
-            return "Points must be a positive number.", 400
+        #if points <= 0:
+        #    return "Points must be a positive number.", 400
     except ValueError:
         return "Invalid points value. Must be a number.", 400
 
@@ -1410,11 +1410,10 @@ def grant_points():
             if not user_exists:
                 return f"User '{username}' not found.", 404
 
-            # Update points in the scoreboard table
-            # If the user is not in the scoreboard, insert them with the given points
+            # Update points in the leaderboard table
             conn.execute(sqlalchemy.text('''
-                INSERT INTO scoreboard (username, codename, points)
-                VALUES (:username, :username, :points)
+                INSERT INTO leaderboard (username, points)
+                VALUES (:username, :points)
                 ON DUPLICATE KEY UPDATE points = points + :points
             '''), {'username': username, 'points': points})
             conn.commit()
