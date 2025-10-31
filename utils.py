@@ -30,13 +30,16 @@ def award_contribution_points(sql_db, username, points):
     except Exception as e:
         print(f"Error awarding contribution points: {e}")
 
-def fetch_problems_by_filter(sql_db, filter_criteria):
+import random
+
+def fetch_problems_by_filter(sql_db, filter_criteria, room_id=None):
     """
     Fetch problem IDs from the database based on the given filter criteria.
 
     Args:
         sql_db: Connection to the database.
         filter_criteria (dict): The filter criteria to apply.
+        room_id (int, optional): The ID of the room, used as a seed for shuffling. Defaults to None.
 
     Returns:
         problem_ids (list): A list of problem IDs that match the filter criteria.
@@ -72,9 +75,8 @@ def fetch_problems_by_filter(sql_db, filter_criteria):
 
             query += " AND question_number BETWEEN :start_question AND :end_question"
 
-            # Add sorting logic
-            if not filter_criteria.get('shuffle', False):
-                query += " ORDER BY CAST(question_number AS UNSIGNED)"  # Sort numerically by question_number
+            # Add sorting logic for deterministic results
+            query += " ORDER BY (question_number+0), id"
 
             # Execute the query
             result = conn.execute(sqlalchemy.text(query), params).fetchall()
@@ -82,8 +84,15 @@ def fetch_problems_by_filter(sql_db, filter_criteria):
             if not result:
                 print("No problems found matching the filter criteria.")
 
-            # Shuffle the problem IDs if shuffle is enabled
             problem_ids = [row[0] for row in result]
+
+            # Shuffle the problem IDs in Python if shuffle is enabled
+            if filter_criteria.get('shuffle', False):
+                if room_id is not None:
+                    random.Random(room_id).shuffle(problem_ids)
+                else:
+                    # Fallback for contexts where room_id is not available
+                    random.shuffle(problem_ids)
 
     except Exception as e:
         print(f"Error fetching problems by filter: {e}")
@@ -138,4 +147,3 @@ def get_sorted_tag_set(sql_db):
         print(f"Error fetching tags: {e}")
         tags = []
     return tags
-

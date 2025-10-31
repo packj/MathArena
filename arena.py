@@ -201,7 +201,6 @@ def arena_setup():
                 join_room(room_table_name, username, conn, room_id)
                 # Redirect to waiting_room
                 update_in_lobby_flag(username, False)
-                from main import load_filter
                 #read the rooms db to get various parameters
                 try:
                     with sql_db.connect() as conn:
@@ -211,23 +210,47 @@ def arena_setup():
                         '''), {'room_id': room_id}).fetchone()
                     if room:
                         session['collaborative'] = 'collaborative' if room[0]==1 else 'competitive'
-                        session['filter_name'] = room[1]
+                        filter_name_from_db = room[1]
+                        session['filter_name'] = filter_name_from_db # Set session for other parts of the app
                         session['time_limit'] = room[2]
                         session['live_scoreboard'] = True if room[3]==1 else False
-                    else:
-                        print(f"Room {room_id} not found in the database.")
-                    # load the filter
-                    filter_name = session.get('filter_name')
-                    if filter_name:
-                        load_filter(filter_name)
+                        
+                        if filter_name_from_db:
+                            with sql_db.connect() as conn:
+                                # Query for the filter settings using the filter_name from the rooms table
+                                result = conn.execute(sqlalchemy.text('''
+                                    SELECT start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle
+                                    FROM filters
+                                    WHERE username = :filter_name
+                                    ORDER BY id DESC LIMIT 1
+                                '''), {'filter_name': filter_name_from_db}).fetchone()
+
+                                if result:
+                                    # Update session with the loaded filter settings
+                                    session['filter_criteria'] = {
+                                        'start_year': result[0],
+                                        'end_year': result[1],
+                                        'formats': result[2].split(','),
+                                        'levels': result[3].split(','),
+                                        'classifications': result[4].split(',') if result[4] else [],
+                                        'tags': result[5].split(',') if result[5] else [],
+                                        'start_question': result[6],
+                                        'end_question': result[7],
+                                        'shuffle': bool(result[8])
+                                    }
+                                else:
+                                    print(f"--- Filter {filter_name_from_db} NOT FOUND for user {username} ---")
                         filter_criteria = session.get('filter_criteria', None)
-                        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
+                        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
 
                         session['problem_ids'] = problem_ids
                         session['problem_index'] = 0  # Start with the first problem
                         session['show_answer'] = False  # Hide answer
                         session['points'] = 0  # Reset score to 0
                         session['awarded_problems'] = []
+                    else:
+                        print(f"Room {room_id} not found in the database.")
+                        filter_criteria = None
                 except Exception as e:
                     print(f"Error reading rooms db: {e}")
                 return redirect(url_for('arena.waiting_room', room_id=room_id, time_limit=session['time_limit'], mode=session['collaborative'], show_live_score=session['live_scoreboard']))
@@ -448,7 +471,7 @@ def arena_problem():
             if filter_name:
                 load_filter(filter_name)
                 filter_criteria = session.get('filter_criteria', None)
-                problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
+                problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
                     
                 session['problem_ids'] = problem_ids
                 session['problem_index'] = 0  # Start with the first problem
@@ -493,6 +516,8 @@ def arena_problem():
     try:
         with sql_db.connect() as conn:
             problem_ids = session.get('problem_ids', [])
+            if not problem_ids:
+                return "Error: problem_ids is empty. The filter may not have been loaded correctly for this user."
             problem_index = session.get('problem_index', 0)
             my_id = problem_ids[problem_index]
             problem_query = '''
@@ -608,7 +633,41 @@ def arena_setup_post():
     if not filter_criteria:
         return "No filter criteria found. Please set up filter criteria first."
 
-    problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
+    # Save the filter criteria to the database for this room to ensure all users get the same settings
+    with sql_db.connect() as conn:
+        try:
+            # Use INSERT ... ON DUPLICATE KEY UPDATE to create or overwrite the room's filter
+            conn.execute(sqlalchemy.text('''
+                INSERT INTO filters (username, start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle)
+                VALUES (:username, :start_year, :end_year, :formats, :levels, :classifications, :tags, :start_question, :end_question, :shuffle)
+                ON DUPLICATE KEY UPDATE
+                start_year = VALUES(start_year),
+                end_year = VALUES(end_year),
+                formats = VALUES(formats),
+                levels = VALUES(levels),
+                classifications = VALUES(classifications),
+                tags = VALUES(tags),
+                start_question = VALUES(start_question),
+                end_question = VALUES(end_question),
+                shuffle = VALUES(shuffle)
+            '''), {
+                'username': filter_name,
+                'start_year': filter_criteria['start_year'],
+                'end_year': filter_criteria['end_year'],
+                'formats': ','.join(filter_criteria['formats']),
+                'levels': ','.join(filter_criteria['levels']),
+                'classifications': ','.join(filter_criteria.get('classifications', [])),
+                'tags': ','.join(filter_criteria.get('tags', [])),
+                'start_question': filter_criteria['start_question'],
+                'end_question': filter_criteria['end_question'],
+                'shuffle': filter_criteria.get('shuffle', False)
+            })
+            conn.commit()
+        except Exception as e:
+            print(f"Error saving filter for room: {e}")
+
+    room_id = session.get('room_id')
+    problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
     if len(problem_ids) > num_problems:
         problem_ids = problem_ids[:num_problems]
 

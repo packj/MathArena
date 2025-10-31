@@ -1393,6 +1393,9 @@ def grant_points():
     if not username or not points_str:
         return "Missing username or points.", 400
 
+    #sol: 14128, espe: 636
+    #sol: 14764, espe: 0
+
     try:
         points = int(points_str)
         #if points <= 0:

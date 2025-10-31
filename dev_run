@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 #sudo systemctl stop mathArena
-/home/ubuntu/dev/MathArena/.venv/bin/gunicorn --chdir /home/ubuntu/dev/MathArena -b localhost:8001 --log-level debug --log-file - main:app
+/home/ubuntu/dev/MathArena/.venv/bin/gunicorn --reload --chdir /home/ubuntu/dev/MathArena -b localhost:8001 --log-level debug --log-file - main:app
 #sudo systemctl start mathArena
