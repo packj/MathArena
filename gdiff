@@ -1,0 +1,229 @@
+diff --git a/admin_routes.py b/admin_routes.py
+index c81e4d8..6a38b78 100644
+--- a/admin_routes.py
++++ b/admin_routes.py
+@@ -1393,6 +1393,9 @@ def grant_points():
+     if not username or not points_str:
+         return "Missing username or points.", 400
+ 
++    #sol: 14128, espe: 636
++    #sol: 14764, espe: 0
++
+     try:
+         points = int(points_str)
+         #if points <= 0:
+diff --git a/arena.py b/arena.py
+index 7c30fb8..435c9e9 100644
+--- a/arena.py
++++ b/arena.py
+@@ -201,7 +201,6 @@ def arena_setup():
+                 join_room(room_table_name, username, conn, room_id)
+                 # Redirect to waiting_room
+                 update_in_lobby_flag(username, False)
+-                from main import load_filter
+                 #read the rooms db to get various parameters
+                 try:
+                     with sql_db.connect() as conn:
+@@ -211,23 +210,49 @@ def arena_setup():
+                         '''), {'room_id': room_id}).fetchone()
+                     if room:
+                         session['collaborative'] = 'collaborative' if room[0]==1 else 'competitive'
+-                        session['filter_name'] = room[1]
++                        filter_name_from_db = room[1]
++                        session['filter_name'] = filter_name_from_db # Set session for other parts of the app
+                         session['time_limit'] = room[2]
+                         session['live_scoreboard'] = True if room[3]==1 else False
+-                    else:
+-                        print(f"Room {room_id} not found in the database.")
+-                    # load the filter
+-                    filter_name = session.get('filter_name')
+-                    if filter_name:
+-                        load_filter(filter_name)
++                        
++                        print(f"--- USER {username} JOINING ROOM {room_id}, using filter_name from DB: {filter_name_from_db} ---")
++                        if filter_name_from_db:
++                            with sql_db.connect() as conn:
++                                # Query for the filter settings using the filter_name from the rooms table
++                                result = conn.execute(sqlalchemy.text('''
++                                    SELECT start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle
++                                    FROM filters
++                                    WHERE username = :filter_name
++                                    ORDER BY id DESC LIMIT 1
++                                '''), {'filter_name': filter_name_from_db}).fetchone()
++
++                                if result:
++                                    print(f"--- Filter {filter_name_from_db} FOUND for user {username}. Shuffle is: {bool(result[8])} ---")
++                                    # Update session with the loaded filter settings
++                                    session['filter_criteria'] = {
++                                        'start_year': result[0],
++                                        'end_year': result[1],
++                                        'formats': result[2].split(','),
++                                        'levels': result[3].split(','),
++                                        'classifications': result[4].split(',') if result[4] else [],
++                                        'tags': result[5].split(',') if result[5] else [],
++                                        'start_question': result[6],
++                                        'end_question': result[7],
++                                        'shuffle': bool(result[8])
++                                    }
++                                else:
++                                    print(f"--- Filter {filter_name_from_db} NOT FOUND for user {username} ---")
+                         filter_criteria = session.get('filter_criteria', None)
+-                        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
++                        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
+ 
+                         session['problem_ids'] = problem_ids
+                         session['problem_index'] = 0  # Start with the first problem
+                         session['show_answer'] = False  # Hide answer
+                         session['points'] = 0  # Reset score to 0
+                         session['awarded_problems'] = []
++                    else:
++                        print(f"Room {room_id} not found in the database.")
++                        filter_criteria = None
+                 except Exception as e:
+                     print(f"Error reading rooms db: {e}")
+                 return redirect(url_for('arena.waiting_room', room_id=room_id, time_limit=session['time_limit'], mode=session['collaborative'], show_live_score=session['live_scoreboard']))
+@@ -448,7 +473,7 @@ def arena_problem():
+             if filter_name:
+                 load_filter(filter_name)
+                 filter_criteria = session.get('filter_criteria', None)
+-                problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
++                problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
+                     
+                 session['problem_ids'] = problem_ids
+                 session['problem_index'] = 0  # Start with the first problem
+@@ -493,6 +518,8 @@ def arena_problem():
+     try:
+         with sql_db.connect() as conn:
+             problem_ids = session.get('problem_ids', [])
++            if not problem_ids:
++                return "Error: problem_ids is empty. The filter may not have been loaded correctly for this user."
+             problem_index = session.get('problem_index', 0)
+             my_id = problem_ids[problem_index]
+             problem_query = '''
+@@ -608,7 +635,41 @@ def arena_setup_post():
+     if not filter_criteria:
+         return "No filter criteria found. Please set up filter criteria first."
+ 
+-    problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
++    # Save the filter criteria to the database for this room to ensure all users get the same settings
++    with sql_db.connect() as conn:
++        try:
++            # Use INSERT ... ON DUPLICATE KEY UPDATE to create or overwrite the room's filter
++            conn.execute(sqlalchemy.text('''
++                INSERT INTO filters (username, start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle)
++                VALUES (:username, :start_year, :end_year, :formats, :levels, :classifications, :tags, :start_question, :end_question, :shuffle)
++                ON DUPLICATE KEY UPDATE
++                start_year = VALUES(start_year),
++                end_year = VALUES(end_year),
++                formats = VALUES(formats),
++                levels = VALUES(levels),
++                classifications = VALUES(classifications),
++                tags = VALUES(tags),
++                start_question = VALUES(start_question),
++                end_question = VALUES(end_question),
++                shuffle = VALUES(shuffle)
++            '''), {
++                'username': filter_name,
++                'start_year': filter_criteria['start_year'],
++                'end_year': filter_criteria['end_year'],
++                'formats': ','.join(filter_criteria['formats']),
++                'levels': ','.join(filter_criteria['levels']),
++                'classifications': ','.join(filter_criteria.get('classifications', [])),
++                'tags': ','.join(filter_criteria.get('tags', [])),
++                'start_question': filter_criteria['start_question'],
++                'end_question': filter_criteria['end_question'],
++                'shuffle': filter_criteria.get('shuffle', False)
++            })
++            conn.commit()
++        except Exception as e:
++            print(f"Error saving filter for room: {e}")
++
++    room_id = session.get('room_id')
++    problem_ids = fetch_problems_by_filter(sql_db, filter_criteria, room_id=int(room_id))
+     if len(problem_ids) > num_problems:
+         problem_ids = problem_ids[:num_problems]
+ 
+diff --git a/dev_run b/dev_run
+index 096611a..8de49d0 100755
+--- a/dev_run
++++ b/dev_run
+@@ -1,4 +1,4 @@
+ #!/usr/bin/bash
+ #sudo systemctl stop mathArena
+-/home/ubuntu/dev/MathArena/.venv/bin/gunicorn --chdir /home/ubuntu/dev/MathArena -b localhost:8001 --log-level debug --log-file - main:app
++/home/ubuntu/dev/MathArena/.venv/bin/gunicorn --reload --chdir /home/ubuntu/dev/MathArena -b localhost:8001 --log-level debug --log-file - main:app
+ #sudo systemctl start mathArena
+diff --git a/templates/arena_problem.html b/templates/arena_problem.html
+index e28fb51..a5aefc2 100644
+--- a/templates/arena_problem.html
++++ b/templates/arena_problem.html
+@@ -19,6 +19,7 @@
+     </div>
+     <div style="background-color: {{ room_color }}; padding: 20px; text-align: center;">
+         <h1>{{ room_name }} Contest Room</h1>
++        <p>Debug: {{ session['problem_ids'] }}</p>
+     </div>
+     <div class="info-section centered-info">
+         <span>Year: <strong>{{ current_year }}</strong></span>
+diff --git a/utils.py b/utils.py
+index 29a321b..4efce63 100644
+--- a/utils.py
++++ b/utils.py
+@@ -30,17 +30,21 @@ def award_contribution_points(sql_db, username, points):
+     except Exception as e:
+         print(f"Error awarding contribution points: {e}")
+ 
+-def fetch_problems_by_filter(sql_db, filter_criteria):
++import random
++
++def fetch_problems_by_filter(sql_db, filter_criteria, room_id=None):
+     """
+     Fetch problem IDs from the database based on the given filter criteria.
+ 
+     Args:
+         sql_db: Connection to the database.
+         filter_criteria (dict): The filter criteria to apply.
++        room_id (int, optional): The ID of the room, used as a seed for shuffling. Defaults to None.
+ 
+     Returns:
+         problem_ids (list): A list of problem IDs that match the filter criteria.
+     """
++    print("--- EXECUTING V3 of fetch_problems_by_filter ---")
+     try:
+         with sql_db.connect() as conn:
+             query = '''
+@@ -72,9 +76,8 @@ def fetch_problems_by_filter(sql_db, filter_criteria):
+ 
+             query += " AND question_number BETWEEN :start_question AND :end_question"
+ 
+-            # Add sorting logic
+-            if not filter_criteria.get('shuffle', False):
+-                query += " ORDER BY CAST(question_number AS UNSIGNED)"  # Sort numerically by question_number
++            # Add sorting logic for deterministic results
++            query += " ORDER BY (question_number+0), id"
+ 
+             # Execute the query
+             result = conn.execute(sqlalchemy.text(query), params).fetchall()
+@@ -82,9 +85,16 @@ def fetch_problems_by_filter(sql_db, filter_criteria):
+             if not result:
+                 print("No problems found matching the filter criteria.")
+ 
+-            # Shuffle the problem IDs if shuffle is enabled
+             problem_ids = [row[0] for row in result]
+ 
++            # Shuffle the problem IDs in Python if shuffle is enabled
++            if filter_criteria.get('shuffle', False):
++                if room_id is not None:
++                    random.Random(room_id).shuffle(problem_ids)
++                else:
++                    # Fallback for contexts where room_id is not available
++                    random.shuffle(problem_ids)
++
+     except Exception as e:
+         print(f"Error fetching problems by filter: {e}")
+         problem_ids = []
+@@ -138,4 +148,3 @@ def get_sorted_tag_set(sql_db):
+         print(f"Error fetching tags: {e}")
+         tags = []
+     return tags
+-

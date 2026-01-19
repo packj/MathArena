@@ -1,3 +1,7 @@
+Note: sometimes the browser tries to use https with dev
+its best to ensure only http:// in the browser for dev testing
+This ensures the correct server is being accessed.
+
 Here are instructions for how to make updates:
 
 0) Activate the virtual env 

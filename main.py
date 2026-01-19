@@ -352,7 +352,9 @@ def refresh_count():
         'tags': request.form.getlist('tags'),
         'start_question': start_question,
         'end_question': end_question,
-        'shuffle': 'shuffle' in request.form
+        'shuffle': 'shuffle' in request.form,
+        'even_only': 'even_only' in request.form,
+        'odd_only': 'odd_only' in request.form
     }
 
     session['question_count'] = get_question_count(filter_criteria)
@@ -520,13 +522,26 @@ def setup_filter():
             'tags': request.form.getlist('tags'),
             'start_question': int(request.form.get('start_question', 1)),
             'end_question': int(request.form.get('end_question', 30)),
-            'shuffle': 'shuffle' in request.form
+            'shuffle': 'shuffle' in request.form,
+            'even_only': 'even_only' in request.form,
+            'odd_only': 'odd_only' in request.form
         }
         session['filter_criteria'] = filter_criteria
 
         # Save or update filter criteria in the database
         try:
             with sql_db.connect() as conn:
+                # Check if even_only column exists and add it if not
+                result = conn.execute(sqlalchemy.text("SHOW COLUMNS FROM filters LIKE 'even_only'")).fetchone()
+                if not result:
+                    conn.execute(sqlalchemy.text("ALTER TABLE filters ADD COLUMN even_only INT DEFAULT 0"))
+
+                # Check if odd_only column exists and add it if not
+                result = conn.execute(sqlalchemy.text("SHOW COLUMNS FROM filters LIKE 'odd_only'")).fetchone()
+                if not result:
+                    conn.execute(sqlalchemy.text("ALTER TABLE filters ADD COLUMN odd_only INT DEFAULT 0"))
+                conn.commit()  # Commit schema changes
+
                 # Check if a row already exists for the filter name
                 existing_row = conn.execute(sqlalchemy.text('''
                     SELECT id FROM filters WHERE username = :username
@@ -538,7 +553,8 @@ def setup_filter():
                         UPDATE filters
                         SET start_year = :start_year, end_year = :end_year, formats = :formats,
                             levels = :levels, classifications = :classifications, tags = :tags,
-                            start_question = :start_question, end_question = :end_question, shuffle = :shuffle
+                            start_question = :start_question, end_question = :end_question, shuffle = :shuffle,
+                            even_only = :even_only, odd_only = :odd_only
                         WHERE username = :username
                     '''), {
                         'username': filter_name,
@@ -550,13 +566,15 @@ def setup_filter():
                         'tags': ','.join(filter_criteria['tags']),
                         'start_question': filter_criteria['start_question'],
                         'end_question': filter_criteria['end_question'],
-                        'shuffle': int(filter_criteria['shuffle'])  # Convert boolean to integer
+                        'shuffle': int(filter_criteria['shuffle']),  # Convert boolean to integer
+                        'even_only': int(filter_criteria['even_only']),
+                        'odd_only': int(filter_criteria['odd_only'])
                     })
                 else:
                     # Insert a new row if no existing row is found
                     conn.execute(sqlalchemy.text('''
-                        INSERT INTO filters (username, start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle)
-                        VALUES (:username, :start_year, :end_year, :formats, :levels, :classifications, :tags, :start_question, :end_question, :shuffle)
+                        INSERT INTO filters (username, start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle, even_only, odd_only)
+                        VALUES (:username, :start_year, :end_year, :formats, :levels, :classifications, :tags, :start_question, :end_question, :shuffle, :even_only, :odd_only)
                     '''), {
                         'username': filter_name,
                         'start_year': filter_criteria['start_year'],
@@ -567,7 +585,9 @@ def setup_filter():
                         'tags': ','.join(filter_criteria['tags']),
                         'start_question': filter_criteria['start_question'],
                         'end_question': filter_criteria['end_question'],
-                        'shuffle': int(filter_criteria['shuffle'])  # Convert boolean to integer
+                        'shuffle': int(filter_criteria['shuffle']),  # Convert boolean to integer
+                        'even_only': int(filter_criteria['even_only']),
+                        'odd_only': int(filter_criteria['odd_only'])
                     })
                 conn.commit()
         except Exception as e:
@@ -590,7 +610,9 @@ def setup_filter():
             'tags': [],
             'start_question': 1,
             'end_question': 30,
-            'shuffle': False
+            'shuffle': False,
+            'even_only': False,
+            'odd_only': False
         }
     filter_criteria['start_question'] = int(filter_criteria.get('start_question', 1))
     filter_criteria['end_question'] = int(filter_criteria.get('end_question', 30))

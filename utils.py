@@ -75,8 +75,15 @@ def fetch_problems_by_filter(sql_db, filter_criteria, room_id=None):
 
             query += " AND question_number BETWEEN :start_question AND :end_question"
 
+            if filter_criteria.get('even_only') and not filter_criteria.get('odd_only'):
+                query += " AND CAST(question_number AS UNSIGNED) % 2 = 0"
+            elif filter_criteria.get('odd_only') and not filter_criteria.get('even_only'):
+                query += " AND CAST(question_number AS UNSIGNED) % 2 != 0"
+            elif filter_criteria.get('even_only') and filter_criteria.get('odd_only'):
+                query += " AND 1=0"  # Return no results if both are checked
+
             # Add sorting logic for deterministic results
-            query += " ORDER BY (question_number+0), id"
+            query += " ORDER BY CAST(question_number AS UNSIGNED), id"
 
             # Execute the query
             result = conn.execute(sqlalchemy.text(query), params).fetchall()

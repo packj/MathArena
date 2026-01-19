@@ -28,7 +28,7 @@
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.history.back()">Back</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
     </div>
-    <h1 style="text-align: center;">Setup Filter Criteria</h1>
+    <h1 style="text-align: center;">Setup Filter Criteria (dev)</h1>
     <form method="post">
         <div class="filter-columns">
             <div class="filter-column">
@@ -73,6 +73,11 @@
 
                 <label for="end_question">End Question:</label>
                 <input type="number" name="end_question" id="end_question" value="{{ filter_criteria['end_question'] }}"><br><br>
+
+                <input type="checkbox" name="even_only" id="even_only" {% if filter_criteria.get('even_only') %}checked{% endif %}>
+                <label for="even_only">Even Problems Only</label><br>
+                <input type="checkbox" name="odd_only" id="odd_only" {% if filter_criteria.get('odd_only') %}checked{% endif %}>
+                <label for="odd_only">Odd Problems Only</label><br><br>
 
                 <input type="checkbox" name="shuffle" id="shuffle" {% if filter_criteria['shuffle'] %}checked{% endif %}>
                 <label for="shuffle">Shuffle</label><br><br>
