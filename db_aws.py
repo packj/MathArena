@@ -9,12 +9,15 @@ def load_db_config():
         config = yaml.safe_load(file)
     return config['database']
 
+import os
+password = os.environ.get("MATHARENA_DB_PASSWORD")
+
 db_config = load_db_config()
 
 host = db_config['host']
 port = db_config['port']
 user = db_config['user']
-password = db_config['password']
+#password = db_config['password']       # Now in environment
 db_name = db_config['db_name']
 
 sql_db = None
@@ -228,7 +231,8 @@ def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
                     level VARCHAR(255),
                     format VARCHAR(255),
                     question_number INT,
-                    true_answer TEXT
+                    true_answer TEXT,
+                    accepted_answers TEXT
                 )
             '''))
             conn.commit()
@@ -450,6 +454,38 @@ def get_users_in_room(sql_db, room_id):
             return []
 
 
+def ensure_playlists_table(sql_db):
+    """Ensures the playlists table exists. Safe to call at startup on existing DBs."""
+    try:
+        with sql_db.connect() as conn:
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS playlists (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL UNIQUE,
+                    description TEXT,
+                    created_by VARCHAR(255) NOT NULL,
+                    problem_ids TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            '''))
+            conn.commit()
+    except Exception as e:
+        print(f"Error ensuring playlists table: {e}")
+
+
+def ensure_accepted_answers_column(sql_db):
+    """Ensures the accepted_answers column exists in the problems table."""
+    try:
+        with sql_db.connect() as conn:
+            result = conn.execute(sqlalchemy.text("SHOW COLUMNS FROM problems LIKE 'accepted_answers'")).fetchone()
+            if not result:
+                conn.execute(sqlalchemy.text("ALTER TABLE problems ADD COLUMN accepted_answers TEXT"))
+                conn.commit()
+    except Exception as e:
+        print(f"Error ensuring accepted_answers column: {e}")
+
+
 sql_db = init_connection_pool()
 
 
@@ -457,3 +493,7 @@ sql_db = init_connection_pool()
 inspector = sqlalchemy.inspect(sql_db)
 if not inspector.has_table('users'):
     create_all_tables(sql_db)
+
+# Always ensure the playlists table exists (even on existing databases)
+ensure_playlists_table(sql_db)
+ensure_accepted_answers_column(sql_db)

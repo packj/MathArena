@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ 'Edit' if playlist else 'New' }} Playlist — Math Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body { background-color: #dce6f1; font-family: Arial, sans-serif; margin: 0; }
+
+        .editor-layout {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 16px;
+            flex-wrap: wrap;
+        }
+
+        /* ── Left: browser panel ──────────────────── */
+        .browser-panel {
+            flex: 1;
+            min-width: 320px;
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .filter-row select, .filter-row input {
+            flex: 1;
+            min-width: 80px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        #problem-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        #problem-table th { background: #3498db; color: white; padding: 8px; text-align: left; }
+        #problem-table td { padding: 7px 8px; border-bottom: 1px solid #eee; }
+        #problem-table tr:hover td { background: #f0f7ff; }
+        .add-btn {
+            background: #27ae60; color: white; border: none; border-radius: 4px;
+            padding: 4px 10px; cursor: pointer; font-size: 13px;
+        }
+        .add-btn:hover { background: #219a52; }
+        .pagination { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+        .pagination button { padding: 5px 12px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; background: white; }
+        .pagination button:disabled { opacity: 0.4; cursor: default; }
+        #total-label { font-size: 13px; color: #555; }
+
+        /* ── Right: playlist panel ─────────────────── */
+        .playlist-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .playlist-panel input[type="text"],
+        .playlist-panel textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        #playlist-items { list-style: none; padding: 0; margin: 0 0 12px; max-height: 420px; overflow-y: auto; }
+        #playlist-items li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        #playlist-items li:last-child { border-bottom: none; }
+        .remove-btn {
+            background: #e74c3c; color: white; border: none; border-radius: 4px;
+            padding: 3px 8px; cursor: pointer; font-size: 12px; margin-left: 8px;
+        }
+        .move-btn {
+            background: #bbb; color: white; border: none; border-radius: 3px;
+            padding: 2px 6px; cursor: pointer; font-size: 11px; margin-left: 2px;
+        }
+        .move-btn:hover { background: #999; }
+        .save-btn {
+            background: #3498db; color: white; border: none; border-radius: 5px;
+            padding: 10px 20px; font-size: 16px; cursor: pointer; width: 100%;
+        }
+        .save-btn:hover { background: #2980b9; }
+        .error-msg { background: #fde; color: #c00; padding: 10px; border-radius: 5px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<div class="banner" style="display:flex; width:100%; height:50px; background-color:#333; color:white; align-items:center;">
+    <div class="banner-section" style="flex:1; text-align:center; cursor:pointer;" onclick="window.location.href='/main_landing'">Home</div>
+    <div class="banner-section" style="flex:1; text-align:center; cursor:pointer;" onclick="window.location.href='{{ url_for('playlists.list_playlists') }}'">All Playlists</div>
+    <div class="banner-section" style="flex:1; text-align:center; cursor:pointer;" onclick="window.location.href='/logout'">Logout</div>
+</div>
+
+<h1 style="text-align:center; margin-top:20px;">
+    {{ 'Edit Playlist' if playlist else 'Create New Playlist' }}
+</h1>
+
+{% if error %}
+    <div class="error-msg" style="max-width:800px; margin:0 auto 10px;">{{ error }}</div>
+{% endif %}
+
+<div class="editor-layout">
+    <!-- ── Problem Browser ── -->
+    <div class="browser-panel">
+        <h3 style="margin-top:0;">Browse Problems</h3>
+        <div class="filter-row">
+            <select id="f-year">
+                <option value="">Any year</option>
+                {% for y in range(2024, 1999, -1) %}
+                    <option value="{{ y }}">{{ y }}</option>
+                {% endfor %}
+            </select>
+            <select id="f-format">
+                <option value="">Any format</option>
+                <option>sprint</option>
+                <option>target</option>
+                <option>team</option>
+            </select>
+            <select id="f-level">
+                <option value="">Any level</option>
+                <option>school</option>
+                <option>chapter</option>
+                <option>state</option>
+                <option>national</option>
+            </select>
+            <input type="number" id="f-q" placeholder="Q#" min="1" max="30" style="max-width:60px;">
+            <button onclick="searchProblems(1)" style="padding:6px 12px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">Search</button>
+        </div>
+        <div id="total-label"></div>
+        <table id="problem-table">
+            <thead>
+                <tr><th>Year</th><th>Level</th><th>Format</th><th>Q#</th><th>Topic</th><th></th></tr>
+            </thead>
+            <tbody id="problem-rows">
+                <tr><td colspan="6" style="color:#999; text-align:center; padding:20px;">Use the filters above to find problems.</td></tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button id="prev-page" onclick="changePage(-1)" disabled>← Prev</button>
+            <span id="page-label" style="font-size:14px;"></span>
+            <button id="next-page" onclick="changePage(1)" disabled>Next →</button>
+        </div>
+    </div>
+
+    <!-- ── Playlist Editor ── -->
+    <div class="playlist-panel">
+        <h3 style="margin-top:0;">Your Playlist</h3>
+        <label for="pl-name"><strong>Name *</strong></label>
+        <input type="text" id="pl-name" placeholder="e.g. Chapter Sprint 2022-2024"
+               value="{{ playlist.name if playlist else '' }}" maxlength="255">
+
+        <label for="pl-desc"><strong>Description</strong></label>
+        <textarea id="pl-desc" rows="2" placeholder="Optional description">{{ playlist.description if playlist else '' }}</textarea>
+
+        <p style="font-size:14px; color:#555; margin:6px 0 4px;">
+            Problems in playlist: <strong id="count-label">0</strong>
+        </p>
+
+        <ul id="playlist-items"></ul>
+
+        <!-- Hidden form that gets submitted -->
+        <form method="post" id="save-form"
+              action="{{ url_for('playlists.edit_playlist', playlist_id=playlist.id) if playlist else url_for('playlists.new_playlist') }}">
+            <input type="hidden" name="name" id="form-name">
+            <input type="hidden" name="description" id="form-desc">
+            <input type="hidden" name="problem_ids" id="form-ids">
+            <button type="button" class="save-btn" onclick="savePlaylist()">
+                {{ 'Save Changes' if playlist else 'Save Playlist' }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // ── State ──────────────────────────────────────────────────────────────
+    let currentPage = 1;
+    let totalPages  = 1;
+    // Each entry: { id, label }
+    let playlistItems = [];
+
+    // Pre-populate if editing
+    {% if playlist and playlist.problem_ids %}
+    (function() {
+        const ids = {{ playlist.problem_ids | tojson }}.split(',').map(s => s.trim()).filter(Boolean);
+        // We only have IDs here; labels will be blank until user searches.
+        // Fetch metadata for them immediately.
+        fetchInitialLabels(ids);
+    })();
+    {% endif %}
+
+    function fetchInitialLabels(ids) {
+        if (!ids.length) return;
+        // First show placeholder labels so the list isn't empty
+        ids.forEach(id => {
+            playlistItems.push({ id: parseInt(id), label: `Problem #${id}` });
+        });
+        renderPlaylist();
+
+        // Fetch actual labels from API using ?ids=
+        fetch(`/api/problems/search?ids=${encodeURIComponent(ids.join(','))}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.problems && data.problems.length) {
+                    const labelMap = {};
+                    data.problems.forEach(p => {
+                        labelMap[p.id] = p.label;
+                    });
+                    playlistItems.forEach(item => {
+                        if (labelMap[item.id]) {
+                            item.label = labelMap[item.id];
+                        }
+                    });
+                    renderPlaylist();
+                }
+            })
+            .catch(err => console.error('Error fetching problem labels:', err));
+    }
+
+    // ── Problem Browser ───────────────────────────────────────────────────
+    function searchProblems(page) {
+        currentPage = page;
+        const year   = document.getElementById('f-year').value;
+        const fmt    = document.getElementById('f-format').value;
+        const level  = document.getElementById('f-level').value;
+        const q      = document.getElementById('f-q').value;
+        let url = `/api/problems/search?page=${page}`;
+        if (year)  url += `&year=${encodeURIComponent(year)}`;
+        if (fmt)   url += `&format=${encodeURIComponent(fmt)}`;
+        if (level) url += `&level=${encodeURIComponent(level)}`;
+        if (q)     url += `&q=${encodeURIComponent(q)}`;
+
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                totalPages = Math.ceil(data.total / data.per_page) || 1;
+                document.getElementById('total-label').textContent =
+                    `${data.total} problem${data.total !== 1 ? 's' : ''} found (page ${currentPage}/${totalPages})`;
+                document.getElementById('page-label').textContent = `${currentPage} / ${totalPages}`;
+                document.getElementById('prev-page').disabled = (currentPage <= 1);
+                document.getElementById('next-page').disabled = (currentPage >= totalPages);
+
+                const tbody = document.getElementById('problem-rows');
+                if (!data.problems.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="color:#999; text-align:center; padding:20px;">No problems found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.problems.map(p => `
+                    <tr>
+                        <td>${p.year}</td>
+                        <td>${capitalize(p.level)}</td>
+                        <td>${capitalize(p.format)}</td>
+                        <td>${p.question_number}</td>
+                        <td>${p.classification || ''}</td>
+                        <td><button class="add-btn" data-id="${p.id}" data-label="${escapeHtml(p.label)}" onclick="handleAddClick(this)">Add</button></td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => console.error('Search failed', err));
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function handleAddClick(button) {
+        console.log("handleAddClick called with button:", button);
+        const id = parseInt(button.getAttribute('data-id'));
+        const label = button.getAttribute('data-label');
+        console.log("Parsed problem:", { id, label });
+        addProblem(id, label);
+    }
+
+    function changePage(delta) {
+        const newPage = currentPage + delta;
+        if (newPage < 1 || newPage > totalPages) return;
+        searchProblems(newPage);
+    }
+
+    function capitalize(s) {
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    }
+
+    // ── Playlist Operations ───────────────────────────────────────────────
+    function addProblem(id, label) {
+        console.log("addProblem called:", id, label);
+        if (playlistItems.some(p => p.id === id)) {
+            alert('That problem is already in the playlist.');
+            return;
+        }
+        playlistItems.push({ id, label });
+        console.log("Updated playlistItems:", playlistItems);
+        renderPlaylist();
+    }
+
+    function removeProblem(id) {
+        playlistItems = playlistItems.filter(p => p.id !== id);
+        renderPlaylist();
+    }
+
+    function moveItem(index, delta) {
+        const newIndex = index + delta;
+        if (newIndex < 0 || newIndex >= playlistItems.length) return;
+        const tmp = playlistItems[index];
+        playlistItems[index] = playlistItems[newIndex];
+        playlistItems[newIndex] = tmp;
+        renderPlaylist();
+    }
+
+    function renderPlaylist() {
+        const ul = document.getElementById('playlist-items');
+        document.getElementById('count-label').textContent = playlistItems.length;
+        if (!playlistItems.length) {
+            ul.innerHTML = '<li style="color:#aaa; font-style:italic;">No problems added yet. Browse and click Add.</li>';
+            return;
+        }
+        ul.innerHTML = playlistItems.map((p, i) => `
+            <li>
+                <span>${i + 1}. ${escapeHtml(p.label)}</span>
+                <span style="display:flex; align-items:center; gap:2px;">
+                    <button class="move-btn" onclick="moveItem(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+                    <button class="move-btn" onclick="moveItem(${i}, 1)" ${i === playlistItems.length - 1 ? 'disabled' : ''}>▼</button>
+                    <button class="remove-btn" onclick="removeProblem(${p.id})">✕</button>
+                </span>
+            </li>
+        `).join('');
+    }
+
+    function savePlaylist() {
+        const name = document.getElementById('pl-name').value.trim();
+        if (!name) { alert('Please enter a playlist name.'); return; }
+        if (!playlistItems.length) { alert('Please add at least one problem.'); return; }
+
+        document.getElementById('form-name').value = name;
+        document.getElementById('form-desc').value = document.getElementById('pl-desc').value.trim();
+        document.getElementById('form-ids').value = playlistItems.map(p => p.id).join(',');
+        document.getElementById('save-form').submit();
+    }
+
+    // ── Initial render ───────────────────────────────────────────────────
+    renderPlaylist();
+</script>
+</body>
+</html>

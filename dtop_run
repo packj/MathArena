@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+#sudo systemctl stop mathArena
+/home/packj/git/MathArena/.venv/bin/gunicorn --reload --chdir /home/packj/git/MathArena -b 0.0.0.0:8001 --log-level debug --log-file - main:app --pythonpath /home/packj/git/MathArena
+#sudo systemctl start mathArena

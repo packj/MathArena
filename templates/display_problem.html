@@ -123,6 +123,10 @@
     </div>
     {% endif %}
 
+    {% if auto_correct_message %}
+    <p style="color: #27ae60; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">{{ auto_correct_message }}</p>
+    {% endif %}
+
     {% if invalid_response_message %}
     <p style="color: red; text-align: center; font-weight: bold;">{{ invalid_response_message }}</p>
     {% endif %}

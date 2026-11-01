@@ -30,7 +30,72 @@ def award_contribution_points(sql_db, username, points):
     except Exception as e:
         print(f"Error awarding contribution points: {e}")
 
-import random
+import re
+import json
+
+def normalize_math_answer(ans: str) -> str:
+    """
+    Normalizes a mathematical answer string for comparison:
+    - Strips leading/trailing spaces and lowercases
+    - Strips surrounding currency symbols ($) and percent (%)
+    - Strips commas in numbers (e.g. 1,000 -> 1000)
+    - Replaces LaTeX commands: \pi -> pi, \sqrt -> sqrt, \cdot/\times -> *
+    - Removes whitespace
+    - Replaces implicit multiplication: 2pi -> 2*pi, 3sqrt(2) -> 3*sqrt(2)
+    """
+    if not ans:
+        return ""
+    s = str(ans).strip().lower()
+
+    # Strip surrounding currency/units/percent symbols
+    s = s.lstrip('$').rstrip('%')
+
+    # Strip commas between digits (e.g., 1,000 -> 1000)
+    s = re.sub(r'(?<=\d),(?=\d)', '', s)
+
+    # Canonicalize common LaTeX syntax
+    s = s.replace(r'\pi', 'pi')
+    s = s.replace(r'\sqrt', 'sqrt')
+    s = s.replace(r'\cdot', '*')
+    s = s.replace(r'\times', '*')
+
+    # Remove all internal whitespace
+    s = re.sub(r'\s+', '', s)
+
+    # Canonicalize implicit multiplication with pi and sqrt
+    s = re.sub(r'(\d)(pi|sqrt)', r'\1*\2', s)
+
+    return s
+
+
+def check_answer_match(user_answer: str, accepted_answers_json: str, true_answer: str = None) -> bool:
+    """
+    Checks if user_answer matches any accepted answer for a problem.
+    """
+    norm_user = normalize_math_answer(user_answer)
+    if not norm_user:
+        return False
+
+    candidates = []
+    if accepted_answers_json:
+        try:
+            parsed = json.loads(accepted_answers_json)
+            if isinstance(parsed, list):
+                candidates.extend(parsed)
+            elif isinstance(parsed, str):
+                candidates.append(parsed)
+        except Exception:
+            candidates.append(accepted_answers_json)
+
+    if true_answer and true_answer not in candidates:
+        candidates.append(true_answer)
+
+    for cand in candidates:
+        if normalize_math_answer(cand) == norm_user:
+            return True
+
+    return False
+
 
 def fetch_problems_by_filter(sql_db, filter_criteria, room_id=None):
     """

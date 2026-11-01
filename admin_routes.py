@@ -1107,7 +1107,7 @@ def verify_answers():
                     problem_id, username = row.split('|')
                     problem_id = int(problem_id.strip())
                     if action == 'approve':
-                        # Approve: Update the true_answer column
+                        # Approve: Update the true_answer and accepted_answers columns
                         print(f"Approving answer for problem_id: {problem_id}, username: {username}")
                         
                         # Use the user_answer from collected_data
@@ -1119,11 +1119,43 @@ def verify_answers():
                         
                         print(f"User answer: {user_answer}")
                         if user_answer:
+                            # Fetch existing true_answer and accepted_answers
+                            existing_prob = conn.execute(sqlalchemy.text('''
+                                SELECT true_answer, accepted_answers FROM problems WHERE id = :problem_id
+                            '''), {'problem_id': problem_id}).fetchone()
+
+                            existing_true = existing_prob[0] if existing_prob else None
+                            existing_acc = existing_prob[1] if existing_prob else None
+
+                            import json
+                            ans_list = []
+                            if existing_acc:
+                                try:
+                                    parsed = json.loads(existing_acc)
+                                    if isinstance(parsed, list):
+                                        ans_list = parsed
+                                    elif isinstance(parsed, str):
+                                        ans_list = [parsed]
+                                except Exception:
+                                    ans_list = [existing_acc]
+                            if existing_true and existing_true not in ans_list:
+                                ans_list.append(existing_true)
+
+                            clean_ans = user_answer.strip()
+                            if clean_ans not in ans_list:
+                                ans_list.append(clean_ans)
+
+                            new_true = existing_true or clean_ans
                             conn.execute(sqlalchemy.text('''
-                                UPDATE problems SET true_answer = :true_answer
+                                UPDATE problems
+                                SET true_answer = :true_answer, accepted_answers = :accepted_answers
                                 WHERE id = :problem_id
-                            '''), {'true_answer': user_answer, 'problem_id': problem_id})
-                            print(f"Updated true_answer for problem_id: {problem_id} to {user_answer}")
+                            '''), {
+                                'true_answer': new_true,
+                                'accepted_answers': json.dumps(ans_list),
+                                'problem_id': problem_id
+                            })
+                            print(f"Updated answers for problem_id: {problem_id}: true={new_true}, accepted={ans_list}")
                         
                         # Increment accept_count in user_fidelity
                         conn.execute(sqlalchemy.text('''

@@ -1,0 +1,23 @@
+I decided to try to set things up to run the webserver locally on dtop.  Here are the steps:
+
+ git clone the repo
+ sudo apt-get update
+ sudo apt-get install python3-venv
+ scp -i "~/.ssh/aws_ec2_key.pem" ubuntu@ec2-3-21-42-70.us-east-2.compute.amazonaws.com:auth_backup.sql ~/Database
+ scp -i "~/.ssh/aws_ec2_key.pem" ubuntu@ec2-3-21-42-70.us-east-2.compute.amazonaws.com:MathArena/config.yaml ~/git/MathArena
+ mysql -u root -p auth < ~/Database/auth_backup.sql
+from inside MathArena dir:
+ python3 -m venv .venv
+ source .venv/bin/activate
+ pip install -r requirements.txt
+Create a new AWS IAM user and grant it S3 read permission.  Store credentials in ~/.aws/credentials
+create dtop_run with the following:
+/home/packj/git/MathArena/.venv/bin/gunicorn --reload --chdir /home/packj/git/MathArena -b localhost:8001 --log-level debug --log-file - main:app --pythonpath /home/packj/git/MathArena
+run it
+
+
+Next steps (if i decide to run locally):
+
+1) use cloudfared to solve the DNS/port forwarding/dynamic ip problem
+
+

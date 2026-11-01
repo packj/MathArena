@@ -13,9 +13,9 @@ from user_logs_routes import user_logs_bp
 from admin_routes import admin_bp  # Import the Blueprint
 from arena import arena_bp, update_in_lobby_flag  # Import the Blueprint
 from contributions import contrib_bp
-from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set  # Import from utils
+from playlists import playlists_bp  # Import the playlists Blueprint
+from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set, check_answer_match  # Import from utils
 from db_aws import sql_db  # Import the SQLAlchemy engine
-
 
 app = Flask(__name__)
 
@@ -33,6 +33,7 @@ app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(arena_bp, url_prefix='/arena')
 app.register_blueprint(contrib_bp, url_prefix='/contrib')
 app.register_blueprint(user_logs_bp)
+app.register_blueprint(playlists_bp)  # Registers /playlists/* and /api/problems/search
 
 
 def render_register_form(error_message=None, username=""):
@@ -367,6 +368,8 @@ def refresh_count():
 def main_landing():
     """Landing page for regular users."""
     filter_criteria = session.get('filter_criteria', None)
+    playlist_id = session.get('playlist_id', None)
+    playlist_name = session.get('playlist_name', None)
     username = session.get('username', '')
     update_in_lobby_flag(username, False)
 
@@ -376,65 +379,79 @@ def main_landing():
             session['codename'] = codename
         return redirect(url_for('launch_training'))
 
-    # Fetch the latest filter criteria from the session or database
-    # ...existing code for fetching filter_criteria...
-    if not filter_criteria:
-        try:
-            with sql_db.connect() as conn:
-                # Query for the last saved filter for the current user
-                result = conn.execute(sqlalchemy.text('''
-                    SELECT start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle
-                    FROM filters
-                    WHERE username = :username
-                    ORDER BY id DESC LIMIT 1
-                '''), {'username': session.get('username')}).fetchone()
-
-                if result:
-                    filter_criteria = {
-                        'start_year': result[0],
-                        'end_year': result[1],
-                        'formats': result[2].split(','),
-                        'levels': result[3].split(','),
-                        'classifications': result[4].split(',') if result[4] else [],
-                        'tags': result[5].split(',') if result[5] else [],
-                        'start_question': result[6],
-                        'end_question': result[7],
-                        'shuffle': bool(result[8])
-                    }
-                    session['filter_criteria'] = filter_criteria  # Save to session
-                else:
-                    # If no user-specific filters, query for admin filters
-                    admin_result = conn.execute(sqlalchemy.text('''
+    # If a playlist is active, determine problem count from session or DB
+    if playlist_id and not filter_criteria:
+        problem_ids = session.get('problem_ids', [])
+        if not problem_ids:
+            try:
+                with sql_db.connect() as conn:
+                    pl_row = conn.execute(sqlalchemy.text('SELECT problem_ids FROM playlists WHERE id = :id'), {'id': playlist_id}).fetchone()
+                    if pl_row and pl_row[0]:
+                        problem_ids = [int(i) for i in pl_row[0].split(',') if i.strip().isdigit()]
+                        session['problem_ids'] = problem_ids
+            except Exception as e:
+                print(f"Error fetching playlist problem_ids for main_landing: {e}")
+                problem_ids = []
+        question_count = len(problem_ids)
+    else:
+        # Fetch the latest filter criteria from the session or database
+        if not filter_criteria:
+            try:
+                with sql_db.connect() as conn:
+                    # Query for the last saved filter for the current user
+                    result = conn.execute(sqlalchemy.text('''
                         SELECT start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle
                         FROM filters
-                        WHERE username = 'admin'
+                        WHERE username = :username
                         ORDER BY id DESC LIMIT 1
-                    ''')).fetchone()
+                    '''), {'username': session.get('username')}).fetchone()
 
-                    if admin_result:
+                    if result:
                         filter_criteria = {
-                            'start_year': admin_result[0],
-                            'end_year': admin_result[1],
-                            'formats': admin_result[2].split(','),
-                            'levels': admin_result[3].split(','),
-                            'classifications': admin_result[4].split(',') if admin_result[4] else [],
-                            'tags': admin_result[5].split(',') if admin_result[5] else [],
-                            'start_question': admin_result[6],
-                            'end_question': admin_result[7],
-                            'shuffle': bool(admin_result[8])
+                            'start_year': result[0],
+                            'end_year': result[1],
+                            'formats': result[2].split(','),
+                            'levels': result[3].split(','),
+                            'classifications': result[4].split(',') if result[4] else [],
+                            'tags': result[5].split(',') if result[5] else [],
+                            'start_question': result[6],
+                            'end_question': result[7],
+                            'shuffle': bool(result[8])
                         }
                         session['filter_criteria'] = filter_criteria  # Save to session
                     else:
-                        filter_criteria = None  # No filters found for admin or user
-        except Exception as e:
-            print(f"Error fetching filter criteria: {e}")
-            filter_criteria = None
+                        # If no user-specific filters, query for admin filters
+                        admin_result = conn.execute(sqlalchemy.text('''
+                            SELECT start_year, end_year, formats, levels, classifications, tags, start_question, end_question, shuffle
+                            FROM filters
+                            WHERE username = 'admin'
+                            ORDER BY id DESC LIMIT 1
+                        ''')).fetchone()
 
-    if filter_criteria:
-        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
-        question_count = len(problem_ids)
-    else:
-        question_count = 0
+                        if admin_result:
+                            filter_criteria = {
+                                'start_year': admin_result[0],
+                                'end_year': admin_result[1],
+                                'formats': admin_result[2].split(','),
+                                'levels': admin_result[3].split(','),
+                                'classifications': admin_result[4].split(',') if admin_result[4] else [],
+                                'tags': admin_result[5].split(',') if admin_result[5] else [],
+                                'start_question': admin_result[6],
+                                'end_question': admin_result[7],
+                                'shuffle': bool(admin_result[8])
+                            }
+                            session['filter_criteria'] = filter_criteria  # Save to session
+                        else:
+                            filter_criteria = None  # No filters found for admin or user
+            except Exception as e:
+                print(f"Error fetching filter criteria: {e}")
+                filter_criteria = None
+
+        if filter_criteria:
+            problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
+            question_count = len(problem_ids)
+        else:
+            question_count = 0
 
     filters = get_all_filters(sql_db)
     filter_loaded_message = session.pop('filter_loaded_message', None)  # Retrieve and clear the success message
@@ -442,6 +459,7 @@ def main_landing():
     return render_template(
         'main_landing.html',
         filter_criteria=filter_criteria,
+        playlist_name=playlist_name if (playlist_id and not filter_criteria) else None,
         question_count=question_count,
         filters=filters,
         filter_loaded_message=filter_loaded_message
@@ -455,6 +473,8 @@ def load_filter(username):
     """
     # store username in session as filter_name
     session['filter_name'] = username
+    session.pop('playlist_id', None)
+    session.pop('playlist_name', None)
     print("session filter_name: ", session['filter_name'])
     try:
         with sql_db.connect() as conn:
@@ -527,6 +547,8 @@ def setup_filter():
             'odd_only': 'odd_only' in request.form
         }
         session['filter_criteria'] = filter_criteria
+        session.pop('playlist_id', None)
+        session.pop('playlist_name', None)
 
         # Save or update filter criteria in the database
         try:
@@ -643,13 +665,26 @@ def toggle_tags_visibility():
 @app.route('/launch_training')
 @login_required
 def launch_training():
-    filter_criteria = session.get('filter_criteria', {})
-    if not filter_criteria:
-        return "No filter criteria found. Please set up filter criteria first."
+    filter_criteria = session.get('filter_criteria', None)
+    playlist_id = session.get('playlist_id', None)
 
-    problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)  # Updated to use utils.fetch_problems_by_filter
-    if filter_criteria.get('shuffle', False):
-        random.shuffle(problem_ids)
+    if playlist_id and not filter_criteria:
+        problem_ids = session.get('problem_ids', [])
+        if not problem_ids:
+            try:
+                with sql_db.connect() as conn:
+                    pl_row = conn.execute(sqlalchemy.text('SELECT problem_ids FROM playlists WHERE id = :id'), {'id': playlist_id}).fetchone()
+                    if pl_row and pl_row[0]:
+                        problem_ids = [int(i) for i in pl_row[0].split(',') if i.strip().isdigit()]
+            except Exception as e:
+                print(f"Error fetching playlist problem_ids for launch_training: {e}")
+                problem_ids = []
+    elif filter_criteria:
+        problem_ids = fetch_problems_by_filter(sql_db, filter_criteria)
+        if filter_criteria.get('shuffle', False):
+            random.shuffle(problem_ids)
+    else:
+        return "No filter criteria or playlist found. Please select a filter or playlist first."
 
     # Update session with the problem IDs
     session['problem_ids'] = problem_ids
@@ -740,6 +775,11 @@ def display_problem():
             except Exception as e:
                 print(f"Error fetching attempt history: {e}")
 
+            # Check for auto_correct feedback message
+            auto_correct_message = None
+            if session.pop('auto_correct', False):
+                auto_correct_message = "✓ Correct! Points awarded."
+
             # Check for invalid response message
             invalid_response_message = None
             if session.pop('invalid_response', False):
@@ -764,7 +804,8 @@ def display_problem():
                 embed_link=embed_link,
                 attempt_history=''.join(attempt_history),
                 user_answer=user_answer,
-                invalid_response_message=invalid_response_message
+                invalid_response_message=invalid_response_message,
+                auto_correct_message=auto_correct_message
             )
 
     except Exception as e:
@@ -788,11 +829,38 @@ def submit_answer():
     # Validate user_answer
     if ';' in user_answer or len(user_answer) > 30:
         session['invalid_response'] = True
-        return redirect(url_for('display_problem'))
+        return redirect(next_question_url())
 
     session['user_answer'] = user_answer  # Store the user's answer in the session
+
+    # Check if this answer matches any accepted/true answers in the database
+    problem_ids = session.get('problem_ids', [])
+    problem_index = session.get('problem_index', 0)
+    matched = False
+
+    if problem_ids and problem_index < len(problem_ids):
+        current_problem_id = problem_ids[problem_index]
+        try:
+            with sql_db.connect() as conn:
+                prob = conn.execute(sqlalchemy.text('''
+                    SELECT accepted_answers, true_answer FROM problems WHERE id = :id
+                '''), {'id': current_problem_id}).fetchone()
+                if prob:
+                    accepted_answers_json = prob[0]
+                    true_answer = prob[1]
+                    if (accepted_answers_json or true_answer) and check_answer_match(user_answer, accepted_answers_json, true_answer):
+                        matched = True
+        except Exception as e:
+            print(f"Error checking answer match: {e}")
+
+    if matched:
+        # User is automatically verified correct! Award max points (button_factor = 2) and advance.
+        session['auto_correct'] = True
+        return award_points(button_factor=2)
+
+    # If no match or not yet in database, fall back to review screen
     session['show_answer'] = True  # Show answer after submission
-    url = next_question_url()  # Redirect to the next question
+    url = next_question_url()  # Redirect to the question display
     return redirect(url)
 
 @app.route('/toggle_tags')
@@ -899,7 +967,7 @@ def award_points(button_factor):
 
                         # Calculate points
                         if format == 'target':
-                            points_awarded = target_factor[question_number] * level_factor * button_multiplier
+                            points_awarded = target_factor[question_number - 1] * level_factor * button_multiplier
                         elif format == 'team':
                             points_awarded = (question_number * 3 + 10) * level_factor * button_multiplier
                         else: 

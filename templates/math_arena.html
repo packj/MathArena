@@ -5,25 +5,42 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
     <style>
         body {
-            background-color: #dce6f1; /* Light greyish blue */
+            background-color: #dce6f1;
             font-family: Arial, sans-serif;
             margin: 0;
         }
         .arena-button {
-            width: 180px; /* Increased width by 20% */
-            height: 60px; /* Increased height by 20% */
+            width: 180px;
+            height: 60px;
             margin: 10px;
             border-radius: 5px;
             border: none;
             color: white;
             font-size: 16px;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .arena-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .room1 { background-color: #3498db; }
         .room2 { background-color: #e74c3c; }
         .room3 { background-color: #9b59b6; }
         .room4 { background-color: #f39c12; }
         .room5 { background-color: #16823e; }
+        .room-users {
+            font-size: 13px;
+            color: #444;
+            margin-top: 4px;
+            min-height: 18px;
+        }
+        .room-block {
+            display: inline-block;
+            text-align: center;
+            margin: 5px;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -31,18 +48,17 @@
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
     </div>
-    <div style="background-color: yellow; text-align: center; padding: 5px;">
-        WARNING: Math Arena is currently under construction and may not work correctly.
-    </div>
-    <h1 style="text-align: center; margin-top: 60px; margin-bottom: 40px;">Math Arena Lobby</h1>
+    <h1 style="text-align: center; margin-top: 40px; margin-bottom: 30px;">Math Arena Lobby</h1>
     {% if error_message %}
         <p style="color: red; text-align: center;">{{ error_message }}</p>
     {% endif %}
-    <div style="text-align: center;">
-            {% set room_id = 1 %}
-            {% set room_state = room_states.get(room_id) %}
-            <button 
-                class="arena-button room{{ room_id }}" 
+    <div style="text-align: center;" id="rooms-container">
+        {% for room_id in [1, 2, 3, 4, 5] %}
+        {% set room_state = room_states.get(room_id) %}
+        <div class="room-block" id="room-block-{{ room_id }}">
+            <button
+                class="arena-button room{{ room_id }}"
+                id="room-btn-{{ room_id }}"
                 onclick="window.location.href='/arena/arena_setup?room_id={{ room_id }}'"
                 {% if room_state == 'busy' %}disabled{% endif %}
             >
@@ -56,133 +72,63 @@
                     Create Room
                 {% endif %}
             </button>
-            {% if 1 == 0 %}
-            <div style="display: flex; justify-content: center;">
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=empty'">empty</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=init'">init</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=joinable'">joinable</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=busy'">busy</button>
-            </div>
-            {% endif %}
-            {% set room_id = 2 %}
-            {% set room_state = room_states.get(room_id) %}
-            <button 
-                class="arena-button room{{ room_id }}" 
-                onclick="window.location.href='/arena/arena_setup?room_id={{ room_id }}'"
-                {% if room_state == 'busy' %}disabled{% endif %}
-            >
-                {% if room_state == 'busy' %}
-                    Busy
-                {% elif room_state == 'joinable' or room_state == 'init' %}
-                    Join Room
-                {% elif room_state == 'setup' %}
-                    Initializing
-                {% elif room_state == 'empty' %}
-                    Create Room
+            <div class="room-users" id="room-users-{{ room_id }}">
+                {% set users_in_room = [users1, users2, users3, users4, users5][room_id - 1] %}
+                {% if users_in_room %}
+                    {% for u in users_in_room %}{{ u[0] }}{% if not loop.last %}, {% endif %}{% endfor %}
                 {% endif %}
-            </button>
-            {% if 1 == 0 %}
-            <div style="display: flex; justify-content: center;">
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=empty'">empty</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=init'">init</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=joinable'">joinable</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=busy'">busy</button>
             </div>
-            {% endif %}
-            {% set room_id = 3 %}
-            {% set room_state = room_states.get(room_id) %}
-            <button 
-                class="arena-button room{{ room_id }}" 
-                onclick="window.location.href='/arena/arena_setup?room_id={{ room_id }}'"
-                {% if room_state == 'busy' %}disabled{% endif %}
-            >
-                {% if room_state == 'busy' %}
-                    Busy
-                {% elif room_state == 'joinable' or room_state == 'init' %}
-                    Join Room
-                {% elif room_state == 'setup' %}
-                    Initializing
-                {% elif room_state == 'empty' %}
-                    Create Room
-                {% endif %}
-            </button>
-            {% if 1 == 0 %}
-            <div style="display: flex; justify-content: center;">
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=empty'">empty</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=init'">init</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=joinable'">joinable</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=busy'">busy</button>
-            </div>
-            {% endif %}
-            {% set room_id = 4 %}
-            {% set room_state = room_states.get(room_id) %}
-            <button 
-                class="arena-button room{{ room_id }}" 
-                onclick="window.location.href='/arena/arena_setup?room_id={{ room_id }}'"
-                {% if room_state == 'busy' %}disabled{% endif %}
-            >
-                {% if room_state == 'busy' %}
-                    Busy
-                {% elif room_state == 'joinable' or room_state == 'init' %}
-                    Join Room
-                {% elif room_state == 'setup' %}
-                    Initializing
-                {% elif room_state == 'empty' %}
-                    Create Room
-                {% endif %}
-            </button>
-            {% if 1 == 0 %}
-            <div style="display: flex; justify-content: center;">
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=empty'">empty</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=init'">init</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=joinable'">joinable</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=busy'">busy</button>
-            </div>
-            {% endif %}
-            {% set room_id = 5 %}
-            {% set room_state = room_states.get(room_id) %}
-            <button 
-                class="arena-button room{{ room_id }}" 
-                onclick="window.location.href='/arena/arena_setup?room_id={{ room_id }}'"
-                {% if room_state == 'busy' %}disabled{% endif %}
-            >
-                {% if room_state == 'busy' %}
-                    Busy
-                {% elif room_state == 'joinable' or room_state == 'init' %}
-                    Join Room
-                {% elif room_state == 'setup' %}
-                    Initializing
-                {% elif room_state == 'empty' %}
-                    Create Room
-                {% endif %}
-            </button>
-            {% if 1 == 0 %}
-            <div style="display: flex; justify-content: center;">
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=empty'">empty</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=init'">init</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=joinable'">joinable</button>
-                <button onclick="window.location.href='/arena/update_room_state?room_id={{ room_id }}&state=busy'">busy</button>
-            </div>
-            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    <h2>Users in Arena Rooms:</h2>
-    <p> Blue: {{ users1 }}
-    Red: {{ users2 }}
-    Purple: {{ users3 }}
-    Orange: {{ users4 }}
-    Green: {{ users5 }}</p>
-    <h2>Users in Arena Lobby:</h2>
-    <ul id="user-list">
+
+    <h2 style="margin-left: 20px;">Users in Arena Lobby:</h2>
+    <ul id="user-list" style="margin-left: 20px;">
         {% for user in users %}
-            <li>{{ user.username }}</li>
+            <li>{{ user[0] }}</li>
         {% endfor %}
     </ul>
     <br>
-    <button onclick="window.location.href='/admin/show_live_scores'" style="background-color: #5e2370; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Show Live Scores</button>
+    <button onclick="window.location.href='/admin/show_live_scores'" style="background-color: #5e2370; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 20px;">Show Live Scores</button>
+
     <script>
-        setInterval(function() {
-            location.reload();
-        }, 15000); // Reload every 15 seconds
+        const roomLabels = {
+            empty: 'Create Room',
+            init: 'Join Room',
+            setup: 'Initializing',
+            joinable: 'Join Room',
+            busy: 'Busy'
+        };
+
+        function refreshLobby() {
+            fetch('/arena/lobby_state')
+                .then(r => r.json())
+                .then(data => {
+                    // Update room buttons
+                    for (let roomId = 1; roomId <= 5; roomId++) {
+                        const state = data.room_states[roomId] || 'empty';
+                        const btn = document.getElementById(`room-btn-${roomId}`);
+                        if (btn) {
+                            btn.textContent = roomLabels[state] || state;
+                            btn.disabled = (state === 'busy');
+                        }
+                        const usersDiv = document.getElementById(`room-users-${roomId}`);
+                        if (usersDiv && data.users_in_rooms[roomId]) {
+                            usersDiv.textContent = data.users_in_rooms[roomId].join(', ');
+                        } else if (usersDiv) {
+                            usersDiv.textContent = '';
+                        }
+                    }
+                    // Update lobby user list
+                    const ul = document.getElementById('user-list');
+                    if (ul && data.lobby_users) {
+                        ul.innerHTML = data.lobby_users.map(u => `<li>${u}</li>`).join('');
+                    }
+                })
+                .catch(() => {}); // Silently ignore network errors
+        }
+
+        setInterval(refreshLobby, 5000); // Poll every 5 seconds (AJAX, no full reload)
     </script>
 </body>
 </html>
