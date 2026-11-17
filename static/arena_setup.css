@@ -2,6 +2,22 @@ body {
     background-color: #dce6f1; /* Light greyish blue */
     font-family: Arial, sans-serif;
 }
+.filter-button {
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333;
+    transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.filter-button:hover {
+    transform: translateY(-2px) scale(1.05);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 .filter-button.sprint {
     background-color: #ff9999; /* Light red */
 }
@@ -113,4 +129,31 @@ td {
 
 .bottom-buttons button {
     margin: 0 40px;
+}
+
+/* ── Top Banner Navigation ────────────────────────────── */
+.banner {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    color: white;
+    align-items: center;
+    user-select: none;
+}
+
+.banner-section {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.banner-section:hover {
+    background-color: #555;
+    color: #ffd700; /* Subtle warm highlight */
 }

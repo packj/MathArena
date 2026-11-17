@@ -141,15 +141,18 @@
     {% else %}
     <form method="post" action="/submit_answer">
         <label for="user-answer">Your Answer:</label>
-        <input type="text" id="user-answer" name="user_answer" placeholder="Enter your answer here">
+        <input type="text" id="user-answer" name="user_answer" placeholder="Enter your answer here" autofocus>
         <button type="submit" id="submit-answer" class="prominent-button" disabled>Submit</button>
     </form>
     <script>
         const userAnswerInput = document.getElementById('user-answer');
         const submitAnswerButton = document.getElementById('submit-answer');
-        userAnswerInput.addEventListener('input', () => {
-            submitAnswerButton.disabled = userAnswerInput.value.trim() === '';
-        });
+        if (userAnswerInput) {
+            userAnswerInput.focus();
+            userAnswerInput.addEventListener('input', () => {
+                submitAnswerButton.disabled = userAnswerInput.value.trim() === '';
+            });
+        }
     </script>
     {% endif %}
     {% if attempt_history %}

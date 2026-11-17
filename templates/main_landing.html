@@ -34,6 +34,12 @@
             margin: 2px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             color: #333;
+            transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .filter-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            filter: brightness(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         .filter-button.sprint {
             background-color: #cfae5a; /* Vivid red */
