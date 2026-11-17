@@ -1,0 +1,1343 @@
+year,problem_number,tags,round,level
+2026,1,Basic Arithmetic; PEMDAS,sprint,chapter
+2026,2,Word Problem; Basic Arithmetic,sprint,chapter
+2026,3,Know Your Squares; Prime and Composite,sprint,chapter
+2026,4,Triangle; Angles; Complementary/Supplementary,sprint,chapter
+2026,5,Symmetry; Polygons,sprint,chapter
+2026,6,Defined Symbols; Basic Arithmetic,sprint,chapter
+2026,7,Area; Rectangles; Perimeter,sprint,chapter
+2026,8,Factors/Divisors; Arithmetic Series,sprint,chapter
+2026,9,Triangle; Area; Pythagorean Theorem,sprint,chapter
+2026,10,Circle; Area; Subtract Areas; Radius/Diam./Circum.,sprint,chapter
+2026,11,Word Problem; Linear Equation; One Eqn/Two Unknowns,sprint,chapter
+2026,12,Percentage; Algebra; Linear Equation,sprint,chapter
+2026,13,Word Problem; Optimization; Product/Sum Optimization,sprint,chapter
+2026,14,Area; Square; Ratios,sprint,chapter
+2026,15,Polygons; Angles; Spatial Reasoning; Interior Angles,sprint,chapter
+2026,16,Word Problem; Linear Equation; One Eqn/Two Unknowns,sprint,chapter
+2026,17,Rectangles; Perimeter; Area,sprint,chapter
+2026,18,Factors/Divisors; Counting Principle (fund.); Casework,sprint,chapter
+2026,19,Arithmetic Series; Sequence,sprint,chapter
+2026,20,Rhombus; Area; Pythagorean Theorem,sprint,chapter
+2026,21,Coin; Probability; Complementary Probability,sprint,chapter
+2026,22,Rate or Speed; Word Problem; Linear Equation,sprint,chapter
+2026,23,Combinations; Casework,sprint,chapter
+2026,24,Algebra; LCM; Factors/Divisors,sprint,chapter
+2026,25,Venn Diagram; Word Problem; Logic,sprint,chapter
+2026,26,Quadratic Equation; Quadratic Formula; Vieta's formula,sprint,chapter
+2026,27,Path counting; Combinations; Spatial Reasoning,sprint,chapter
+2026,28,Equilateral Triangle; Square; Area; Subtract Areas,sprint,chapter
+2026,29,Defined Symbols; Casework; Counting Principle (fund.),sprint,chapter
+2026,30,Embedded radical form; Algebra; Square Root; Difference of Squares,sprint,chapter
+2026,1,Word Problem; Percentage; Linear Equation; Algebra,target,chapter
+2026,2,Venn Diagram; Logic,target,chapter
+2026,3,Rectangles; Area; Triangle; Ratios,target,chapter
+2026,4,Counting Principle (fund.); Casework; Combinations,target,chapter
+2026,5,Dice; Casework; Counting Principle (fund.); Stars and Bars; Complementary Counting,target,chapter
+2026,6,Rhombus; Area; Pythagorean Theorem; Diagonal,target,chapter
+2026,7,Rate or Speed; Unit Conversion; Word Problem,target,chapter
+2026,8,Permutations; Casework; Complementary Counting,target,chapter
+2024,1,Median; Basic Arithmetic,sprint,chapter
+2024,2,Graphing a Line; Linear Equation; Graph Understanding,sprint,chapter
+2024,3,Absolute Value; Exponents,sprint,chapter
+2024,4,Linear Equation; Algebra,sprint,chapter
+2024,5,Know Your Squares; Perimeter,sprint,chapter
+2024,6,Linear Equation; Algebra,sprint,chapter
+2024,7,Perimeter; Polygons; Basic Arithmetic,sprint,chapter
+2024,8,Combinations; Counting Principle (fund.),sprint,chapter
+2024,9,Square Root; Know Your Squares,sprint,chapter
+2024,10,Rate or Speed; Word Problem; Unit Conversion,sprint,chapter
+2024,11,Percentage; Word Problem; Linear Equation,sprint,chapter
+2024,12,Defined Symbols; Linear Equation; proportion,sprint,chapter
+2024,13,Triangle; Angles; Linear Equation,sprint,chapter
+2024,14,Rate or Speed; Word Problem; Unit Conversion,sprint,chapter
+2024,15,Area; Rectangles; Algebra; Quadratic Equation,sprint,chapter
+2024,16,Factors/Divisors; Optimization,sprint,chapter
+2024,17,Factors/Divisors; Prime and Composite,sprint,chapter
+2024,18,Triangle; Area; Pythagorean Theorem,sprint,chapter
+2024,19,Word Problem; Linear Equation; Algebra,sprint,chapter
+2024,20,Common Denominator; Fraction to Decimal,sprint,chapter
+2024,21,Factors; Cube; Know Your Cubes,sprint,chapter
+2024,22,Arithmetic Series; Modular Arith.,sprint,chapter
+2024,23,Equilateral Triangle; Area; Ratios; Similar Triangles,sprint,chapter
+2024,24,Optimization; Matching Terms,sprint,chapter
+2024,25,Parallel Lines; Angles; Linear Equation; Alternate interior angles,sprint,chapter
+2024,26,Algebra; Factoring; Quadratic Equation,sprint,chapter
+2024,27,Probability; Word Problem,sprint,chapter
+2024,28,Divisibility Rules; Number Bases,sprint,chapter
+2024,30,Circle; Area; Radius Orth. to Tangent; Angles,sprint,chapter
+2024,1,Word Problem; Basic Arithmetic; Counting Principle (fund.),target,chapter
+2024,2,Square; Area; Spatial Reasoning,target,chapter
+2024,3,Rate or Speed; Word Problem; Linear Equation,target,chapter
+2024,4,Rectangles; Triangle; Pythagorean Theorem; Algebra,target,chapter
+2024,5,Algebra; Quadratic Equation; Non-linear,target,chapter
+2024,6,Optimization; Casework; Basic Arithmetic,target,chapter
+2024,7,Word Problem; Percentage; Linear Equation,target,chapter
+2024,8,Spatial Reasoning; Casework; Optimization,target,chapter
+2024,1,Table Reading; Word Problem; Basic Arithmetic,target,school
+2024,2,Polygons; Counting Principle (fund.),target,school
+2024,3,Word Problem; Linear Equation; Algebra,target,school
+2024,4,Triangle; Area; Unit Conversion; Word Problem,target,school
+2024,5,Dice; Probability; Complementary Counting,target,school
+2024,6,Parallelogram; Algebra; Optimization,target,school
+2024,7,Permutations; Counting Principle (fund.); Casework,target,school
+2024,8,Defined Symbols; Prime and Composite; Casework,target,school
+2024,1,Word Problem; Basic Arithmetic; Linear Equation,target,state
+2024,2,Circle; Arclength; Radius/Diam./Circum.; Pythagorean Theorem,target,state
+2024,3,Word Problem; Basic Arithmetic; Counting Principle (fund.),target,state
+2024,4,Arithmetic mean; Median; Word Problem,target,state
+2024,5,Probability; Complementary Counting; Dice,target,state
+2024,6,Triangle; Area; Angles; Spatial Reasoning,target,state
+2024,7,Triangle; Algebra; Spatial Reasoning,target,state
+2024,8,Probability; Casework; Dependent Events,target,state
+2024,1,Counting Principle (fund.); Basic Arithmetic,sprint,state
+2024,2,Basic Arithmetic; Word Problem,sprint,state
+2024,3,Arithmetic mean; Linear Equation,sprint,state
+2024,4,Factors/Divisors; Divisibility Rules,sprint,state
+2024,5,Word Problem; Linear Equation; Algebra,sprint,state
+2024,6,Graphing a Line; Linear Equation,sprint,state
+2024,7,Circle; Area; Subtract Areas; Radius/Diam./Circum.,sprint,state
+2024,8,Ratios; proportion; Word Problem,sprint,state
+2024,9,Arithmetic mean; Median; Algebra,sprint,state
+2024,10,Probability; Complementary Probability; Independent Events,sprint,state
+2024,11,Rate or Speed; Word Problem; Non-linear,sprint,state
+2024,12,Arithmetic mean; Median; Algebra,sprint,state
+2024,13,Rate or Speed; Clock Hands; Linear Equation,sprint,state
+2024,14,Counting Principle (fund.); Word Problem,sprint,state
+2024,15,Triangle; Angles; Isosceles Triangle,sprint,state
+2024,16,Algebra; Exponents; Inequality,sprint,state
+2024,17,Probability; Casework; Table Reading,sprint,state
+2024,18,Algebra; Linear Equation,sprint,state
+2024,19,Algebra; Factoring; Prime Factorization,sprint,state
+2024,20,Cone; Volume; Surface Area,sprint,state
+2024,21,Probability; Complementary Counting,sprint,state
+2024,22,Coin; Probability; Dependent Events,sprint,state
+2024,23,Circle; Chord; Area; Power of a Point,sprint,state
+2024,24,Dice; Expected Value; Independent Events; Shortcut; Simpler Version 1st,sprint,state
+2024,25,Optimization; Spatial Reasoning; Ratios; Symmetry,sprint,state
+2024,26,Algebra; Factoring,sprint,state
+2024,27,Circle; Power of a Point; Area,sprint,state
+2024,28,How many factors?; Factors/Divisors,sprint,state
+2024,29,Area; Algebra; Embedded radical form,sprint,state
+2024,30,Prime Factorization; Factoring,sprint,state
+2024,1,Optimization; Counting Principle (fund.),team,chapter
+2024,2,Arithmetic mean; Word Problem,team,chapter
+2024,3,Surface Area; Box shape,team,chapter
+2024,4,Triangle; Perimeter; Spatial Reasoning,team,chapter
+2024,5,Word Problem; Linear Equation; Algebra,team,chapter
+2024,6,Algebra; Sequence; Recursive Equations,team,chapter
+2024,7,Counting Principle (fund.); Algebra,team,chapter
+2024,8,Triangle; Area; Spatial Reasoning,team,chapter
+2024,9,Counting Principle (fund.); Casework,team,chapter
+2024,10,Triangle; Area; Ratios,team,chapter
+2024,1,Rate or Speed; Unit Conversion; Word Problem,team,state
+2024,2,Word Problem; Linear Equation; Algebra,team,state
+2024,3,Prime and Composite; Counting Principle (fund.),team,state
+2024,4,Optimization; Counting Principle (fund.),team,state
+2024,5,Square; Pythagorean Theorem; Embedded radical form,team,state
+2024,6,Probability; Casework; Spatial Reasoning,team,state
+2024,7,Arithmetic mean; Prime and Composite,team,state
+2024,8,Probability; Conditional Probability; Dependent Events,team,state
+2024,9,Number Bases; Exponents; Counting Principle (fund.),team,state
+2024,10,Polygons; Area; Angles; Interior Angles,team,state
+2023,1,Word Problem; Basic Arithmetic,sprint,chapter
+2023,2,Exponents; Absolute Value,sprint,chapter
+2023,3,Common Denominator; Fraction to Decimal,sprint,chapter
+2023,4,Word Problem; Basic Arithmetic,sprint,chapter
+2023,5,Triangle; Area,sprint,chapter
+2023,6,Percentage; Square; Counting Principle (fund.),sprint,chapter
+2023,7,Linear Equation; Median,sprint,chapter
+2023,8,Fraction to Decimal; Algebra,sprint,chapter
+2023,9,Know Your Squares; Sequence,sprint,chapter
+2023,10,Graph Understanding; Graphing a Line,sprint,chapter
+2023,11,Common Denominator; Algebra,sprint,chapter
+2023,12,Linear Equation; Algebra; Product/Sum Optimization,sprint,chapter
+2023,13,Ratios; Fractions; Word Problem,sprint,chapter
+2023,14,Probability; Table Reading; Sampling Without Replacement,sprint,chapter
+2023,15,Word Problem; Linear Equation; Casework,sprint,chapter
+2023,16,Rate or Speed; Word Problem; Unit Conversion,sprint,chapter
+2023,17,Median; Algebra; Linear Equation,sprint,chapter
+2023,18,Arithmetic mean; Median; Optimization,sprint,chapter
+2023,19,Divisibility Rules; Units digit patterns,sprint,chapter
+2023,20,Word Problem; Counting Principle (fund.),sprint,chapter
+2023,21,Triangle; Inequality,sprint,chapter
+2023,22,Geometric Series; Arithmetic mean,sprint,chapter
+2023,23,Trapezoid; Perimeter; Pythagorean Theorem,sprint,chapter
+2023,24,Linear Equation; Two equations and two unknowns,sprint,chapter
+2023,25,LCM; Casework,sprint,chapter
+2023,26,Embedded radical form; Algebra; Square Root,sprint,chapter
+2023,27,Pyramid; Volume; Pythagorean Theorem; Embedded radical form,sprint,chapter
+2023,28,Algebra; Exponents; Factors,sprint,chapter
+2023,29,Optimization; Area; Rectangles,sprint,chapter
+2023,30,Probability; Circle; Combinations; Geometric Probability,sprint,chapter
+2023,1,Approximation; Square Root,sprint,state
+2023,2,Exponents; Algebra; Fraction to Decimal,sprint,state
+2023,3,Inequality; Algebra,sprint,state
+2023,4,Triangle; Angles,sprint,state
+2023,5,Arithmetic mean; Algebra,sprint,state
+2023,6,Linear Equation; Sequence; Word Problem,sprint,state
+2023,7,Rectangles; Area; Optimization,sprint,state
+2023,8,Ratios; Unit Conversion; Word Problem,sprint,state
+2023,9,Algebra; Product/Sum Optimization; Absolute Value,sprint,state
+2023,10,Rate or Speed; Angles; Word Problem,sprint,state
+2023,11,Path counting; Spatial Reasoning,sprint,state
+2023,12,Linear Equation; Casework; Word Problem,sprint,state
+2023,13,Rate or Speed; Word Problem; Linear Equation,sprint,state
+2023,14,Arithmetic Series; Sequence,sprint,state
+2023,15,Defined Symbols; Algebra,sprint,state
+2023,16,Triangle; Rectangles; Area; Embedded radical form,sprint,state
+2023,17,Rate or Speed; Linear Equation; Algebra,sprint,state
+2023,18,Quadratic Equation; Algebra; Embedded radical form,sprint,state
+2023,19,Circle; Probability; Subtract Areas; Geometric Probability,sprint,state
+2023,20,Geometric Mean; Arithmetic mean; Algebra; Don't Solve For X,sprint,state
+2023,21,Divisibility Rules; Counting Principle (fund.); Modular Arith.,sprint,state
+2023,22,Probability; Casework; Combinations,sprint,state
+2023,23,Angles; Graphing a Line; Slope,sprint,state
+2023,24,Casework; Optimization; Algebra,sprint,state
+2023,25,Prime Factorization; Factorial; Combinations,sprint,state
+2023,26,Path counting; Spatial Reasoning; Modular Arith.,sprint,state
+2023,27,Circle; Polygons; Area; Inscribed Angle Theorem,sprint,state
+2023,28,Algebra; Two equations and two unknowns; Completing the square,sprint,state
+2023,29,Approximation; Embedded radical form,sprint,state
+2023,30,Pyramid; Volume; Surface Area; Similar Triangles,sprint,state
+2023,1,Word Problem; Linear Equation,target,chapter
+2023,2,Defined Symbols; Unit Conversion; Basic Arithmetic,target,chapter
+2023,3,Sequence; Recursive Equations; Algebra,target,chapter
+2023,4,Circle; Sector; Area; Angles,target,chapter
+2023,5,Word Problem; Linear Equation; Algebra,target,chapter
+2023,6,Probability; Combinations; Sampling Without Replacement,target,chapter
+2023,7,Sphere; Surface Area,target,chapter
+2023,8,Probability; Recursive Equations; Conditional Probability,target,chapter
+2023,1,Counting Principle (fund.); Casework,target,state
+2023,2,Rotation; Symmetry; Area; Algebra,target,state
+2023,3,Calendar; Divisibility Rules,target,state
+2023,4,Circle; Square; Area; Subtract Areas,target,state
+2023,5,Arithmetic mean; Median; Algebra,target,state
+2023,6,Arithmetic mean; Casework; Counting Principle (fund.),target,state
+2023,7,Triangle; Area; Pythagorean Triples; Similar Triangles,target,state
+2023,8,Geometric Series; Optimization,target,state
+2023,1,Unit Conversion; Basic Arithmetic,team,chapter
+2023,2,Word Problem; Counting Principle (fund.),team,chapter
+2023,3,Factors/Divisors; Prime and Composite,team,chapter
+2023,4,Venn Diagram; Word Problem; Logic,team,chapter
+2023,5,Arithmetic mean; Table Reading; Algebra,team,chapter
+2023,6,Rate or Speed; Word Problem; Linear Equation,team,chapter
+2023,7,Triangle; Pythagorean Triples; Counting Principle (fund.),team,chapter
+2023,8,Triangle; Area; Pythagorean Theorem,team,chapter
+2023,9,Dice; Probability; Conditional Probability,team,chapter
+2023,10,Factors/Divisors; Counting Principle (fund.),team,chapter
+2023,1,Algebra; Linear Equation; Three eqns./Three unknowns,team,state
+2023,2,Table Reading; Arithmetic mean; Word Problem,team,state
+2023,3,Divisibility Rules; Modular Arith.,team,state
+2023,4,Sphere; Volume; Percentage,team,state
+2023,5,Circle; Area; Inscribed Angle Theorem; Subtract Areas,team,state
+2023,6,Inequality; Counting Principle (fund.),team,state
+2023,7,Probability; Casework,team,state
+2023,8,Counting Principle (fund.); Casework; Spatial Reasoning,team,state
+2023,9,Divisibility Rules; Algebra; Number Bases,team,state
+2023,10,Triangle; Equilateral Triangle; Area; Pythagorean Theorem,team,state
+2025,1,Basic Arithmetic; PEMDAS,sprint,chapter
+2025,2,Defined Symbols; Basic Arithmetic,sprint,chapter
+2025,3,Linear Equation; Algebra,sprint,chapter
+2025,4,Probability; Factors/Divisors,sprint,chapter
+2025,5,Word Problem; Basic Arithmetic; Linear Equation,sprint,chapter
+2025,6,Algebra; Defined Symbols,sprint,chapter
+2025,7,Rectangles; Area,sprint,chapter
+2025,8,Combinations; Optimization,sprint,chapter
+2025,9,Graph Understanding; Graphing a Line; Linear Equation,sprint,chapter
+2025,10,Sphere; Volume,sprint,chapter
+2025,11,Arithmetic mean; Linear Equation; Algebra,sprint,chapter
+2025,12,Rectangles; Volume; Factors,sprint,chapter
+2025,13,Coin Value; Casework,sprint,chapter
+2025,14,Area; Subtract Areas; Spatial Reasoning,sprint,chapter
+2025,15,Probability; Sampling Without Replacement,sprint,chapter
+2025,16,Volume; Rate or Speed; Word Problem,sprint,chapter
+2025,17,Prime Factorization; Exponents,sprint,chapter
+2025,18,Spatial Reasoning; Sequence; Casework,sprint,chapter
+2025,19,Arithmetic mean; Arithmetic Series,sprint,chapter
+2025,20,Exponents; Factors; Algebra,sprint,chapter
+2025,21,Triangle; Inequality,sprint,chapter
+2025,22,Algebra; Exponents; Embedded radical form,sprint,chapter
+2025,23,Embedded radical form; Completing the square,sprint,chapter
+2025,24,Inequality; Counting Principle (fund.); Fractions,sprint,chapter
+2025,25,Equilateral Triangle; Similar Triangles; Embedded radical form,sprint,chapter
+2025,26,Counting Principle (fund.); Casework; Arithmetic Series,sprint,chapter
+2025,27,Factorial; Exponents; Divisibility Rules,sprint,chapter
+2025,28,Approximation; Fraction to Decimal,sprint,chapter
+2025,29,Algebra; Counting Principle (fund.); Factors/Divisors,sprint,chapter
+2025,30,Tetrahedron; Volume; Special Right Triangles; Embedded radical form,sprint,chapter
+2022,1,Basic Arithmetic; Exponents; PEMDAS,sprint,chapter
+2022,2,Basic Arithmetic; Word Problem,sprint,chapter
+2022,3,Median,sprint,chapter
+2022,4,Word Problem; Basic Arithmetic; Ratios,sprint,chapter
+2022,5,Divisibility Rules; Modular Arith.; Algebra,sprint,chapter
+2022,6,Spatial Reasoning; Logic,sprint,chapter
+2022,7,Linear Equation; Algebra,sprint,chapter
+2022,8,LCM; Word Problem,sprint,chapter
+2022,9,Spatial Reasoning; Rectangles; Counting Principle (fund.),sprint,chapter
+2022,10,Rectangles; Area; Quadratic Equation,sprint,chapter
+2022,11,Word Problem; Linear Equation; Ratios,sprint,chapter
+2022,12,Word Problem; Basic Arithmetic; Casework,sprint,chapter
+2022,13,Ratios; Fraction to Decimal; Word Problem,sprint,chapter
+2022,14,Rectangles; Pythagorean Theorem; Optimization,sprint,chapter
+2022,15,Ratios; Sampling Without Replacement; Word Problem,sprint,chapter
+2022,16,Percentage; Arithmetic mean; Word Problem,sprint,chapter
+2022,17,Area; Unit Conversion; Rectangles,sprint,chapter
+2022,18,Rectangles; Area; Algebra; Linear Equation,sprint,chapter
+2022,19,Rate or Speed; Word Problem; Basic Arithmetic,sprint,chapter
+2022,20,Algebra; Exponents; Ratios,sprint,chapter
+2022,21,Combinations; Casework; Counting Principle (fund.),sprint,chapter
+2022,22,Linear Equation; Algebra; Word Problem,sprint,chapter
+2022,23,Rate or Speed; Graph Understanding; Word Problem; Unit Conversion,sprint,chapter
+2022,24,Triangle; Inequality; Median,sprint,chapter
+2022,25,Optimization; Word Problem; Linear Equation,sprint,chapter
+2022,26,Prime Factorization; Exponents; Algebra,sprint,chapter
+2022,27,Combinations; Stars and Bars,sprint,chapter
+2022,28,Algebra; Factors/Divisors; Casework,sprint,chapter
+2022,29,Recursive Equations; Algebra; Sequence,sprint,chapter
+2022,30,Cube; Probability; Exponents,sprint,chapter
+2022,1,Slope; Graphing a Line,sprint,state
+2022,2,Arithmetic mean; Table Reading,sprint,state
+2022,3,Area; Unit Conversion,sprint,state
+2022,4,Sequence; Recursive Equations; Prime and Composite,sprint,state
+2022,5,Know Your Cubes; Prime Factorization,sprint,state
+2022,6,Rate or Speed; Word Problem; Sequence,sprint,state
+2022,7,Defined Symbols; Algebra; Fraction to Decimal,sprint,state
+2022,8,Percentage; Word Problem; Algebra,sprint,state
+2022,9,Linear Equation; Algebra; Word Problem,sprint,state
+2022,10,Prime and Composite; Combinations; Counting Principle (fund.),sprint,state
+2022,11,Graphing a Line; Slope; Algebra,sprint,state
+2022,12,Surface Area; Cube; Spatial Reasoning,sprint,state
+2022,13,Absolute Value; Linear Equation; Algebra,sprint,state
+2022,14,Percentage; Weighted Average; Algebra,sprint,state
+2022,15,Area; Polygons; Shoelace Theorem,sprint,state
+2022,16,Algebra; Exponents; Embedded radical form,sprint,state
+2022,17,Algebra; Embedded radical form; Exponents,sprint,state
+2022,18,Counting Principle (fund.); Divisibility Rules,sprint,state
+2022,19,Circle; Triangle; Area; Subtract Areas; Pythagorean Theorem,sprint,state
+2022,20,Algebra; Exponents; Sequence; Shortcut,sprint,state
+2022,21,Logic; Casework,sprint,state
+2022,22,Volume; Algebra; Percentage; Pythagorean Triples;Prizm,sprint,state
+2022,23,Probability; Prime Factorization; Factorial,sprint,state
+2022,24,Combinations; Counting Principle (fund.),sprint,state
+2022,25,Factorial; Divisibility Rules; Prime Factorization,sprint,state
+2022,26,Algebra; Exponents; Prime Factorization; Know Your Squares; Know Your Cubes,sprint,state
+2022,27,Algebra; Quadratic Equation; Exponents,sprint,state
+2022,28,Quadratic Equation; Vieta's formula; Algebra,sprint,state
+2022,29,Algebra; Exponents; Approximation,sprint,state
+2022,30,Optimization; PEMDAS; Algebra,sprint,state
+2024,29,Dice; Probability; Factors/Divisors,sprint,chapter
+2024,2,Basic Arithmetic; Units digit patterns,sprint,school
+2024,1,Measurement; Basic Arithmetic,sprint,school
+2024,3,Word Problem; Basic Arithmetic,sprint,school
+2024,4,Basic Arithmetic,sprint,school
+2024,5,Rectangles; Area,sprint,school
+2024,6,Approximation; Basic Arithmetic,sprint,school
+2024,7,Word Problem; Basic Arithmetic,sprint,school
+2024,8,Percentage; Table Reading,sprint,school
+2024,9,Sequence,sprint,school
+2024,10,Fraction to Decimal; Common Denominator,sprint,school
+2024,11,Exponents; Algebra,sprint,school
+2024,12,Table Reading; Basic Arithmetic,sprint,school
+2024,13,Unit Conversion; Basic Arithmetic,sprint,school
+2024,14,Word Problem; Algebra; Linear Equation,sprint,school
+2024,15,Percentage; Basic Arithmetic,sprint,school
+2024,16,Rectangles; Area; Quadratic Equation; Word Problem,sprint,school
+2024,17,Word Problem; Arithmetic mean,sprint,school
+2024,18,Triangle; Area; Ratios,sprint,school
+2024,19,Venn Diagram; Word Problem; Linear Equation,sprint,school
+2024,20,Linear Equation; Graphing a Line; Area,sprint,school
+2024,21,Arithmetic mean; Median; Absolute Value,sprint,school
+2024,22,Square; Area; Spatial Reasoning,sprint,school
+2024,23,Coin; Probability; Complementary Probability,sprint,school
+2024,24,Euclidean Algorithm; LCM,sprint,school
+2024,25,Perpendicular Slope; Linear Equation; Graphing a Line,sprint,school
+2024,26,Dice; Probability; Know Your Squares,sprint,school
+2024,27,Word Problem; Percentage; Linear Equation,sprint,school
+2024,28,Rate or Speed; Word Problem; Pythagorean Theorem,sprint,school
+2024,29,Cylinder; Cone; Volume; Ratios,sprint,school
+2024,30,Absolute Value; Optimization; Median,sprint,school
+2026,1,Measurement; Basic Arithmetic,sprint,school
+2026,2,Basic Arithmetic,sprint,school
+2026,3,Word Problem; Basic Arithmetic,sprint,school
+2026,4,Basic Arithmetic,sprint,school
+2026,5,Rectangles; Area,sprint,school
+2026,6,Approximation; Basic Arithmetic,sprint,school
+2026,7,Word Problem; Basic Arithmetic,sprint,school
+2026,8,Percentage; Table Reading,sprint,school
+2026,9,Sequence,sprint,school
+2026,10,Fraction to Decimal; Common Denominator,sprint,school
+2026,11,Exponents; Algebra,sprint,school
+2026,12,Table Reading; Basic Arithmetic,sprint,school
+2026,13,Unit Conversion; Basic Arithmetic,sprint,school
+2026,14,Word Problem; Algebra; Linear Equation,sprint,school
+2026,15,Percentage; Basic Arithmetic,sprint,school
+2026,16,Rectangles; Area; Quadratic Equation; Word Problem,sprint,school
+2026,17,Word Problem; Arithmetic mean,sprint,school
+2026,18,Triangle; Area; Ratios,sprint,school
+2026,19,Venn Diagram; Word Problem; Linear Equation,sprint,school
+2026,20,Linear Equation; Graphing a Line; Area,sprint,school
+2026,21,Arithmetic mean; Median; Absolute Value,sprint,school
+2026,22,Square; Area; Spatial Reasoning,sprint,school
+2026,23,Coin; Probability; Complementary Probability,sprint,school
+2026,24,Euclidean Algorithm; LCM,sprint,school
+2026,25,Perpendicular Slope; Linear Equation; Graphing a Line,sprint,school
+2026,26,Dice; Probability; Know Your Squares,sprint,school
+2026,27,Word Problem; Percentage; Linear Equation,sprint,school
+2026,28,Rate or Speed; Word Problem; Pythagorean Theorem,sprint,school
+2026,29,Cylinder; Cone; Volume; Ratios,sprint,school
+2026,30,Absolute Value; Optimization; Median,sprint,school
+2021,1,Word Problem; Basic Arithmetic; Ratios,sprint,chapter
+2021,2,Rate or Speed; Unit Conversion,sprint,chapter
+2021,3,Word Problem; Basic Arithmetic; Linear Equation,sprint,chapter
+2021,4,Triangle; Area,sprint,chapter
+2021,5,Basic Arithmetic; Absolute Value,sprint,chapter
+2021,6,Approximation; Ratios,sprint,chapter
+2021,7,Ratios; proportion,sprint,chapter
+2021,8,Common Denominator; Algebra; Fractions,sprint,chapter
+2021,9,Equilateral Triangle; Square; Perimeter; Area,sprint,chapter
+2021,10,Word Problem; Basic Arithmetic; Absolute Value,sprint,chapter
+2021,11,Counting Principle (fund.); Casework; Divisibility Rules,sprint,chapter
+2021,12,Word Problem; Fractions; Basic Arithmetic,sprint,chapter
+2021,13,Prime and Composite; Divisibility Rules; Arithmetic Series,sprint,chapter
+2021,14,Triangle; Angles; Exterior Angle Theorem,sprint,chapter
+2021,15,Algebra; Matching Terms,sprint,chapter
+2021,16,Fractions; proportion; Linear Equation,sprint,chapter
+2021,17,Algebra; Non-linear,sprint,chapter
+2021,18,Ratios; proportion; Fractions,sprint,chapter
+2021,19,Percentage; Word Problem,sprint,chapter
+2021,20,Arithmetic mean; Median; Table Reading,sprint,chapter
+2021,21,Know Your Squares; Algebra; Matching Terms,sprint,chapter
+2021,22,Circle; Area; Basic Arithmetic,sprint,chapter
+2021,23,Arithmetic mean; Know Your Squares; Arithmetic Series,sprint,chapter
+2021,24,Area; Measurement; Word Problem; Spatial Reasoning; Unit Conversion,sprint,chapter
+2021,25,Coin Value; Linear Equation; Two equations and two unknowns; Casework,sprint,chapter
+2021,26,Unit Conversion; Word Problem; Basic Arithmetic,sprint,chapter
+2021,27,Parallel Lines; Angles; Alternate interior angles,sprint,chapter
+2021,28,Measurement; Unit Conversion,sprint,chapter
+2021,29,Arithmetic Series; Modular Arith.; Casework; Word Problem,sprint,chapter
+2021,30,Rate or Speed; Ratios,sprint,chapter
+2021,1,Basic Arithmetic; Word Problem,sprint,state
+2021,2,Basic Arithmetic; Fractions,sprint,state
+2021,3,Basic Arithmetic; Algebra,sprint,state
+2021,4,Polygons; Spatial Reasoning,sprint,state
+2021,5,Algebra; Fractions; Basic Arithmetic,sprint,state
+2021,6,Unit Conversion; Basic Arithmetic; Approximation,sprint,state
+2021,7,Linear Equation; Two equations and two unknowns; Word Problem,sprint,state
+2021,8,Percentage; Basic Arithmetic; Word Problem,sprint,state
+2021,9,Triangle; Area; Ratios,sprint,state
+2021,10,Inequality; Casework; Word Problem; Absolute Value,sprint,state
+2021,11,Optimization; Perimeter; Rectangles; Word Problem,sprint,state
+2021,12,Algebra; Quadratic Equation; Square,sprint,state
+2021,13,Weighted Average; Arithmetic mean; Algebra,sprint,state
+2021,14,Probability; Counting Principle (fund.); LCM,sprint,state
+2021,15,Exponents; Algebra,sprint,state
+2021,16,Ratios; Probability; Algebra,sprint,state
+2021,17,Linear Equation; Two equations and two unknowns; Word Problem,sprint,state
+2021,18,Rhombus; Triangle; Special Right Triangles; Pythagorean Theorem; Embedded radical form,sprint,state
+2021,19,Factors/Divisors; Divisibility Rules; Modular Arith.,sprint,state
+2021,20,Optimization; Sequence; Casework,sprint,state
+2021,21,Algebra; Recursive Equations; Embedded radical form,sprint,state
+2021,22,Completing the square; Algebra; Counting Principle (fund.),sprint,state
+2021,23,Exponents; Casework; Counting Principle (fund.),sprint,state
+2021,24,Algebra; Factoring; Don't Solve For X,sprint,state
+2021,25,Probability; Casework; Recursive Equations,sprint,state
+2021,26,Algebra; Recursive Equations; Sequence,sprint,state
+2021,27,Number Bases; Algebra,sprint,state
+2021,28,Optimization; Algebra; Spatial Reasoning,sprint,state
+2021,29,Probability; Trapezoid; Optimization; Geometric Probability,sprint,state
+2021,30,Algebra; Recursive Equations; Sequence,sprint,state
+2020,1,Basic Arithmetic; Unit Conversion,sprint,chapter
+2020,2,Ratios; proportion; Word Problem,sprint,chapter
+2020,3,Algebra; Substitution; Basic Arithmetic,sprint,chapter
+2020,4,Table Reading; Basic Arithmetic; Absolute Value,sprint,chapter
+2020,5,Square; Area; Perimeter; Square Root,sprint,chapter
+2020,6,Unit Conversion; proportion,sprint,chapter
+2020,7,Polygons; Angles; Interior Angles,sprint,chapter
+2020,8,Sequence; Geometric Series,sprint,chapter
+2020,9,Algebra; Word Problem; Polygons,sprint,chapter
+2020,10,Unit Conversion; proportion,sprint,chapter
+2020,11,Arithmetic mean; Algebra,sprint,chapter
+2020,12,Square; Area; Pythagorean Theorem,sprint,chapter
+2020,13,Rate or Speed; Basic Arithmetic; Word Problem,sprint,chapter
+2020,14,Rectangles; Area; Algebra; Two equations and two unknowns,sprint,chapter
+2020,15,Square Root; Basic Arithmetic,sprint,chapter
+2020,16,Area; Square; Spatial Reasoning,sprint,chapter
+2020,17,Prime and Composite; Counting Principle (fund.),sprint,chapter
+2020,18,Linear Equation; Algebra; Word Problem,sprint,chapter
+2020,19,Basic Arithmetic; Casework; Algebra,sprint,chapter
+2020,20,Measurement; proportion,sprint,chapter
+2020,21,Divisibility Rules; Casework,sprint,chapter
+2020,22,Exponents; Approximation,sprint,chapter
+2020,23,Casework; Counting Principle (fund.),sprint,chapter
+2020,24,Algebra; Substitution; Binomial Expansion,sprint,chapter
+2020,25,proportion; Circle; Area; Fractions,sprint,chapter
+2020,26,Combinations; Counting Principle (fund.),sprint,chapter
+2020,27,Probability; Complementary Counting; Combinations,sprint,chapter
+2020,28,Circle; Square; Area; Pythagorean Theorem,sprint,chapter
+2020,29,Factorial; Number Bases; Modular Arith.,sprint,chapter
+2020,30,Rotation; Triangle; Area; Fractions,sprint,chapter
+2020,1,Triangle; Angles; Angle Bisector Theorem,sprint,state
+2020,2,Exponents; Fractions; Basic Arithmetic,sprint,state
+2020,3,Two equations and two unknowns; Algebra,sprint,state
+2020,4,Polygons; Perimeter; Basic Arithmetic,sprint,state
+2020,5,Euclidean Algorithm; Area; Word Problem,sprint,state
+2020,6,Two equations and two unknowns; Algebra; Word Problem,sprint,state
+2020,7,Spatial Reasoning; Perimeter; Casework; Word Problem,sprint,state
+2020,8,Factorial; Prime Factorization,sprint,state
+2020,9,Algebra; Binomial Expansion; Basic Arithmetic,sprint,state
+2020,10,Algebra; Measurement; Word Problem,sprint,state
+2020,11,Linear Equation; Algebra; Word Problem,sprint,state
+2020,12,Percentage; Algebra; proportion,sprint,state
+2020,13,Algebra; Absolute Value; Two equations and two unknowns,sprint,state
+2020,14,Path counting; Casework,sprint,state
+2020,15,Area; Polygons; Rectangles; Subtract Areas,sprint,state
+2020,16,Arithmetic mean; Median; Optimization; Algebra,sprint,state
+2020,17,Surface Area; Triangle; Pythagorean Theorem; Spatial Reasoning,sprint,state
+2020,18,Algebra; Matching Terms; Binomial Expansion,sprint,state
+2020,19,Sequence; Exponents; Recursive Equations; Approximation,sprint,state
+2020,20,Counting Principle (fund.); Casework; Venn Diagram,sprint,state
+2020,21,Divisibility Rules; Casework,sprint,state
+2020,22,Linear Equation; Three eqns./Three unknowns; Algebra,sprint,state
+2020,23,Permutations; Counting Principle (fund.),sprint,state
+2020,24,Prime and Composite; Algebra; Factors/Divisors; Factoring,sprint,state
+2020,25,Probability; Equilateral Triangle; Triangle; Counting Principle (fund.),sprint,state
+2020,26,Circle; Equation of a circle; Radius Orth. to Tangent; Algebra,sprint,state
+2020,27,Prime and Composite; Counting Principle (fund.); Casework,sprint,state
+2020,28,Algebra; Difference of Squares; Basic Arithmetic,sprint,state
+2020,29,Geometric Probability; Triangle; Circle; Area,sprint,state
+2020,30,Sequence; Number Bases; Casework,sprint,state
+2019,1,Know Your Squares; Basic Arithmetic,sprint,chapter
+2019,2,Graph Understanding,sprint,chapter
+2019,3,Basic Arithmetic,sprint,chapter
+2019,4,Know Your Squares; Difference of Squares,sprint,chapter
+2019,5,Venn Diagram; Word Problem; Basic Arithmetic,sprint,chapter
+2019,6,Basic Arithmetic; Word Problem; Unit Conversion,sprint,chapter
+2019,7,Coin Value; Two equations and two unknowns; Algebra,sprint,chapter
+2019,8,Rate or Speed; proportion; Word Problem,sprint,chapter
+2019,9,Median; Prime and Composite,sprint,chapter
+2019,10,Percentage; Algebra,sprint,chapter
+2019,11,Area; Polygons; Fractions,sprint,chapter
+2019,12,Algebra; Basic Arithmetic,sprint,chapter
+2019,13,How many shapes?; Counting Principle (fund.),sprint,chapter
+2019,14,Table Reading; Basic Arithmetic; Absolute Value,sprint,chapter
+2019,15,Prime and Composite; Divisibility Rules; Factorial,sprint,chapter
+2019,16,Rate or Speed; Unit Conversion; Word Problem,sprint,chapter
+2019,17,Quadratic Equation; Vieta's formula; Algebra,sprint,chapter
+2019,18,Pigeonhole Principle; Casework; Optimization,sprint,chapter
+2019,19,Defined Symbols; Pythagorean Theorem; Basic Arithmetic,sprint,chapter
+2019,20,Rate or Speed; Algebra; Unit Conversion,sprint,chapter
+2019,21,Combinations; Counting Principle (fund.),sprint,chapter
+2019,22,Probability; Relatively Prime; Independent Events; Counting Principle (fund.),sprint,chapter
+2019,23,Algebra; Units digit patterns; Basic Arithmetic,sprint,chapter
+2019,24,Probability; Dice; Casework; Counting Principle (fund.),sprint,chapter
+2019,25,Angle Bisector Theorem; Triangle; Ratios,sprint,chapter
+2019,26,Path counting; Counting Principle (fund.),sprint,chapter
+2019,27,Rate or Speed; Algebra; Quadratic Equation; Word Problem,sprint,chapter
+2019,28,LCM; Prime and Composite; Casework,sprint,chapter
+2019,29,Triangle; Area; Ratios; Similar Triangles,sprint,chapter
+2019,30,Algebra; Fractions; Casework; Factors/Divisors,sprint,chapter
+2019,1,Ratios; Basic Arithmetic,sprint,state
+2019,2,Linear Equation; Basic Arithmetic; Substitution,sprint,state
+2019,3,Probability; Basic Arithmetic,sprint,state
+2019,4,proportion; Word Problem,sprint,state
+2019,5,Arithmetic mean; Algebra; Word Problem,sprint,state
+2019,6,Rectangles; Perimeter; Algebra; Linear Equation,sprint,state
+2019,7,Logic; Casework; Word Problem,sprint,state
+2019,8,Triangle; Area; Graphing a Line,sprint,state
+2019,9,Median; Table Reading; Absolute Value,sprint,state
+2019,10,Factorial; Algebra,sprint,state
+2019,11,Calendar; Modular Arith.,sprint,state
+2019,12,Algebra; Linear Equation; Word Problem,sprint,state
+2019,13,Factorial; Prime Factorization; Divisibility Rules,sprint,state
+2019,14,Factorial; Basic Arithmetic,sprint,state
+2019,15,Rectangles; Area; Algebra; Quadratic Equation; Word Problem,sprint,state
+2019,16,Arithmetic Series; Algebra; Linear Equation,sprint,state
+2019,17,Algebra; Fractions; Difference of Squares; Factors/Divisors,sprint,state
+2019,18,Units digit patterns; Casework; Basic Arithmetic,sprint,state
+2019,19,Graphing a Line; Algebra; Slope; Factor by Grouping,sprint,state
+2019,20,Inequality; Algebra; Quadratic Equation; Completing the square,sprint,state
+2019,21,Geometric Probability; Probability,sprint,state
+2019,22,Rate or Speed; Pythagorean Theorem; Word Problem,sprint,state
+2019,23,Algebra; Two equations and two unknowns; Factors/Divisors; Optimization,sprint,state
+2019,24,Probability; Prime and Composite; Casework; Dice,sprint,state
+2019,25,Circle; Equation of a circle; Optimization; Embedded radical form,sprint,state
+2019,26,Tetrahedron; Pythagorean Theorem; Special Right Triangles; Embedded radical form,sprint,state
+2019,27,Cone; Volume; Similar Triangles; Subtract Volumes,sprint,state
+2019,28,Circle; Chord; Algebra; Equation of a circle,sprint,state
+2019,29,Probability; Casework; Complementary Counting; Combinations,sprint,state
+2019,30,Circle; Power of a Point; Factors/Divisors,sprint,state
+2018,1,Approximation; Basic Arithmetic,sprint,chapter
+2018,2,Clock Hands,sprint,chapter
+2018,3,Basic Arithmetic; Word Problem,sprint,chapter
+2018,4,Basic Arithmetic; Measurement,sprint,chapter
+2018,5,Basic Arithmetic; Word Problem,sprint,chapter
+2018,6,Algebra; Linear Equation,sprint,chapter
+2018,7,Ratios; Word Problem,sprint,chapter
+2018,8,Prime Factorization; Basic Arithmetic,sprint,chapter
+2018,9,Fraction to Decimal; PEMDAS; Basic Arithmetic,sprint,chapter
+2018,10,Arithmetic mean; Algebra,sprint,chapter
+2018,11,Algebra; Linear Equation,sprint,chapter
+2018,12,Volume; Basic Arithmetic,sprint,chapter
+2018,13,Algebra; Non-linear; Know Your Squares,sprint,chapter
+2018,14,Basic Arithmetic; Word Problem,sprint,chapter
+2018,15,Basic Arithmetic; Algebra; Casework,sprint,chapter
+2018,16,Triangle; Angles,sprint,chapter
+2018,17,Coin Value; Counting Principle (fund.); Casework,sprint,chapter
+2018,18,Algebra; Two equations and two unknowns,sprint,chapter
+2018,19,Know Your Squares; Difference of Squares,sprint,chapter
+2018,20,Arithmetic mean; Algebra; Two equations and two unknowns,sprint,chapter
+2018,21,Exponents; Inequality; Algebra,sprint,chapter
+2018,22,Divisibility Rules,sprint,chapter
+2018,23,How many shapes?; Counting Principle (fund.),sprint,chapter
+2018,24,Factorial; Fractions; Matching Terms,sprint,chapter
+2018,25,Algebra; Linear Equation; Word Problem,sprint,chapter
+2018,26,Circle; Perpendicular Slope; Slope; Radius Orth. to Tangent,sprint,chapter
+2018,27,Arithmetic mean; Median; Optimization; Casework,sprint,chapter
+2018,28,Circle; Power of a Point; Triangle; Area; Embedded radical form,sprint,chapter
+2018,29,Quadratic Equation; Algebra; Absolute Value,sprint,chapter
+2018,30,Dice; Probability; Casework; Complementary Counting,sprint,chapter
+2018,1,Defined Symbols; Basic Arithmetic,sprint,state
+2018,2,Algebra; Casework,sprint,state
+2018,3,Algebra; Arithmetic Series; Linear Equation,sprint,state
+2018,4,Square; Area; Perimeter; Algebra,sprint,state
+2018,5,Algebra; Substitution,sprint,state
+2018,6,Two equations and two unknowns; Algebra; Word Problem,sprint,state
+2018,7,Arithmetic mean; Word Problem,sprint,state
+2018,8,Probability; Casework; Counting Principle (fund.),sprint,state
+2018,9,Prime Factorization; Factors,sprint,state
+2018,10,Algebra; Casework,sprint,state
+2018,11,Area; Rectangles; Graphing a Line; Ratios,sprint,state
+2018,12,Rate or Speed; Algebra; Non-linear; Approximation,sprint,state
+2018,13,Arithmetic Series; Algebra; Units digit patterns; Casework,sprint,state
+2018,14,Defined Symbols; Algebra; Ratios; Factoring,sprint,state
+2018,15,Rate or Speed; Algebra; Word Problem,sprint,state
+2018,16,Ratios; proportion,sprint,state
+2018,17,Casework; Algebra; Word Problem,sprint,state
+2018,18,Divisibility Rules; Optimization; Algebra,sprint,state
+2018,19,Path counting; Casework,sprint,state
+2018,20,Absolute Value; Inequality; Algebra; Arithmetic Series,sprint,state
+2018,21,Graphing a Line; Counting Principle (fund.); Triangle,sprint,state
+2018,22,Number Bases; Geometric Series,sprint,state
+2018,23,Probability; Conditional Probability,sprint,state
+2018,24,Units digit patterns; Casework; Basic Arithmetic,sprint,state
+2018,25,Geometric Probability; Probability,sprint,state
+2018,26,Sequence; Recursive Equations; LCM,sprint,state
+2018,27,Dice; Probability; Complementary Counting; Casework,sprint,state
+2018,28,Geometric Probability; Circle; Probability; Inscribed Angle Theorem,sprint,state
+2018,29,Pyramid; Algebra; Ratios; Spatial Reasoning; Similar Triangles,sprint,state
+2018,30,Circle; Triangle; Embedded radical form; Algebra,sprint,state
+2017,1,Approximation; Basic Arithmetic,sprint,chapter
+2017,2,Measurement; Approximation; Basic Arithmetic,sprint,chapter
+2017,3,Sequence; Basic Arithmetic,sprint,chapter
+2017,4,Basic Arithmetic,sprint,chapter
+2017,5,Arithmetic mean; Word Problem,sprint,chapter
+2017,6,Unit Conversion,sprint,chapter
+2017,7,Median,sprint,chapter
+2017,8,Algebra; Linear Equation; Word Problem,sprint,chapter
+2017,9,Exponents; Basic Arithmetic,sprint,chapter
+2017,10,Measurement; Basic Arithmetic,sprint,chapter
+2017,11,Algebra; Linear Equation; Ratios; Word Problem,sprint,chapter
+2017,12,How many shapes?; Counting Principle (fund.),sprint,chapter
+2017,13,Ratios; Linear Equation; Word Problem,sprint,chapter
+2017,14,Triangle; Area; Algebra,sprint,chapter
+2017,15,Exponents; Fractions; Basic Arithmetic,sprint,chapter
+2017,16,Inequality; Algebra; Casework; Arithmetic Series,sprint,chapter
+2017,17,Table Reading; Percentage; Word Problem,sprint,chapter
+2017,18,Ratios; Linear Equation; Word Problem,sprint,chapter
+2017,19,Fraction to Decimal; Basic Arithmetic,sprint,chapter
+2017,20,Quadratic Equation; Algebra; Vieta's formula,sprint,chapter
+2017,21,Rate or Speed; Word Problem; Linear Equation,sprint,chapter
+2017,22,Exponents; Basic Arithmetic,sprint,chapter
+2017,23,Casework; Counting Principle (fund.),sprint,chapter
+2017,24,Optimization; Casework; Basic Arithmetic,sprint,chapter
+2017,25,Fractions; Counting Principle (fund.); Algebra,sprint,chapter
+2017,26,Algebra; Difference of Squares; Know Your Squares,sprint,chapter
+2017,27,Arithmetic Series; Summing Arithmetic Series; Know Your Cubes,sprint,chapter
+2017,28,Circle; Triangle; Area; Pythagorean Theorem; Inscribed Angle Theorem,sprint,chapter
+2017,29,Probability; Coin; Casework; Combinations,sprint,chapter
+2017,30,Counting Principle (fund.); Casework; Algebra,sprint,chapter
+2017,1,Area; Perimeter; Square; Know Your Squares,sprint,state
+2017,2,Know Your Squares; Summing Arithmetic Series,sprint,state
+2017,3,Algebra,sprint,state
+2017,4,Percentage; Word Problem; Algebra,sprint,state
+2017,5,Prime and Composite; Casework; Word Problem,sprint,state
+2017,6,Angles; Word Problem,sprint,state
+2017,7,Sphere; Percentage; Word Problem,sprint,state
+2017,8,Two equations and two unknowns; Algebra; Word Problem,sprint,state
+2017,9,Cube; Volume; Word Problem,sprint,state
+2017,10,Ratios; Rate or Speed; Algebra,sprint,state
+2017,11,Sequence; Recursive Equations; Algebra,sprint,state
+2017,12,Arithmetic mean; Algebra; Casework,sprint,state
+2017,13,Rectangles; Pythagorean Theorem; Area,sprint,state
+2017,14,Path counting; Casework,sprint,state
+2017,15,Number Bases; Casework,sprint,state
+2017,16,Equation of a circle; Optimization; Algebra,sprint,state
+2017,17,Prime and Composite; Factors; Exponents,sprint,state
+2017,18,Algebra; Fractions; Two equations and two unknowns,sprint,state
+2017,19,Spatial Reasoning; Algebra; Pythagorean Theorem; Word Problem,sprint,state
+2017,20,Exponents; Median; Prime and Composite; Algebra,sprint,state
+2017,21,Counting Principle (fund.); Casework; Permutations,sprint,state
+2017,22,Circle; Pythagorean Theorem; Algebra,sprint,state
+2017,23,Divisibility Rules; Casework,sprint,state
+2017,24,Triangle; Semiperimeter*Radius=Area; Heron's Formula,sprint,state
+2017,25,Sequence; Spatial Reasoning,sprint,state
+2017,26,Triangle; Area; Graphing a Line; Ratios,sprint,state
+2017,27,Stars and Bars; Counting Principle (fund.),sprint,state
+2017,28,Algebra; Absolute Value; Quadratic Equation,sprint,state
+2017,29,Parallel Lines; Ratios; Algebra; Similar Triangles; Gift of Missing Info,sprint,state
+2017,30,Algebra; Absolute Value; Two equations and two unknowns; Casework,sprint,state
+2016,1,Sequence; Arithmetic Series,sprint,chapter
+2016,2,Graph Understanding,sprint,chapter
+2016,3,Algebra; Substitution,sprint,chapter
+2016,4,Summing Arithmetic Series; Divisibility Rules,sprint,chapter
+2016,5,Recursive Equations; Sequence; Summing Arithmetic Series,sprint,chapter
+2016,6,Graph Understanding; Word Problem,sprint,chapter
+2016,7,Pie Chart; Basic Arithmetic,sprint,chapter
+2016,8,Two equations and two unknowns; Algebra; Word Problem,sprint,chapter
+2016,9,Algebra; Ratios; Square Root; Rectangles,sprint,chapter
+2016,10,Divisibility Rules; Casework,sprint,chapter
+2016,11,Exponents; Algebra; Matching Terms,sprint,chapter
+2016,12,Percentage; Algebra,sprint,chapter
+2016,13,Probability,sprint,chapter
+2016,14,Exponents,sprint,chapter
+2016,15,Circle; Area; Radius/Diam./Circum.,sprint,chapter
+2016,16,Linear Equation; Algebra,sprint,chapter
+2016,17,Ratios; Percentage,sprint,chapter
+2016,18,Prime Factorization,sprint,chapter
+2016,19,Dice; Spatial Reasoning,sprint,chapter
+2016,20,Casework; Combinations,sprint,chapter
+2016,21,Three eqns./Three unknowns; Algebra,sprint,chapter
+2016,22,Arithmetic mean; Algebra; Ratios,sprint,chapter
+2016,23,Area; Perimeter; Rectangles; Square,sprint,chapter
+2016,24,Factorial; Prime Factorization,sprint,chapter
+2016,25,Triangle; Angle Chasing; Isosceles Triangle,sprint,chapter
+2016,26,Summing Arithmetic Series,sprint,chapter
+2016,27,Rate or Speed; Word Problem; Algebra,sprint,chapter
+2016,28,Triangle; Circle; Ratios; Similar Triangles; Area,sprint,chapter
+2016,29,Rate or Speed; Algebra; Non-linear,sprint,chapter
+2016,30,Casework; Work Backwards,sprint,chapter
+2016,1,Graph Understanding,sprint,school
+2016,2,Word Problem; Basic Arithmetic,sprint,school
+2016,3,Basic Arithmetic; Fractions,sprint,school
+2016,4,Graph Understanding; Percentage,sprint,school
+2016,5,Defined Symbols; Algebra,sprint,school
+2016,6,proportion; Basic Arithmetic,sprint,school
+2016,7,Sequence,sprint,school
+2016,8,Table Reading; Algebra,sprint,school
+2016,9,Word Problem; Basic Arithmetic,sprint,school
+2016,10,Area; Polygons,sprint,school
+2016,11,Algebra; Fractions; Word Problem,sprint,school
+2016,12,Defined Symbols; Algebra,sprint,school
+2016,13,Arithmetic mean; Basic Arithmetic,sprint,school
+2016,14,Ratios; Unit Conversion,sprint,school
+2016,15,Rate or Speed; Word Problem; Basic Arithmetic,sprint,school
+2016,16,Symmetry,sprint,school
+2016,17,Algebra; Word Problem; Basic Arithmetic,sprint,school
+2016,18,Area; Perimeter; Rectangles; Algebra,sprint,school
+2016,19,Factors/Divisors; Casework,sprint,school
+2016,20,Divisibility Rules; Casework,sprint,school
+2016,21,Casework; Coin Value; Word Problem,sprint,school
+2016,22,Slope; Graphing a Line; Algebra,sprint,school
+2016,23,Ratios; Algebra; Word Problem,sprint,school
+2016,24,Triangle; Angles; Angle Chasing,sprint,school
+2016,25,Fractions; Ratios,sprint,school
+2016,26,How many shapes?,sprint,school
+2016,27,Know Your Squares; Algebra; Word Problem,sprint,school
+2016,28,Rate or Speed; Algebra; Word Problem,sprint,school
+2016,29,Box shape; Spatial Reasoning; Volume,sprint,school
+2016,30,Broken Problem,sprint,school
+2016,1,Defined Symbols; Algebra,sprint,state
+2016,2,How many shapes?; Combinations,sprint,state
+2016,3,Algebra; Substitution,sprint,state
+2016,4,Median; Know Your Squares,sprint,state
+2016,5,Algebra; proportion,sprint,state
+2016,6,Area; Triangle; Rectangles; Algebra,sprint,state
+2016,7,Algebra; Percentage; Word Problem,sprint,state
+2016,8,Ratios; Word Problem,sprint,state
+2016,9,Algebra; Two equations and two unknowns; Word Problem,sprint,state
+2016,10,Prime and Composite; Casework,sprint,state
+2016,11,Three eqns./Three unknowns; Algebra,sprint,state
+2016,12,Fraction to Decimal; Modular Arith.,sprint,state
+2016,13,Algebra; Word Problem; Rate or Speed,sprint,state
+2016,14,Percentage; Algebra,sprint,state
+2016,15,Rate or Speed; LCM; Word Problem,sprint,state
+2016,16,Probability; Casework,sprint,state
+2016,17,Algebra; Recursive Equations; Exponents,sprint,state
+2016,18,Rectangles; Pythagorean Theorem; Algebra,sprint,state
+2016,19,Algebra; Factoring,sprint,state
+2016,20,Area; Pythagorean Theorem; Algebra,sprint,state
+2016,21,Probability; Complementary Probability,sprint,state
+2016,22,Circular Permutation; Permutations; Counting Principle (fund.),sprint,state
+2016,23,Spatial Reasoning; Casework,sprint,state
+2016,24,Algebra; Linear Equation,sprint,state
+2016,25,Combinations; Arithmetic mean; Fractions,sprint,state
+2016,26,Summing Arithmetic Series; Modular Arith.; Extraneous Information,sprint,state
+2016,27,Pythagorean Theorem; Casework; Know Your Squares; Circle; Symmetry; Spatial Reasoning; Off by One,sprint,state
+2016,28,Factorial; Algebra; Casework,sprint,state
+2016,29,Counting Principle (fund.); Casework,sprint,state
+2016,30,Pyramid; Pythagorean Theorem; Spatial Reasoning,sprint,state
+2016,1,Basic Arithmetic; Fractions,sprint,national
+2016,2,Counting Principle (fund.); Permutations; Casework,sprint,national
+2016,3,Ratios; Algebra; Word Problem,sprint,national
+2016,4,Basic Arithmetic; Fractions; Casework; PEMDAS,sprint,national
+2016,5,LCM; Rate or Speed; Word Problem,sprint,national
+2016,1,Word Problem; Basic Arithmetic,target,chapter
+2016,2,Sequence; Summing Arithmetic Series; Casework,target,chapter
+2016,3,Rate or Speed; Unit Conversion; Word Problem,target,chapter
+2016,4,Rectangles; Area; Algebra,target,chapter
+2016,5,Arithmetic Series; Algebra,target,chapter
+2016,6,Clock Hands; Algebra; Rate or Speed,target,chapter
+2016,7,Probability; Algebra; Casework,target,chapter
+2016,8,Probability; Casework; Independent Events,target,chapter
+2016,1,Two equations and two unknowns; Algebra; Coin Value,target,school
+2016,2,Geometric Series; Algebra; Word Problem,target,school
+2016,3,Arithmetic mean; Word Problem; Basic Arithmetic,target,school
+2016,4,Prime Factorization; Divisibility Rules,target,school
+2016,5,Volume; Unit Conversion; Algebra; Word Problem,target,school
+2016,6,Path counting; Combinations,target,school
+2016,7,Word Problem; LCM; Basic Arithmetic,target,school
+2016,8,Circle; Equilateral Triangle; Area; Arclength,target,school
+2016,1,Sequence; Arithmetic Series; Word Problem,target,state
+2016,2,Circle; Arclength; Perimeter,target,state
+2016,3,Binomial Probability; Percentage,target,state
+2016,4,Box shape; Pythagorean Theorem; Algebra,target,state
+2016,5,Area; Algebra; Word Problem,target,state
+2016,6,Probability; Casework; Sampling Without Replacement,target,state
+2016,7,Algebra; Matching Terms; Binomial Expansion,target,state
+2016,8,Spatial Reasoning; Volume,target,state
+2016,1,Word Problem; Basic Arithmetic,target,national
+2016,2,Factors/Divisors; Prime and Composite; Algebra,target,national
+2016,3,Arithmetic mean; Median; Arithmetic Series; Casework,target,national
+2016,4,Area; Polygons; Triangle; Ratios,target,national
+2016,5,Sphere; Pythagorean Theorem; Algebra,target,national
+2016,6,Casework; Counting Principle (fund.),target,national
+2016,7,Triangle; Ratios; Area,target,national
+2016,1,Percentage; Word Problem; Ratios,team,chapter
+2016,2,Similar Triangles; Ratios,team,chapter
+2016,3,Casework; Word Problem; Logic,team,chapter
+2016,4,Arclength; Unit Conversion; Word Problem,team,chapter
+2016,5,LCM; Summing Arithmetic Series,team,chapter
+2016,6,Arithmetic mean; Median; Optimization; Casework,team,chapter
+2016,7,Percentage; Algebra; Word Problem,team,chapter
+2016,8,Prime and Composite; Casework; Counting Principle (fund.),team,chapter
+2016,9,Path counting; Pascal's Triangle,team,chapter
+2016,10,Know Your Squares; Casework; Algebra,team,chapter
+2016,1,Percentage; Basic Arithmetic; Word Problem,team,school
+2016,2,Factors/Divisors; Counting Principle (fund.),team,school
+2016,3,Percentage; Algebra; Word Problem,team,school
+2016,4,Pigeonhole Principle; Casework,team,school
+2016,5,Area; Triangle,team,school
+2016,6,Prime and Composite; Factoring,team,school
+2016,7,Percentage; Algebra; Word Problem,team,school
+2016,8,Perpendicular Slope; Graphing a Line; Algebra,team,school
+2016,9,Cylinder; Cone; Volume; Subtract Volumes,team,school
+2016,10,Polygons; Spatial Reasoning; Square Root; Special Right Triangles,team,school
+2016,1,Arclength; Unit Conversion; Rate or Speed,team,state
+2016,2,Optimization; Casework,team,state
+2016,3,Percentage; Algebra; Ratios,team,state
+2016,4,Logic; Word Problem; Casework,team,state
+2016,5,Algebra; Exponents; Non-linear,team,state
+2016,6,Ratios; Word Problem; Algebra,team,state
+2016,7,Sequence; Arithmetic Series; Algebra,team,state
+2016,8,Area; Trapezoid; Algebra,team,state
+2016,9,Casework; Combinations; Recursive Equations,team,state
+2016,10,Circle; Area; Word Problem,team,state
+2015,1,Algebra; proportion,sprint,chapter
+2015,2,How many shapes?; Square,sprint,chapter
+2015,3,Counting Principle (fund.); Casework,sprint,chapter
+2015,4,Summing Arithmetic Series; Casework,sprint,chapter
+2015,5,Fractions; Word Problem; Basic Arithmetic,sprint,chapter
+2015,6,Algebra; Linear Equation,sprint,chapter
+2015,7,Percentage; Word Problem; Basic Arithmetic,sprint,chapter
+2015,8,Percentage; Algebra,sprint,chapter
+2015,9,Probability; Area; Congruent shapes,sprint,chapter
+2015,10,Exponents; Algebra,sprint,chapter
+2015,11,Table Reading; Algebra; Percentage,sprint,chapter
+2015,12,Area; Triangle; Algebra,sprint,chapter
+2015,13,Prime Factorization,sprint,chapter
+2015,14,Defined Symbols; Algebra,sprint,chapter
+2015,15,Algebra; Fractions; Casework,sprint,chapter
+2015,16,Rate or Speed; Algebra; Word Problem,sprint,chapter
+2015,17,Algebra; Quadratic Equation,sprint,chapter
+2015,18,Casework; Algebra; Optimization,sprint,chapter
+2015,19,Defined Symbols; Algebra,sprint,chapter
+2015,20,Similar Triangles; Ratios; Area,sprint,chapter
+2015,21,Arithmetic mean; Median; Optimization; Casework,sprint,chapter
+2015,22,Recursive Equations; Algebra,sprint,chapter
+2015,23,Arithmetic Series; Casework,sprint,chapter
+2015,24,Area; Triangle; Symmetry,sprint,chapter
+2015,25,Algebra; Two equations and two unknowns; Casework,sprint,chapter
+2015,26,Recursive Equations; Sequence,sprint,chapter
+2015,27,Binomial Probability; Combinations,sprint,chapter
+2015,28,Absolute Value; Casework; Counting Principle (fund.),sprint,chapter
+2015,29,Fraction to Decimal; Sequence,sprint,chapter
+2015,30,Interior Angles; Polygons; Algebra,sprint,chapter
+2015,1,Algebra; Linear Equation,sprint,school
+2015,2,Percentage; Word Problem; Basic Arithmetic,sprint,school
+2015,3,proportion; Algebra,sprint,school
+2015,4,Counting Principle (fund.); Word Problem,sprint,school
+2015,5,Area; Rectangles; Optimization,sprint,school
+2015,6,Algebra; Word Problem,sprint,school
+2015,7,Area; Rectangles; Word Problem,sprint,school
+2015,8,Know Your Squares; Factors/Divisors,sprint,school
+2015,9,Two equations and two unknowns; Word Problem,sprint,school
+2015,10,Algebra; Volume; Word Problem,sprint,school
+2015,11,Rate or Speed; Algebra; Word Problem,sprint,school
+2015,12,Arithmetic mean; Word Problem,sprint,school
+2015,13,Box shape; Spatial Reasoning,sprint,school
+2015,14,Recursive Equations; Sequence,sprint,school
+2015,15,Arithmetic mean; Median; Casework,sprint,school
+2015,16,Pythagorean Theorem,sprint,school
+2015,17,Rate or Speed; Fractions; Word Problem,sprint,school
+2015,18,Algebra; Two equations and two unknowns,sprint,school
+2015,19,Coin Value; Word Problem; Algebra,sprint,school
+2015,20,Algebra; Word Problem; Optimization,sprint,school
+2015,21,Summing Arithmetic Series; Algebra,sprint,school
+2015,22,Algebra; Linear Equation,sprint,school
+2015,23,Volume; Rectangles; Optimization,sprint,school
+2015,24,Summing Arithmetic Series,sprint,school
+2015,25,Rate or Speed; Algebra; Word Problem,sprint,school
+2015,26,Area; Ratios; Similar Triangles,sprint,school
+2015,27,Percentage; Geometric Series; Word Problem,sprint,school
+2015,28,Algebra; Fractions,sprint,school
+2015,29,Geometric Series; Arclength,sprint,school
+2015,30,Area; Pythagorean Theorem; Square,sprint,school
+2015,1,Algebra; Word Problem,sprint,state
+2015,2,Algebra; proportion,sprint,state
+2015,3,Algebra; Non-linear; Substitution,sprint,state
+2015,4,Sequence; Arithmetic mean,sprint,state
+2015,5,Graph Understanding; Rate or Speed,sprint,state
+2015,6,Algebra; Linear Equation; Table Reading,sprint,state
+2015,7,Algebra; Two equations and two unknowns; Word Problem,sprint,state
+2015,8,Algebra; Rectangles; Word Problem,sprint,state
+2015,9,Triangle; Fractions; Similar Triangles,sprint,state
+2015,10,Isosceles Triangle; Perimeter; Algebra; Optimization,sprint,state
+2015,11,Arithmetic Series; Algebra,sprint,state
+2015,12,Algebra; Square Root,sprint,state
+2015,13,Perpendicular Slope; Graphing a Line; Slope,sprint,state
+2015,14,Units digit patterns; Summing Arithmetic Series,sprint,state
+2015,15,Recursive Equations; Combinations,sprint,state
+2015,16,Circle; Semiperimeter*Radius=Area; Triangle,sprint,state
+2015,17,Probability; Ratios; Algebra; Word Problem,sprint,state
+2015,18,Quadratic Equation; Vieta's formula; Algebra,sprint,state
+2015,19,Circle; Rectangles; Area; Pythagorean Theorem,sprint,state
+2015,20,Algebra; Factoring; Casework; Educated Starting Guess,sprint,state
+2015,21,Probability; Complementary Probability; Combinations,sprint,state
+2015,22,Algebra;Ratios;Don't Solve For X; Linear Equation; Three eqns./Three unknowns,sprint,state
+2015,23,Algebra; Non-linear,sprint,state
+2015,24,Triangle; Angles; Pythagorean Theorem,sprint,state
+2015,25,Casework; Word Problem; Linear Equation,sprint,state
+2015,26,Casework; Counting Principle (fund.),sprint,state
+2015,27,Geometric Series Sum; Area; Fractions,sprint,state
+2015,28,Polygons; Similar Triangles; Algebra,sprint,state
+2015,29,Algebra; Word Problem; Casework,sprint,state
+2015,30,Combinations; Casework,sprint,state
+2015,1,Slope; Algebra,sprint,national
+2015,2,Exponents; Algebra; Matching Terms,sprint,national
+2015,3,Algebra; Exponents,sprint,national
+2015,4,Units digit patterns; Exponents,sprint,national
+2015,5,Similar Triangles; Ratios; Pythagorean Theorem,sprint,national
+2015,6,Isosceles Triangle; Area; Pythagorean Theorem,sprint,national
+2015,7,Rate or Speed; Algebra; Word Problem,sprint,national
+2015,8,Defined Symbols; Algebra; Casework,sprint,national
+2015,9,Cone; Similar Triangles; Algebra,sprint,national
+2015,10,Arithmetic Series; Median,sprint,national
+2015,11,Isosceles Triangle; Square; Pythagorean Theorem,sprint,national
+2015,12,Triangle; Slope; Algebra,sprint,national
+2015,13,Circle; Area; Equilateral Triangle,sprint,national
+2015,14,Probability; Combinations; Sampling Without Replacement,sprint,national
+2015,15,Polygons; Area; Special Right Triangles,sprint,national
+2015,16,Casework; Algebra,sprint,national
+2015,17,Number Bases; Algebra,sprint,national
+2015,18,Algebra; Fractions; Casework,sprint,national
+2015,19,Tetrahedron; Volume; Pythagorean Theorem,sprint,national
+2015,20,Recursive Equations; Summing Arithmetic Series; Off by One,sprint,national
+2015,21,Algebra; Casework; Non-linear,sprint,national
+2015,22,Probability; Permutations; Casework; Combinations; Complex Combinatorics,sprint,national
+2015,23,Permutations; Casework,sprint,national
+2015,24,Circle; Equation of a circle; Graphing a Line; Casework,sprint,national
+2015,25,Area; Square; Pythagorean Theorem,sprint,national
+2015,26,Permutations; Counting Principle (fund.),sprint,national
+2015,27,Circle; Equilateral Triangle; Algebra; Seeing the invisible,sprint,national
+2015,28,Algebra; Optimization; Non-linear,sprint,national
+2015,29,Probability; Conditional Probability; Dependent Events,sprint,national
+2015,30,Probability; Volume; Cone,sprint,national
+2015,1,How many shapes?,target,chapter
+2015,2,Basic Arithmetic; Word Problem,target,chapter
+2015,3,Arithmetic Series; Algebra,target,chapter
+2015,4,Area; Triangle; Trapezoid; Algebra,target,chapter
+2015,5,Prime Factorization; Divisibility Rules,target,chapter
+2015,6,Perpendicular Bisector; Graphing a Line; Algebra,target,chapter
+2015,7,Circle; Pythagorean Theorem; Area; Same area computed two ways,target,chapter
+2015,8,Recursive Equations; Algebra; Fractions,target,chapter
+2015,1,Percentage; Word Problem,target,school
+2015,2,Path counting; Complementary Counting,target,school
+2015,3,Arithmetic mean; Median; Casework,target,school
+2015,4,Percentage; Algebra; Word Problem,target,school
+2015,5,Percentage; Algebra; Word Problem,target,school
+2015,6,Circle; Area,target,school
+2015,7,Algebra; Area; Square,target,school
+2015,8,Algebra; PEMDAS; Word Problem,target,school
+2015,1,Algebra; Modular Arith.; Word Problem,target,state
+2015,2,Combinations; Algebra; Inequality,target,state
+2015,3,Prime and Composite; Units digit patterns,target,state
+2015,4,Algebra; proportion; Two equations and two unknowns,target,state
+2015,5,Algebra; Sequence; Modular Arith.,target,state
+2015,6,Spatial Reasoning; Volume,target,state
+2015,7,Algebra; Two equations and two unknowns; Casework,target,state
+2015,8,Circle; Equilateral Triangle; Area; Ratios,target,state
+2015,1,Algebra; Linear Equation,target,national
+2015,2,Cylinder; Volume; Algebra,target,national
+2015,3,Number Bases; Counting Principle (fund.),target,national
+2015,4,Area; Trapezoid,target,national
+2015,5,Algebra; Word Problem; Summing Arithmetic Series,target,national
+2015,6,Rate or Speed; LCM; Word Problem,target,national
+2015,7,Binomial Probability; Algebra,target,national
+2015,8,LCM; Counting Principle (fund.),target,national
+2015,1,Calendar; LCM; Word Problem,team,chapter
+2015,2,Equilateral Triangle; Area; Algebra,team,chapter
+2015,3,Rate or Speed; Unit Conversion,team,chapter
+2015,4,Parallel Lines; Angles; Algebra,team,chapter
+2015,5,Algebra; Two equations and two unknowns,team,chapter
+2015,6,LCM; Divisibility Rules; Summing Arithmetic Series,team,chapter
+2015,7,Interior Angles; Polygons,team,chapter
+2015,8,Counting Principle (fund.); Casework,team,chapter
+2015,9,Path counting; Combinations,team,chapter
+2015,10,Circle; Ratios; Algebra,team,chapter
+2015,1,Sequence; Casework,team,school
+2015,2,Fractions; Word Problem,team,school
+2015,3,Path counting; Casework,team,school
+2015,4,Quadratic Equation; Algebra; Vieta's formula,team,school
+2015,5,Equilateral Triangle; Square; Perimeter,team,school
+2015,6,Counting Principle (fund.); Combinations,team,school
+2015,7,Arithmetic Series; Factors/Divisors; Casework,team,school
+2015,8,Euclidean Algorithm; Algebra,team,school
+2015,9,Probability; Dice; Stars and Bars,team,school
+2015,10,Fraction to Decimal; Factors/Divisors,team,school
+2015,1,Number Bases; Fractions,team,state
+2015,2,Combinations; Casework,team,state
+2015,3,Circle; Equilateral Triangle; Area; Inscribed Angle Theorem,team,state
+2015,4,Rate or Speed; Unit Conversion; Algebra,team,state
+2015,5,Arithmetic Series; Algebra,team,state
+2015,6,Arithmetic mean; Median; Casework,team,state
+2015,7,Polygons; Algebra,team,state
+2015,8,Algebra; Casework; Sequence,team,state
+2015,9,Prime and Composite; Casework,team,state
+2015,10,Algebra; Non-linear; Word Problem,team,state
+2015,1,Prime and Composite; Casework,team,national
+2015,2,Recursive Equations; Sequence,team,national
+2015,3,Parallel Lines; Casework; Counting Principle (fund.),team,national
+2015,4,Summing Arithmetic Series; Casework,team,national
+2015,5,Geometric Probability; Polygons,team,national
+2015,6,Algebra; Vieta's formula; Arithmetic Series,team,national
+2015,7,Counting Principle (fund.); Casework,team,national
+2015,8,Pythagorean Theorem; Algebra,team,national
+2015,9,Algebra; Casework,team,national
+2015,10,Probability; Conditional Probability,team,national
+2014,1,Algebra; Linear Equation,sprint,chapter
+2014,2,Percentage; Word Problem; Basic Arithmetic,sprint,chapter
+2014,3,Ratios; proportion; Word Problem,sprint,chapter
+2014,4,How many shapes?; Spatial Reasoning,sprint,chapter
+2014,5,Rate or Speed; Word Problem; Basic Arithmetic,sprint,chapter
+2014,6,Factors/Divisors; Optimization; Product/Sum Optimization,sprint,chapter
+2014,7,Basic Arithmetic; Word Problem,sprint,chapter
+2014,8,Pythagorean Theorem; Special Right Triangles; Embedded radical form,sprint,chapter
+2014,9,Defined Symbols; Algebra,sprint,chapter
+2014,10,Probability; Basic Arithmetic,sprint,chapter
+2014,11,Combinations,sprint,chapter
+2014,12,Arithmetic mean; Table Reading; Casework,sprint,chapter
+2014,13,Summing Arithmetic Series,sprint,chapter
+2014,14,Rate or Speed; Word Problem; Unit Conversion,sprint,chapter
+2014,15,Factors/Divisors; Casework; Algebra,sprint,chapter
+2014,16,Stars and Bars; Counting Principle (fund.),sprint,chapter
+2014,17,Slope; Linear Equation; Algebra,sprint,chapter
+2014,18,Permutations; Casework; Counting Principle (fund.),sprint,chapter
+2014,19,Exponents; Know Your Cubes,sprint,chapter
+2014,20,Perpendicular Slope; Linear Equation; Graphing a Line,sprint,chapter
+2014,21,Probability; proportion,sprint,chapter
+2014,22,Rectangles; Algebra; Pythagorean Theorem,sprint,chapter
+2014,23,Equilateral Triangle; Arclength; Algebra,sprint,chapter
+2014,24,Algebra; Linear Equation; Absolute Value,sprint,chapter
+2014,25,Exponents; Algebra; Plug and Chug,sprint,chapter
+2014,26,Combinations; Triangle; Casework; Inequality,sprint,chapter
+2014,27,Two equations and two unknowns; Algebra; Fractions,sprint,chapter
+2014,28,Prime and Composite; Divisibility Rules; Modular Arith.,sprint,chapter
+2014,29,British Flag Theorem; Pythagorean Theorem,sprint,chapter
+2014,30,Embedded radical form; Recursive Equations; Algebra,sprint,chapter
+2014,1,proportion; Basic Arithmetic; Word Problem,sprint,school
+2014,2,Defined Symbols; Basic Arithmetic,sprint,school
+2014,3,Arithmetic mean; Table Reading,sprint,school
+2014,4,Logic; Casework; Basic Arithmetic,sprint,school
+2014,5,How many shapes?; Spatial Reasoning,sprint,school
+2014,6,Graphing a Line; Linear Equation; Algebra,sprint,school
+2014,7,Pythagorean Theorem; Spatial Reasoning,sprint,school
+2014,8,Logic; Table Reading; Casework,sprint,school
+2014,9,proportion; Basic Arithmetic; Word Problem,sprint,school
+2014,10,Square Root; Approximation; Basic Arithmetic,sprint,school
+2014,11,Fractions; Counting Principle (fund.); Casework,sprint,school
+2014,12,Exponents; Algebra,sprint,school
+2014,13,Fractions; Algebra; Basic Arithmetic,sprint,school
+2014,14,Arithmetic mean; Basic Arithmetic; Algebra,sprint,school
+2014,15,Probability; Complementary Probability; Basic Arithmetic,sprint,school
+2014,16,Ratios; proportion; Word Problem,sprint,school
+2014,17,Two equations and two unknowns; Graphing a Line; Linear Equation,sprint,school
+2014,18,Know Your Squares; Algebra; Two equations and two unknowns,sprint,school
+2014,19,Conditional Probability; Probability; Venn Diagram,sprint,school
+2014,20,Coin Value; Casework; Algebra,sprint,school
+2014,21,proportion; Word Problem; Basic Arithmetic,sprint,school
+2014,22,Counting Principle (fund.); Casework,sprint,school
+2014,23,Fractions; Algebra; Word Problem,sprint,school
+2014,24,Prime and Composite; Arithmetic Series; Casework,sprint,school
+2014,25,Pythagorean Theorem; Similar Triangles; Embedded radical form,sprint,school
+2014,26,Parallelogram; Area; Angles,sprint,school
+2014,27,Two equations and two unknowns; Algebra; Word Problem; proportion,sprint,school
+2014,28,Coin Value; Casework; Optimization; Algebra,sprint,school
+2014,29,Slope; Graphing a Line; Algebra; Symmetry,sprint,school
+2014,30,Trapezoid; Area; Ratios; Similar Triangles,sprint,school
+2014,1,Ratios; Basic Arithmetic,sprint,state
+2014,2,Absolute Value; Algebra,sprint,state
+2014,3,Geometric Probability; Probability; Area; Ratios,sprint,state
+2014,4,Circle; Sector; Area; Angles,sprint,state
+2014,5,Recursive Equations; Sequence; Algebra,sprint,state
+2014,6,Prime Factorization; Basic Arithmetic,sprint,state
+2014,7,How many shapes?; Polygons; Spatial Reasoning,sprint,state
+2014,8,Sequence; Algebra; Arithmetic Series,sprint,state
+2014,9,Sequence; Recursive Equations; Modular Arith.,sprint,state
+2014,10,Probability; Casework; Counting Principle (fund.),sprint,state
+2014,11,Measure Scaling; Area; Ratios,sprint,state
+2014,12,Shoelace Theorem; Area,sprint,state
+2014,13,Arithmetic Series; Algebra; Optimization,sprint,state
+2014,14,Divisibility Rules; Casework; Number Bases,sprint,state
+2014,15,Quadratic Equation; Vieta's formula; Algebra,sprint,state
+2014,16,Cone; Volume; Similar Triangles; Fractions,sprint,state
+2014,17,Probability; Counting Principle (fund.); Casework,sprint,state
+2014,18,Counting Principle (fund.); Casework,sprint,state
+2014,19,Percentage; Optimization; Algebra,sprint,state
+2014,20,Number Bases; Basic Arithmetic,sprint,state
+2014,21,Algebra; X plus 1/X squared,sprint,state
+2014,22,Probability; Algebra; Two equations and two unknowns; Sampling Without Replacement,sprint,state
+2014,23,Pythagorean Theorem; Special Right Triangles; Algebra; Geometric Series Sum; Seeing the invisible,sprint,state
+2014,24,Exponents; Approximation,sprint,state
+2014,25,Parallelogram; Area; Algebra,sprint,state
+2014,26,Stars and Bars; Counting Principle (fund.); Casework,sprint,state
+2014,27,Vieta's formula; Algebra; Factoring,sprint,state
+2014,28,Modular Arith.; Exponents; Fermat-Euler Theorem,sprint,state
+2014,29,Recursive Equations; Casework; Counting Principle (fund.),sprint,state
+2014,30,Polygons; Angles; Pythagorean Theorem; Special Right Triangles; Embedded radical form,sprint,state
+2014,1,Arithmetic mean; Arithmetic Series; Basic Arithmetic,sprint,national
+2014,2,Prime and Composite; Counting Principle (fund.); Percentage,sprint,national
+2014,3,Unit Conversion; Basic Arithmetic; Approximation,sprint,national
+2014,4,Ratios; Word Problem; Basic Arithmetic,sprint,national
+2014,5,Arithmetic Series; Algebra; Linear Equation,sprint,national
+2014,6,Area; Shoelace Theorem; Algebra,sprint,national
+2014,7,Inequality; Algebra; Divisibility Rules,sprint,national
+2014,8,Know Your Squares; Two equations and two unknowns; Algebra,sprint,national
+2014,9,Arithmetic mean; Median; Algebra; Casework,sprint,national
+2014,10,Circle; Optimization; Pythagorean Theorem; Embedded radical form; Spatial Reasoning,sprint,national
+2014,11,Parallel Lines; Angles; Algebra,sprint,national
+2014,12,Algebra; Factoring; Matching Terms,sprint,national
+2014,13,Spatial Reasoning; Casework; Counting Principle (fund.),sprint,national
+2014,14,Divisibility Rules; Casework; Modular Arith.,sprint,national
+2014,15,Probability; Casework; Counting Principle (fund.),sprint,national
+2014,16,Pythagorean Theorem; Perimeter; Area; Algebra,sprint,national
+2014,17,Three eqns./Three unknowns; Algebra; Linear Equation,sprint,national
+2014,18,Dice; Probability; Casework; Counting Principle (fund.),sprint,national
+2014,19,Circle; Sector; Area; Angles,sprint,national
+2014,20,Algebra; Matching Terms; Binomial Expansion; Don't Solve For X,sprint,national
+2014,21,Modular Arith.; Exponents; Probability; Counting Principle (fund.),sprint,national
+2014,22,Pythagorean Triples; Prime and Composite; Casework,sprint,national
+2014,23,Number Bases; Algebra; Quadratic Equation,sprint,national
+2014,24,Logic; Casework; Word Problem,sprint,national
+2014,25,Geometric Series; Algebra; Exponents,sprint,national
+2014,26,Rate or Speed; Word Problem; Algebra; Unit Conversion,sprint,national
+2014,27,Binomial Probability; Algebra; Quadratic Equation; Probability,sprint,national
+2014,28,Algebra; Substitution; Matching Terms,sprint,national
+2014,29,Arithmetic Series; Algebra; Word Problem,sprint,national
+2014,30,Equilateral Triangle; Area; Optimization; Algebra; Embedded radical form,sprint,national
+2014,1,Optimization; Casework; Basic Arithmetic,target,chapter
+2014,2,Prime Factorization; Factors/Divisors; Algebra,target,chapter
+2014,3,Permutations; Counting Principle (fund.),target,chapter
+2014,4,Optimization; Casework; Word Problem,target,chapter
+2014,5,Sequence; Recursive Equations; Casework,target,chapter
+2014,6,Circle; Pythagorean Theorem; Algebra; Radius Orth. to Tangent,target,chapter
+2014,7,Spatial Reasoning; Counting Principle (fund.); Casework,target,chapter
+2014,8,Optimization; Area; Triangle; Algebra; Non-linear,target,chapter
+2014,1,Geometric Series; Sequence; Algebra,target,school
+2014,2,Coin Value; Basic Arithmetic; Word Problem,target,school
+2014,3,Path counting; Counting Principle (fund.),target,school
+2014,4,Weighted Average; Arithmetic mean; Word Problem,target,school
+2014,5,Percentage; Algebra; Word Problem,target,school
+2014,6,Probability; Combinations; Counting Principle (fund.),target,school
+2014,7,Circle; Perimeter; Area; Optimization; Radius/Diam./Circum.,target,school
+2014,8,Circle; Pythagorean Theorem; Algebra; Radius Orth. to Tangent,target,school
+2014,1,Percentage; Algebra; Word Problem,target,state
+2014,2,Two equations and two unknowns; Algebra; Logic; Word Problem,target,state
+2014,3,Circle; Area; Subtract Areas; Pythagorean Theorem,target,state
+2014,4,Arithmetic mean; Median; Casework; Optimization,target,state
+2014,5,Spatial Reasoning,target,state
+2014,6,Binomial Probability; Algebra; Quadratic Equation,target,state
+2014,7,Probability; Casework; Counting Principle (fund.); Path counting,target,state
+2014,8,Cone; Volume; Surface Area; Similar Triangles,target,state
+2014,1,Quadratic Equation; Three eqns./Three unknowns; Algebra,target,national
+2014,2,Weighted Average; Arithmetic mean; Word Problem,target,national
+2014,3,Know Your Squares; Algebra; Units digit patterns,target,national
+2014,4,Venn Diagram; Algebra; Word Problem,target,national
+2014,5,Trapezoid; Area; Algebra; Word Problem,target,national
+2014,6,Exponents; Algebra; Quadratic Equation,target,national
+2014,7,Conditional Probability; Probability; Algebra,target,national
+2014,8,Circle; Rectangles; Pythagorean Theorem; Optimization; Algebra,target,national
+2014,1,Spatial Reasoning; Pythagorean Theorem; Algebra,team,chapter
+2014,2,Arithmetic mean; Algebra; Casework,team,chapter
+2014,3,Combinations,team,chapter
+2014,4,Linear Equation; Two equations and two unknowns; Algebra,team,chapter
+2014,5,Geometric Series; Algebra; Exponents; Word Problem,team,chapter
+2014,6,Prime and Composite; Casework; Logic,team,chapter
+2014,7,Counting Principle (fund.); Casework,team,chapter
+2014,8,Defined Symbols; Casework; Basic Arithmetic,team,chapter
+2014,9,Counting Principle (fund.); Divisibility Rules; Permutations,team,chapter
+2014,10,Mass Points; Triangle; Ratios,team,chapter
+2014,1,Optimization; Algebra; Counting Principle (fund.),team,school
+2014,2,Logic; Casework; Word Problem,team,school
+2014,3,Pythagorean Theorem; Spatial Reasoning; Embedded radical form,team,school
+2014,4,Two equations and two unknowns; Algebra; Logic,team,school
+2014,5,How many shapes?; Spatial Reasoning,team,school
+2014,6,Geometric Series; Algebra,team,school
+2014,7,Algebra; Square Root; Word Problem,team,school
+2014,8,Rectangles; Area; Linear Equation; Word Problem,team,school
+2014,9,Word Problem; Logic; Linear Equation; Algebra,team,school
+2014,10,Pythagorean Theorem; Similar Triangles; Algebra,team,school
+2014,1,Logic; Casework; Spatial Reasoning,team,state
+2014,2,Quadratic Equation; Three eqns./Three unknowns; Algebra,team,state
+2014,3,Algebra; Substitution; Quadratic Equation,team,state
+2014,4,Rectangles; Circle; Pythagorean Theorem; Algebra,team,state
+2014,5,Divisibility Rules; Casework; Counting Principle (fund.),team,state
+2014,6,Rate or Speed; Algebra; Word Problem,team,state
+2014,7,Spatial Reasoning; Casework,team,state
+2014,8,Rotation; Algebra; Word Problem,team,state
+2014,9,Algebra; Fractions; Two equations and two unknowns; Factors/Divisors,team,state
+2014,10,Ratios; Similar Triangles; Algebra,team,state
+2014,1,Spatial Reasoning; Counting Principle (fund.),team,national
+2014,2,Algebra; Non-linear; Optimization; Word Problem,team,national
+2014,3,Prime Factorization; Casework; Optimization,team,national
+2014,4,Recursive Equations; Sequence; Exponents; Casework,team,national
+2014,5,Dice; Probability; Casework,team,national
+2014,6,Absolute Value; Area; Algebra; Spatial Reasoning,team,national
+2014,7,Circle; Area; Sector; Angles,team,national
+2014,8,Probability; Casework; Dice,team,national
+2014,9,Counting Principle (fund.); Casework; Complementary Counting,team,national
+2014,10,Angles; Triangle; Angle Chasing; Exterior Angle Theorem,team,national
+2013,1,Table Reading; Measurement,sprint,chapter
+2013,2,Geometric Series,sprint,chapter
+2013,3,Rate or Speed; Unit Conversion,sprint,chapter
+2013,4,Graph Understanding,sprint,chapter
+2013,5,Perimeter; Algebra,sprint,chapter
+2013,6,Linear Equation,sprint,chapter
+2013,7,Units digit patterns,sprint,chapter
+2013,8,Logic; Casework,sprint,chapter
+2013,9,Sequence; Geometric Series,sprint,chapter
+2013,10,Counting Principle (fund.),sprint,chapter
+2013,11,Angles; Equilateral Triangle,sprint,chapter
+2013,12,Two equations and two unknowns,sprint,chapter
+2013,13,Area; Perimeter; Factoring,sprint,chapter
+2013,14,Word Problem; Basic Arithmetic,sprint,chapter
+2013,15,Modular Arith.; Casework,sprint,chapter
+2013,16,Rate or Speed; proportion,sprint,chapter
+2013,17,Geometric Probability,sprint,chapter
+2013,18,Slope; Linear Equation; Graphing a Line,sprint,chapter
+2013,19,Area; Circle; Triangle,sprint,chapter
+2013,20,Counting Principle (fund.); Permutations,sprint,chapter
+2013,21,Pyramid; Volume; Similar Triangles,sprint,chapter
+2013,22,Arithmetic mean; Median; Optimization; Casework,sprint,chapter
+2013,23,Two equations and two unknowns,sprint,chapter
+2013,24,Box shape; Volume; Surface Area; Pythagorean Theorem,sprint,chapter
+2013,25,Geometric Probability,sprint,chapter
+2013,26,Percentage; Ratios,sprint,chapter
+2013,27,Three eqns./Three unknowns; Rate or Speed,sprint,chapter
+2013,28,Triangle Numbers; Divisibility Rules; Modular Arith.,sprint,chapter
+2013,29,Clock Hands; Arclength; proportion,sprint,chapter
+2013,30,Inequality; Algebra,sprint,chapter
+2013,1,PEMDAS,sprint,school
+2013,2,Basic Arithmetic; Fractions,sprint,school
+2013,3,Angles; Triangle,sprint,school
+2013,4,Area; Fractions,sprint,school
+2013,5,proportion; Fractions,sprint,school
+2013,6,Rate or Speed; proportion,sprint,school
+2013,7,Rate or Speed; Sequence,sprint,school
+2013,8,Linear Equation,sprint,school
+2013,9,Pie Chart; Table Reading,sprint,school
+2013,10,Logic; Graph Understanding,sprint,school
+2013,11,Fraction to Decimal; Percentage,sprint,school
+2013,12,Venn Diagram,sprint,school
+2013,13,Counting Principle (fund.); Recursive Equations,sprint,school
+2013,14,Two equations and two unknowns,sprint,school
+2013,15,Unit Conversion; Basic Arithmetic,sprint,school
+2013,16,Percentage; Basic Arithmetic,sprint,school
+2013,17,Two equations and two unknowns,sprint,school
+2013,18,Linear Equation; Basic Arithmetic,sprint,school
+2013,19,Algebra; Factoring,sprint,school
+2013,20,Independent Events; Probability,sprint,school
+2013,21,Circle; Area; Subtract Areas,sprint,school
+2013,22,Percentage; Algebra,sprint,school
+2013,23,Rate or Speed; Algebra,sprint,school
+2013,24,Parallel Lines; Angles; Angle Chasing,sprint,school
+2013,25,Substitution; Algebra,sprint,school
+2013,26,Two equations and two unknowns,sprint,school
+2013,27,Rate or Speed,sprint,school
+2013,28,Sampling Without Replacement; Probability; Combinations,sprint,school
+2013,29,Pythagorean Theorem; Pythagorean Triples,sprint,school
+2013,30,Polygons; Area; Radius/Diam./Circum.,sprint,school
+2013,1,Two equations and two unknowns,sprint,state
+2013,2,Linear Equation; Fractions,sprint,state
+2013,3,Complementary Probability,sprint,state
+2013,4,Arithmetic mean; Arithmetic Series,sprint,state
+2013,5,Circle; Area; Radius/Diam./Circum.,sprint,state
+2013,6,Percentage; Basic Arithmetic,sprint,state
+2013,7,Difference of Squares,sprint,state
+2013,8,Factors; Casework,sprint,state
+2013,9,Circle; Area; Subtract Areas,sprint,state
+2013,10,Algebra; Fractions,sprint,state
+2013,11,Perpendicular Bisector; Algebra,sprint,state
+2013,12,Fractions; Algebra,sprint,state
+2013,13,Percentage; Basic Arithmetic,sprint,state
+2013,14,Logic; Counting Principle (fund.); Casework,sprint,state
+2013,15,Units digit patterns; Exponents,sprint,state
+2013,16,Two equations and two unknowns,sprint,state
+2013,17,Cone; Volume; Similar Triangles,sprint,state
+2013,18,Probability; Casework; Coin,sprint,state
+2013,19,Quadratic Equation,sprint,state
+2013,20,Logic; Casework; Coin Value,sprint,state
+2013,21,Summing Arithmetic Series,sprint,state
+2013,22,Permutations; Casework,sprint,state
+2013,23,Algebra; Quadratic Equation;Shifted Function,sprint,state
+2013,24,Trapezoid; Similar Triangles; Area; Ratios,sprint,state
+2013,25,Arithmetic Series; Know Your Squares; Casework,sprint,state
+2013,26,Number Bases; Algebra,sprint,state
+2013,27,Algebra; Probability; proportion,sprint,state
+2013,28,Casework; Counting Principle (fund.),sprint,state
+2013,29,Area; Triangle; Rectangles; Similar Triangles; Optimization; Heron's Formula,sprint,state
+2013,30,Rotation; Perpendicular Bisector,sprint,state
+2013,1,Area; Pick's Theorem,target,chapter
+2013,2,Percentage; Basic Arithmetic,target,chapter
+2013,3,Rate or Speed; Basic Arithmetic,target,chapter
+2013,4,Permutations; Arithmetic mean,target,chapter
+2013,5,Substitution; Algebra,target,chapter
+2013,6,Arithmetic Series; Casework,target,chapter
+2013,7,Circular Permutation; Casework,target,chapter
+2013,8,Circle; Square; Area; Pythagorean Theorem,target,chapter
+2013,1,Counting Principle (fund.),target,school
+2013,2,Pythagorean Theorem; Isosceles Triangle,target,school
+2013,3,proportion; Basic Arithmetic,target,school
+2013,4,Independent Events; Probability,target,school
+2013,5,Percentage; Algebra,target,school
+2013,6,Circle; Equilateral Triangle; Pythagorean Theorem,target,school
+2013,7,Cylinder; Volume; Unit Conversion,target,school
+2013,8,Counting Principle (fund.); Exponents,target,school
+2013,1,Arithmetic mean; Linear Equation,target,state
+2013,2,Expected Value; Probability,target,state
+2013,3,Rate or Speed; Algebra,target,state
+2013,4,Area; Rectangles; Similar Triangles,target,state
+2013,5,Geometric Series Sum; Algebra; Fractions,target,state
+2013,6,Slope; Perpendicular Slope; Algebra,target,state
+2013,7,How many factors?; Casework,target,state
+2013,8,Triangle; Angle Bisector Theorem; Pythagorean Theorem; Similar Triangles,target,state
