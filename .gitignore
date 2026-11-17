@@ -6,6 +6,7 @@ ideas.txt
 *~
 \#*#
 .#*
+.env
 # Python pycache:
 __pycache__/
 
