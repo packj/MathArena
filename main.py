@@ -465,7 +465,7 @@ def main_landing():
         filter_loaded_message=filter_loaded_message
     )
 
-@app.route('/load_filter/<username>')
+@app.route('/load_filter/<path:username>')
 @login_required
 def load_filter(username):
     """

@@ -271,3 +271,70 @@ def api_problem_search():
         for r in rows
     ]
     return jsonify({'problems': problems, 'total': total, 'page': page, 'per_page': per_page})
+
+
+@playlists_bp.route('/api/problems/missed')
+@login_required
+def api_problems_missed():
+    """
+    JSON API to fetch problems attempted by the user that resulted in 0 (wrong)
+    or 1 (figured out after seeing answer) within an optional time range.
+    Includes any problem with result 0 or 1 even if the user subsequently got it right.
+    """
+    username = session.get('username')
+    if not username or not username.isalnum():
+        return jsonify({'error': 'Invalid username'}), 400
+
+    start_date = request.args.get('start_date', '').strip()
+    end_date = request.args.get('end_date', '').strip()
+
+    table_name = f"results_{username}"
+    time_conditions = ["r.result IN (0, 1)"]
+    params = {}
+
+    if start_date:
+        time_conditions.append("r.time >= :start_time")
+        params['start_time'] = f"{start_date} 00:00:00"
+    if end_date:
+        time_conditions.append("r.time <= :end_time")
+        params['end_time'] = f"{end_date} 23:59:59"
+
+    where_sql = " AND ".join(time_conditions)
+
+    try:
+        with sql_db.connect() as conn:
+            # Check if user results table exists
+            check_table = conn.execute(sqlalchemy.text(f"SHOW TABLES LIKE '{table_name}'")).fetchone()
+            if not check_table:
+                return jsonify({'problems': [], 'total': 0})
+
+            query = sqlalchemy.text(f'''
+                SELECT p.id, p.year, p.format, p.level, p.question_number, p.classification,
+                       MAX(r.time) AS latest_attempt,
+                       COUNT(r.id) AS attempt_count
+                FROM {table_name} r
+                JOIN problems p ON r.problem_id = p.id
+                WHERE {where_sql}
+                GROUP BY p.id, p.year, p.format, p.level, p.question_number, p.classification
+                ORDER BY latest_attempt DESC
+            ''')
+            rows = conn.execute(query, params).fetchall()
+
+            problems = [
+                {
+                    'id': r[0],
+                    'year': r[1],
+                    'format': r[2],
+                    'level': r[3],
+                    'question_number': r[4],
+                    'classification': r[5],
+                    'latest_attempt': r[6].strftime('%Y-%m-%d %H:%M') if r[6] else '',
+                    'attempt_count': r[7],
+                    'label': f"{r[1]} {str(r[3]).capitalize()} {str(r[2]).capitalize()} #{r[4]}"
+                }
+                for r in rows
+            ]
+            return jsonify({'problems': problems, 'total': len(problems)})
+    except Exception as e:
+        print(f"Error fetching missed problems for {username}: {e}")
+        return jsonify({'error': str(e), 'problems': [], 'total': 0}), 500

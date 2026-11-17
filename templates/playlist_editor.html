@@ -24,12 +24,34 @@
             padding: 16px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-        .filter-row {
+        .tab-bar {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 12px;
+            border-bottom: 2px solid #ddd;
         }
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .batch-btn {
+            background: #27ae60; color: white; border: none; border-radius: 4px;
+            padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: bold;
+        }
+        .batch-btn:hover { background: #219a52; }
         .filter-row select, .filter-row input {
             flex: 1;
             min-width: 80px;
@@ -116,43 +138,94 @@
 <div class="editor-layout">
     <!-- ── Problem Browser ── -->
     <div class="browser-panel">
-        <h3 style="margin-top:0;">Browse Problems</h3>
-        <div class="filter-row">
-            <select id="f-year">
-                <option value="">Any year</option>
-                {% for y in range(2024, 1999, -1) %}
-                    <option value="{{ y }}">{{ y }}</option>
-                {% endfor %}
-            </select>
-            <select id="f-format">
-                <option value="">Any format</option>
-                <option>sprint</option>
-                <option>target</option>
-                <option>team</option>
-            </select>
-            <select id="f-level">
-                <option value="">Any level</option>
-                <option>school</option>
-                <option>chapter</option>
-                <option>state</option>
-                <option>national</option>
-            </select>
-            <input type="number" id="f-q" placeholder="Q#" min="1" max="30" style="max-width:60px;">
-            <button onclick="searchProblems(1)" style="padding:6px 12px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">Search</button>
+        <div class="tab-bar">
+            <button type="button" class="tab-btn active" id="tab-btn-browse" onclick="switchTab('browse')">🔍 Browse All</button>
+            <button type="button" class="tab-btn" id="tab-btn-missed" onclick="switchTab('missed')">⏱️ Load Missed Problems</button>
         </div>
-        <div id="total-label"></div>
-        <table id="problem-table">
-            <thead>
-                <tr><th>Year</th><th>Level</th><th>Format</th><th>Q#</th><th>Topic</th><th></th></tr>
-            </thead>
-            <tbody id="problem-rows">
-                <tr><td colspan="6" style="color:#999; text-align:center; padding:20px;">Use the filters above to find problems.</td></tr>
-            </tbody>
-        </table>
-        <div class="pagination">
-            <button id="prev-page" onclick="changePage(-1)" disabled>← Prev</button>
-            <span id="page-label" style="font-size:14px;"></span>
-            <button id="next-page" onclick="changePage(1)" disabled>Next →</button>
+
+        <!-- Tab 1: Browse -->
+        <div id="tab-browse" class="tab-content active">
+            <div class="filter-row" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                <select id="f-year">
+                    <option value="">Any year</option>
+                    {% for y in range(2024, 1999, -1) %}
+                        <option value="{{ y }}">{{ y }}</option>
+                    {% endfor %}
+                </select>
+                <select id="f-format">
+                    <option value="">Any format</option>
+                    <option>sprint</option>
+                    <option>target</option>
+                    <option>team</option>
+                </select>
+                <select id="f-level">
+                    <option value="">Any level</option>
+                    <option>school</option>
+                    <option>chapter</option>
+                    <option>state</option>
+                    <option>national</option>
+                </select>
+                <input type="number" id="f-q" placeholder="Q#" min="1" max="30" style="max-width:60px;">
+                <button onclick="searchProblems(1)" style="padding:6px 12px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">Search</button>
+            </div>
+            <div id="total-label"></div>
+            <table id="problem-table">
+                <thead>
+                    <tr><th>Year</th><th>Level</th><th>Format</th><th>Q#</th><th>Topic</th><th></th></tr>
+                </thead>
+                <tbody id="problem-rows">
+                    <tr><td colspan="6" style="color:#999; text-align:center; padding:20px;">Use the filters above to find problems.</td></tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button id="prev-page" onclick="changePage(-1)" disabled>← Prev</button>
+                <span id="page-label" style="font-size:14px;"></span>
+                <button id="next-page" onclick="changePage(1)" disabled>Next →</button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Missed Problems by Time Range -->
+        <div id="tab-missed" class="tab-content">
+            <p style="font-size:13px; color:#555; margin-top:0;">
+                Find problems you attempted with <em>wrong</em> or <em>figured out after seeing answer</em> within a date range.
+            </p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                <div>
+                    <label style="font-size:12px; display:block; color:#555;">From:</label>
+                    <input type="date" id="m-start-date" style="padding:5px 8px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; display:block; color:#555;">To:</label>
+                    <input type="date" id="m-end-date" style="padding:5px 8px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+                </div>
+                <div style="align-self:flex-end;">
+                    <button type="button" onclick="searchMissedProblems()" style="padding:6px 12px; background:#e67e22; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Find Missed</button>
+                </div>
+                <div style="align-self:flex-end; display:flex; gap:4px;">
+                    <button type="button" onclick="setQuickRange(7)" style="padding:5px 8px; background:#f4f4f4; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px;">Last 7d</button>
+                    <button type="button" onclick="setQuickRange(30)" style="padding:5px 8px; background:#f4f4f4; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px;">Last 30d</button>
+                    <button type="button" onclick="setQuickRange(0)" style="padding:5px 8px; background:#f4f4f4; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:12px;">All time</button>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div id="missed-total-label" style="font-size:13px; color:#555;"></div>
+                <button type="button" id="add-all-missed-btn" class="batch-btn" onclick="addAllMissedProblems()" style="display:none;">+ Add All to Playlist</button>
+            </div>
+
+            <table id="missed-problem-table" style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="background:#e67e22; color:white;">
+                        <th style="padding:8px; text-align:left;">Problem</th>
+                        <th style="padding:8px; text-align:left;">Topic</th>
+                        <th style="padding:8px; text-align:left;">Attempted</th>
+                        <th style="padding:8px; text-align:center;"></th>
+                    </tr>
+                </thead>
+                <tbody id="missed-problem-rows">
+                    <tr><td colspan="4" style="color:#999; text-align:center; padding:20px;">Select a date range and click "Find Missed".</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -298,6 +371,106 @@
 
     function capitalize(s) {
         return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    }
+
+    // ── Tab Switching ───────────────────────────────────────────────────
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+        const btn = document.getElementById(`tab-btn-${tabName}`);
+        const content = document.getElementById(`tab-browse`);
+        const missedContent = document.getElementById(`tab-missed`);
+
+        if (btn) btn.classList.add('active');
+        if (tabName === 'browse' && content) content.classList.add('active');
+        if (tabName === 'missed' && missedContent) missedContent.classList.add('active');
+    }
+
+    // ── Missed Problems Feature ──────────────────────────────────────────
+    let missedProblemsList = [];
+
+    function setQuickRange(days) {
+        const endInput = document.getElementById('m-end-date');
+        const startInput = document.getElementById('m-start-date');
+
+        if (days === 0) {
+            startInput.value = '';
+            endInput.value = '';
+        } else {
+            const today = new Date();
+            const past = new Date();
+            past.setDate(today.getDate() - days);
+
+            endInput.value = today.toISOString().split('T')[0];
+            startInput.value = past.toISOString().split('T')[0];
+        }
+        searchMissedProblems();
+    }
+
+    function searchMissedProblems() {
+        const startDate = document.getElementById('m-start-date').value;
+        const endDate = document.getElementById('m-end-date').value;
+        let url = `/api/problems/missed?`;
+        if (startDate) url += `start_date=${encodeURIComponent(startDate)}&`;
+        if (endDate) url += `end_date=${encodeURIComponent(endDate)}&`;
+
+        const tbody = document.getElementById('missed-problem-rows');
+        tbody.innerHTML = '<tr><td colspan="4" style="color:#666; text-align:center; padding:20px;">Loading missed problems...</td></tr>';
+
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="color:#c00; text-align:center; padding:20px;">Error: ${escapeHtml(data.error)}</td></tr>`;
+                    return;
+                }
+
+                missedProblemsList = data.problems || [];
+                const count = missedProblemsList.length;
+                document.getElementById('missed-total-label').textContent =
+                    `${count} missed problem${count !== 1 ? 's' : ''} found`;
+
+                const addAllBtn = document.getElementById('add-all-missed-btn');
+                if (count > 0) {
+                    addAllBtn.style.display = 'inline-block';
+                } else {
+                    addAllBtn.style.display = 'none';
+                }
+
+                if (!count) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="color:#999; text-align:center; padding:20px;">No missed problems found in this time range!</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = missedProblemsList.map(p => `
+                    <tr>
+                        <td><strong>${escapeHtml(p.label)}</strong></td>
+                        <td>${escapeHtml(p.classification || '')}</td>
+                        <td style="font-size:12px; color:#666;">${p.latest_attempt} (${p.attempt_count}x)</td>
+                        <td style="text-align:center;">
+                            <button class="add-btn" data-id="${p.id}" data-label="${escapeHtml(p.label)}" onclick="handleAddClick(this)">Add</button>
+                        </td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => {
+                console.error('Failed to search missed problems:', err);
+                tbody.innerHTML = '<tr><td colspan="4" style="color:#c00; text-align:center; padding:20px;">Failed to load missed problems.</td></tr>';
+            });
+    }
+
+    function addAllMissedProblems() {
+        if (!missedProblemsList.length) return;
+        let addedCount = 0;
+        missedProblemsList.forEach(p => {
+            if (!playlistItems.some(item => item.id === p.id)) {
+                playlistItems.push({ id: p.id, label: p.label });
+                addedCount++;
+            }
+        });
+        renderPlaylist();
+        alert(`Added ${addedCount} problem${addedCount !== 1 ? 's' : ''} to the playlist.`);
     }
 
     // ── Playlist Operations ───────────────────────────────────────────────
