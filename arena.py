@@ -654,6 +654,8 @@ def arena_problem():
             if session.pop('auto_correct', False):
                 auto_correct_message = "✓ Correct! Points awarded."
 
+            badge_notification = session.pop('badge_notification', None)
+
             return render_template(
                 'arena_problem.html',
                 question_number=question_number,
@@ -672,7 +674,8 @@ def arena_problem():
                 time_limit=remaining_time_sec,
                 room_color=room_color,
                 room_name=room_name,
-                auto_correct_message=auto_correct_message
+                auto_correct_message=auto_correct_message,
+                badge_notification=badge_notification
             )
     except Exception as e:
         print(f"Error during display problem: {e}")

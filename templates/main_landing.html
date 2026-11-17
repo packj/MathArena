@@ -63,10 +63,17 @@
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/playlists'">Playlists</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/leaderboard'">View Leaderboards</div>
+        <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/profile/{{ session['username'] }}'">My Profile</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/change_password'">Change Password</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
     </div>
     <h1 style="text-align: center;">Welcome, {{ session['username'] }}, to Math Arena!</h1>
+    {% if badge_notification %}
+    <div style="background: linear-gradient(135deg, #ffd700, #ffae19); color: #333; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; border-radius: 8px; margin: 15px auto; max-width: 70%; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+        🎉 <strong>New Badge Unlocked!</strong> You earned {{ badge_notification.emoji }} <u>{{ badge_notification.name }}</u> ({{ "{:,}".format(badge_notification.points) }} pts)!
+        <a href="/profile/{{ session['username'] }}" style="margin-left: 15px; color: #1a5276; text-decoration: underline;">View Profile</a>
+    </div>
+    {% endif %}
     {% if filter_loaded_message %}
     <p style="color: green; text-align: center;">{{ filter_loaded_message }}</p>
     {% endif %}

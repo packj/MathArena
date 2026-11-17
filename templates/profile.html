@@ -1,0 +1,338 @@
+<!doctype html>
+<html>
+<head>
+    <title>{{ user }}'s Profile — Math Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='arena_setup.css') }}">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .profile-container {
+            max-width: 960px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .profile-header-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .profile-username {
+            margin: 0 0 8px 0;
+            font-size: 30px;
+            color: #2c3e50;
+        }
+        .profile-stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            background: #eef3f8;
+            padding: 12px 18px;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2980b9;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .cat-tab-btn {
+            padding: 8px 14px;
+            border: 1px solid #d0d7de;
+            border-radius: 20px;
+            background: white;
+            color: #555;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .cat-tab-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .cat-tab-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .badges-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        .category-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34495e;
+            margin: 20px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #eef2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-header:first-of-type {
+            margin-top: 0;
+        }
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            margin-bottom: 15px;
+        }
+        .badge-card {
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .badge-card.earned:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        }
+        .badge-card.tier-bronze.earned {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-color: #cd7f32;
+        }
+        .badge-card.tier-silver.earned {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-color: #94a3b8;
+        }
+        .badge-card.tier-gold.earned {
+            background: linear-gradient(135deg, #fefce8 0%, #fef08a 100%);
+            border-color: #eab308;
+        }
+        .badge-card.locked {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            opacity: 0.65;
+        }
+        .badge-icon {
+            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .badge-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .badge-title-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+        .badge-name {
+            font-weight: bold;
+            font-size: 15px;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .badge-tier-pill {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .pill-bronze { background: #cd7f32; color: white; }
+        .pill-silver { background: #64748b; color: white; }
+        .pill-gold { background: #d97706; color: white; }
+        .pill-locked { background: #9ca3af; color: white; }
+        .badge-desc {
+            font-size: 12px;
+            color: #4b5563;
+            margin: 2px 0 4px;
+            line-height: 1.3;
+        }
+        .badge-progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .badge-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: #27ae60;
+        }
+        .badge-progress-fill.locked-fill {
+            background: #3498db;
+        }
+        .badge-progress-text {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .status-unlocked { color: #16a34a; font-weight: bold; }
+        .status-locked { color: #64748b; }
+        .back-nav {
+            margin: 20px 0 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-section" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
+        <div class="banner-section" onclick="window.location.href='/leaderboard'">Leaderboard</div>
+        <div class="banner-section" onclick="window.location.href='/logout'">Logout</div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header-card">
+            <h1 class="profile-username">
+                {% if highest_tier == 'gold' %}🥇
+                {% elif highest_tier == 'silver' %}🥈
+                {% elif highest_tier == 'bronze' %}🥉
+                {% else %}👤{% endif %}
+                {{ user }}
+            </h1>
+            <div class="profile-stats-row">
+                <div class="stat-badge">
+                    <div class="stat-value">{{ "{:,.1f}".format(points) if points % 1 != 0 else "{:,}".format(points|int) }}</div>
+                    <div class="stat-label">Practice Points</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-value">{{ earned_count }} / {{ total_count }}</div>
+                    <div class="stat-label">Badges Earned</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-value">{{ user_stats.get('max_streak', 0) }}</div>
+                    <div class="stat-label">Best Hot Streak</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-value">{{ user_stats.get('difficult_solved', 0) }}</div>
+                    <div class="stat-label">Hard Problems Solved</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-value">{{ contrib_points }}</div>
+                    <div class="stat-label">Contribution Points</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <button class="cat-tab-btn active" onclick="filterCategory('All')">All Badges ({{ total_count }})</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Points')">Points</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Accuracy')">Accuracy</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Difficult Problems')">Difficult Problems</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Subject Mastery')">Subject Mastery</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Consistency')">Consistency</button>
+            <button class="cat-tab-btn" onclick="filterCategory('Contributions')">Contributions</button>
+        </div>
+
+        <div class="badges-card">
+            {% set categories = ['Points', 'Accuracy', 'Difficult Problems', 'Subject Mastery', 'Consistency', 'Contributions'] %}
+            {% for cat in categories %}
+            <div class="category-block" data-category="{{ cat }}">
+                <div class="category-header">
+                    <span>
+                        {% if cat == 'Points' %}🏆
+                        {% elif cat == 'Accuracy' %}🔥
+                        {% elif cat == 'Difficult Problems' %}⚡
+                        {% elif cat == 'Subject Mastery' %}📚
+                        {% elif cat == 'Consistency' %}📅
+                        {% else %}🤝{% endif %}
+                        {{ cat }}
+                    </span>
+                </div>
+                <div class="badges-grid">
+                    {% for b in badges if b.category == cat %}
+                    <div class="badge-card tier-{{ b.tier }} {{ 'earned' if b.earned else 'locked' }}">
+                        <div class="badge-icon">
+                            {% if b.tier == 'bronze' %}🥉{% elif b.tier == 'silver' %}🥈{% else %}🥇{% endif %}
+                        </div>
+                        <div class="badge-info">
+                            <div class="badge-title-row">
+                                <span class="badge-name">{{ b.name }}</span>
+                                <span class="badge-tier-pill {{ 'pill-' + b.tier if b.earned else 'pill-locked' }}">
+                                    {{ b.tier }}
+                                </span>
+                            </div>
+                            <div class="badge-desc">{{ b.desc }}</div>
+
+                            {% set pct = 100 if b.earned else ([((b.current / b.target) * 100)|round|int, 100]|min if b.target > 0 else 0) %}
+                            <div class="badge-progress-bar">
+                                <div class="badge-progress-fill {{ '' if b.earned else 'locked-fill' }}" style="width: {{ pct }}%;"></div>
+                            </div>
+                            <div class="badge-progress-text">
+                                <span class="{{ 'status-unlocked' if b.earned else 'status-locked' }}">
+                                    {% if b.earned %}✓ Earned{% else %}🔒 Locked ({{ pct }}%){% endif %}
+                                </span>
+                                <span>
+                                    {{ "{:,}".format(b.current|int if b.current % 1 == 0 else b.current) }} / {{ "{:,}".format(b.target) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="back-nav">
+            <button class="top-button" onclick="window.location.href='/leaderboard'">← Back to Leaderboard</button>
+        </div>
+    </div>
+
+    <script>
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.category-block').forEach(block => {
+                if (cat === 'All' || block.getAttribute('data-category') === cat) {
+                    block.style.display = 'block';
+                } else {
+                    block.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

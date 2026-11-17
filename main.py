@@ -15,6 +15,7 @@ from arena import arena_bp, update_in_lobby_flag  # Import the Blueprint
 from contributions import contrib_bp
 from playlists import playlists_bp  # Import the playlists Blueprint
 from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set, check_answer_match  # Import from utils
+from badges import get_user_stats, evaluate_all_badges, ALL_BADGE_DEFINITIONS
 from db_aws import sql_db  # Import the SQLAlchemy engine
 
 app = Flask(__name__)
@@ -455,6 +456,7 @@ def main_landing():
 
     filters = get_all_filters(sql_db)
     filter_loaded_message = session.pop('filter_loaded_message', None)  # Retrieve and clear the success message
+    badge_notification = session.pop('badge_notification', None)
 
     return render_template(
         'main_landing.html',
@@ -462,7 +464,8 @@ def main_landing():
         playlist_name=playlist_name if (playlist_id and not filter_criteria) else None,
         question_count=question_count,
         filters=filters,
-        filter_loaded_message=filter_loaded_message
+        filter_loaded_message=filter_loaded_message,
+        badge_notification=badge_notification
     )
 
 @app.route('/load_filter/<path:username>')
@@ -785,6 +788,9 @@ def display_problem():
             if session.pop('invalid_response', False):
                 invalid_response_message = "Invalid response"
 
+            # Check for badge unlock notification
+            badge_notification = session.pop('badge_notification', None)
+
             return render_template(
                 'display_problem.html',
                 question_number=question_number,
@@ -805,7 +811,8 @@ def display_problem():
                 attempt_history=''.join(attempt_history),
                 user_answer=user_answer,
                 invalid_response_message=invalid_response_message,
-                auto_correct_message=auto_correct_message
+                auto_correct_message=auto_correct_message,
+                badge_notification=badge_notification
             )
 
     except Exception as e:
@@ -1007,16 +1014,39 @@ def award_points(button_factor):
                                 'points': session['points']
                             })
 
+                        # Fetch stats before points awarded to detect any newly unlocked badges
+                        uname = session.get('username')
+                        stats_before = get_user_stats(conn, uname)
+                        badges_before, _, _ = evaluate_all_badges(stats_before)
+                        earned_before_ids = {b['id'] for b in badges_before if b['earned']}
+
                         # Write the cumulative points to the leaderboard table
                         conn.execute(sqlalchemy.text('''
                             INSERT INTO leaderboard (username, points)
                             VALUES (:username, :points)
                             ON DUPLICATE KEY UPDATE points = points + :points
                         '''), {
-                            'username': session.get('username'),
+                            'username': uname,
                             'points': points_awarded
                         })
                         conn.commit()
+
+                        # Evaluate badges after points & answer logging
+                        stats_after = get_user_stats(conn, uname)
+                        badges_after, _, _ = evaluate_all_badges(stats_after)
+                        newly_unlocked = [b for b in badges_after if b['earned'] and b['id'] not in earned_before_ids]
+
+                        if newly_unlocked:
+                            # Notify about the most prestigious or first newly earned badge
+                            nb = newly_unlocked[0]
+                            tier_emoji = '🥇' if nb['tier'] == 'gold' else ('🥈' if nb['tier'] == 'silver' else '🥉')
+                            session['badge_notification'] = {
+                                'name': nb['name'],
+                                'tier': nb['tier'],
+                                'desc': nb['desc'],
+                                'category': nb['category'],
+                                'emoji': tier_emoji
+                            }
             except Exception as e:
                 print(f"Error updating scoreboard/leaderboard or fetching problem details: {e}")
 
@@ -1037,11 +1067,25 @@ def leaderboard():
     try:
         with sql_db.connect() as conn:
             # Fetch leaderboard data sorted by points (descending) and username (alphabetically)
-            results = conn.execute(sqlalchemy.text('''
+            db_results = conn.execute(sqlalchemy.text('''
                 SELECT username, points
                 FROM leaderboard
                 ORDER BY points DESC, username ASC
             ''')).fetchall()
+
+            # Transform results with full badge evaluation
+            results = []
+            for row in db_results:
+                uname = row[0]
+                pts = float(row[1]) if row[1] is not None else 0.0
+                user_stats = get_user_stats(conn, uname)
+                _, count, tier = evaluate_all_badges(user_stats)
+                results.append({
+                    'username': uname,
+                    'points': pts,
+                    'badge_count': count,
+                    'tier': tier  # 'bronze', 'silver', 'gold', or None
+                })
     except Exception as e:
         # Log the error details for debugging
         print(f"Error fetching leaderboard: {e}")
@@ -1064,6 +1108,33 @@ def leaderboard():
                 margin: 0;
                 text-align: center;
             }
+            .user-link {
+                text-decoration: none;
+                font-weight: bold;
+                transition: opacity 0.2s;
+            }
+            .user-link:hover {
+                text-decoration: underline;
+                opacity: 0.85;
+            }
+            .tier-bronze {
+                color: #b85d19 !important; /* Rich metallic bronze */
+            }
+            .tier-silver {
+                color: #5c6b73 !important; /* Cool polished silver */
+            }
+            .tier-gold {
+                color: #c98a00 !important; /* Warm vibrant gold */
+            }
+            .tier-none {
+                color: #333333 !important;
+            }
+            .badge-count-tag {
+                font-size: 13px;
+                font-weight: normal;
+                margin-left: 6px;
+                color: #444;
+            }
         </style>
         <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
             <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
@@ -1076,7 +1147,8 @@ def leaderboard():
             <li><strong>Correct answers:</strong> Earn points based on the problem's difficulty level.</li>
             <li><strong>Figuring out after seeing the answer:</strong> Earn partial points.</li>
         </ul>
-        <table border="1" style="border-collapse: collapse; width: 50%; margin: auto;">
+        <p style="font-size: 14px; color: #555;">💡 Click on any username to view their profile and earned badges!</p>
+        <table border="1" style="border-collapse: collapse; width: 55%; margin: auto;">
             <thead>
                 <tr>
                     <th>Username</th>
@@ -1086,14 +1158,59 @@ def leaderboard():
             <tbody>
                 {% for row in results %}
                 <tr>
-                    <td>{{ row[0] }}</td>
-                    <td>{{ row[1] }}</td>
+                    <td style="text-align: left; padding-left: 20px;">
+                        <a href="/profile/{{ row.username }}" class="user-link tier-{{ row.tier if row.tier else 'none' }}">
+                            {% if row.tier == 'bronze' %}🥉
+                            {% elif row.tier == 'silver' %}🥈
+                            {% elif row.tier == 'gold' %}🥇
+                            {% else %}👤{% endif %}
+                            {{ row.username }}
+                        </a>
+                        <span class="badge-count-tag">({{ row.badge_count }} badge{{ 's' if row.badge_count != 1 else '' }})</span>
+                    </td>
+                    <td>{{ row.points }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         <br>
     ''', results=results)
+
+
+@app.route('/profile')
+@app.route('/profile/<username>')
+@login_required
+def view_profile(username=None):
+    """Display user profile page with cumulative points and full badge achievements across categories."""
+    if not username:
+        username = session.get('username')
+
+    try:
+        with sql_db.connect() as conn:
+            user_stats = get_user_stats(conn, username)
+            points = user_stats.get('practice_points', 0.0)
+            contrib_points = user_stats.get('contribution_points', 0)
+            badges, earned_count, highest_tier = evaluate_all_badges(user_stats)
+    except Exception as e:
+        print(f"Error fetching profile points for {username}: {e}")
+        points = 0.0
+        contrib_points = 0
+        user_stats = {}
+        badges = []
+        earned_count = 0
+        highest_tier = None
+
+    return render_template(
+        'profile.html',
+        user=username,
+        points=points,
+        contrib_points=contrib_points,
+        user_stats=user_stats,
+        badges=badges,
+        earned_count=earned_count,
+        total_count=len(badges),
+        highest_tier=highest_tier
+    )
 
 @app.route('/contributor_leaderboard')
 @login_required
@@ -1155,7 +1272,7 @@ def contributor_leaderboard():
             <tbody>
                 {% for row in results %}
                 <tr>
-                    <td>{{ row[0] }}</td>
+                    <td><a href="/profile/{{ row[0] }}" style="color: #6a1b9a; text-decoration: none; font-weight: bold;">👤 {{ row[0] }}</a></td>
                     <td>{{ row[1] }}</td>
                 </tr>
                 {% endfor %}

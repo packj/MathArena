@@ -17,6 +17,12 @@
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/exit_room'" title="Exit Room">Exit Room</div>
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/arena/leave_room_and_logout'">Logout</div>
     </div>
+    {% if badge_notification %}
+    <div style="background: linear-gradient(135deg, #ffd700, #ffae19); color: #333; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+        🎉 <strong>New Badge Unlocked!</strong> You earned {{ badge_notification.emoji }} <u>{{ badge_notification.name }}</u> ({{ "{:,}".format(badge_notification.points) }} pts)!
+        <a href="/profile/{{ session['username'] }}" style="margin-left: 15px; color: #1a5276; text-decoration: underline;" target="_blank">View Profile</a>
+    </div>
+    {% endif %}
     <div style="background-color: {{ room_color }}; padding: 20px; text-align: center;">
         <h1>{{ room_name }} Contest Room</h1>
     </div>

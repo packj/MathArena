@@ -93,6 +93,12 @@
     <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
     <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
 </div>
+{% if badge_notification %}
+<div style="background: linear-gradient(135deg, #ffd700, #ffae19); color: #333; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15); animation: fadeIn 0.5s;">
+    🎉 <strong>New Badge Unlocked!</strong> You earned {{ badge_notification.emoji }} <u>{{ badge_notification.name }}</u> ({{ "{:,}".format(badge_notification.points) }} pts)!
+    <a href="/profile/{{ session['username'] }}" style="margin-left: 15px; color: #1a5276; text-decoration: underline;">View Profile</a>
+</div>
+{% endif %}
 <div class="top-buttons">
         <span style="display:flex; align-items: center;">
         <span style="margin-right: 20px;">Year: <strong>{{ current_year }}</strong></span>
