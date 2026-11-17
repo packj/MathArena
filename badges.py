@@ -81,6 +81,22 @@ ALL_BADGE_DEFINITIONS = (
 TIER_ORDER = {'bronze': 1, 'silver': 2, 'gold': 3}
 
 
+def get_points_tier(points: float) -> Optional[str]:
+    """
+    Returns the user's tier ('bronze', 'silver', 'gold', or None) based exclusively on cumulative points.
+      Bronze: 500 - 7,999 pts
+      Silver: 8,000 - 39,999 pts
+      Gold:   40,000+ pts
+    """
+    if points >= 40000:
+        return 'gold'
+    elif points >= 8000:
+        return 'silver'
+    elif points >= 500:
+        return 'bronze'
+    return None
+
+
 def is_difficult_problem(level: str, fmt: str, qnum: int) -> bool:
     """Check if problem matches the endgame sprint range criteria."""
     if not fmt or fmt.strip().lower() != 'sprint':
@@ -285,8 +301,6 @@ def evaluate_all_badges(stats: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], in
 
         if earned:
             earned_count += 1
-            if highest_tier is None or TIER_ORDER.get(tier, 0) > TIER_ORDER.get(highest_tier, 0):
-                highest_tier = tier
 
         badges.append({
             'id': bid,
@@ -298,5 +312,8 @@ def evaluate_all_badges(stats: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], in
             'desc': b['desc'],
             'earned': earned,
         })
+
+    # The user's overall medal tier is based strictly on cumulative points
+    highest_tier = get_points_tier(pts)
 
     return badges, earned_count, highest_tier
