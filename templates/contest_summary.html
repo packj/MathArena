@@ -68,5 +68,116 @@ th {
             {% endfor %}
         </tbody>
     </table>
+
+    {% if requested_problems %}
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px;">
+            Requested Demonstrations
+            <span style="font-size: 14px; font-weight: normal; color: #7f8c8d; margin-left: 10px;">
+                (Sorted by number of requests &mdash; click "Show Problem" to demonstrate at the board)
+            </span>
+        </h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Problem</th>
+                    <th style="width: 20%;">Demo Requests</th>
+                    <th style="width: 35%;">Got It Correct</th>
+                    <th style="width: 15%; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in requested_problems %}
+                <tr>
+                    <td><strong>{{ loop.index }}</strong></td>
+                    <td>
+                        {% if p.contest_prob_num %}
+                            <strong>Problem {{ p.contest_prob_num }}</strong><br>
+                        {% endif %}
+                        <span style="color: #555; font-size: 14px;">
+                            {{ p.year }} {{ p.level }} {{ p.format }} #{{ p.question_number }}
+                            {% if p.classification %} - {{ p.classification }}{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <strong style="color: #d35400; font-size: 16px;">{{ p.request_count }} {% if p.request_count == 1 %}user{% else %}users{% endif %}</strong>
+                        {% if p.requested_users %}
+                        <br><small style="color: #666;">({{ p.requested_users }})</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if p.correct_users %}
+                            <span style="color: #27ae60; font-weight: bold;">{{ p.correct_users | join(', ') }}</span>
+                            <br><small style="color: #555;">(Can demonstrate at the board)</small>
+                        {% else %}
+                            <span style="color: #c0392b; font-style: italic;">None</span>
+                            <br><small style="color: #777;">(Instructor demo)</small>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="arena-button" style="width: auto; height: auto; padding: 8px 14px; background-color: #3498db; font-size: 14px;" onclick="toggleProblemView('prob-{{ p.problem_id }}', this)">
+                            Show Problem
+                        </button>
+                    </td>
+                </tr>
+                <tr id="prob-{{ p.problem_id }}" style="display: none; background-color: #f9fbfd;">
+                    <td colspan="5" style="padding: 20px; text-align: center;">
+                        <div style="max-width: 900px; margin: 0 auto;">
+                            <h4>Question:</h4>
+                            {% if p.Q_url %}
+                            <img src="{{ p.Q_url }}" alt="Question Image" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                            {% else %}
+                            <p>No question image available.</p>
+                            {% endif %}
+                            <div>
+                                <button onclick="toggleAnswerView('ans-{{ p.problem_id }}', this)" style="padding: 8px 16px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                                    Show Answer
+                                </button>
+                            </div>
+                            <div id="ans-{{ p.problem_id }}" style="display: none; margin-top: 15px;">
+                                <h4>Answer:</h4>
+                                {% if p.A_url %}
+                                <img src="{{ p.A_url }}" alt="Answer Image" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                {% else %}
+                                <p>No answer image available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleProblemView(rowId, btn) {
+            const row = document.getElementById(rowId);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+                btn.textContent = 'Hide Problem';
+                btn.style.backgroundColor = '#7f8c8d';
+            } else {
+                row.style.display = 'none';
+                btn.textContent = 'Show Problem';
+                btn.style.backgroundColor = '#3498db';
+            }
+        }
+
+        function toggleAnswerView(ansId, btn) {
+            const ansDiv = document.getElementById(ansId);
+            if (ansDiv.style.display === 'none') {
+                ansDiv.style.display = 'block';
+                btn.textContent = 'Hide Answer';
+                btn.style.backgroundColor = '#e67e22';
+            } else {
+                ansDiv.style.display = 'none';
+                btn.textContent = 'Show Answer';
+                btn.style.backgroundColor = '#27ae60';
+            }
+        }
+    </script>
+    {% endif %}
 </body>
 </html>

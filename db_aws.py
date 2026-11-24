@@ -84,6 +84,13 @@ def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
                 conn.commit()
             except Exception:
                 pass  # Column already exists
+            try:
+                conn.execute(sqlalchemy.text(
+                    "ALTER TABLE rooms ADD COLUMN mode VARCHAR(50) DEFAULT 'competitive'"
+                ))
+                conn.commit()
+            except Exception:
+                pass  # Column already exists
 
             # Check if the rooms table is empty and populate it if necessary
             result = conn.execute(sqlalchemy.text("SELECT COUNT(*) FROM rooms")).scalar()
@@ -417,6 +424,26 @@ def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
                 CREATE TABLE IF NOT EXISTS contribution_points (
                     username VARCHAR(255) PRIMARY KEY,
                     points INT DEFAULT NULL
+                )
+            '''))
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS room_demo_requests (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    room_id INT NOT NULL,
+                    problem_id INT NOT NULL,
+                    username VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE KEY unique_room_prob_user (room_id, problem_id, username)
+                )
+            '''))
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS room_problem_solvers (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    room_id INT NOT NULL,
+                    problem_id INT NOT NULL,
+                    username VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE KEY unique_room_prob_solver (room_id, problem_id, username)
                 )
             '''))
             conn.commit()

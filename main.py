@@ -1095,6 +1095,19 @@ def award_points(button_factor, advance=True):
                                 'points': points_awarded,
                                 'username': session.get('username')
                             })
+                            if button_factor == 2:
+                                try:
+                                    conn.execute(sqlalchemy.text('''
+                                        INSERT INTO room_problem_solvers (room_id, problem_id, username)
+                                        VALUES (:room_id, :problem_id, :username)
+                                        ON DUPLICATE KEY UPDATE username = :username
+                                    '''), {
+                                        'room_id': int(room_id),
+                                        'problem_id': current_problem_id,
+                                        'username': session.get('username')
+                                    })
+                                except Exception as e:
+                                    print(f"Error recording room problem solver: {e}")
                             conn.commit()
                             print(f"Points awarded to room {room_id}: {points_awarded}")  # Debugging line to check points awarded
                         else:   

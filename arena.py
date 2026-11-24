@@ -195,6 +195,12 @@ def arena_setup():
                 conn.execute(sqlalchemy.text(f'''
                     DELETE FROM {room_table_name}
                 '''))
+                conn.execute(sqlalchemy.text('''
+                    DELETE FROM room_demo_requests WHERE room_id = :room_id
+                '''), {'room_id': room_id})
+                conn.execute(sqlalchemy.text('''
+                    DELETE FROM room_problem_solvers WHERE room_id = :room_id
+                '''), {'room_id': room_id})
                 conn.commit()
                 #session['filter_criteria'] = None
                 session['filter_name'] = f"arena_{room_id}"
@@ -229,10 +235,12 @@ def arena_setup():
                     with sql_db.connect() as conn:
                         room_id = session.get('room_id')
                         room = conn.execute(sqlalchemy.text('''
-                            SELECT collaborative, filter_name, time_limit, live_scoreboard FROM rooms WHERE id = :room_id
+                            SELECT collaborative, filter_name, time_limit, live_scoreboard, mode FROM rooms WHERE id = :room_id
                         '''), {'room_id': room_id}).fetchone()
                     if room:
-                        session['collaborative'] = 'collaborative' if room[0]==1 else 'competitive'
+                        room_mode = room[4] if len(room) > 4 and room[4] else ('collaborative' if room[0]==1 else 'competitive')
+                        session['collaborative'] = room_mode
+                        session['mode'] = room_mode
                         filter_name_from_db = room[1]
                         session['filter_name'] = filter_name_from_db # Set session for other parts of the app
                         session['time_limit'] = room[2]
@@ -292,7 +300,7 @@ def arena_setup():
                         filter_criteria = None
                 except Exception as e:
                     print(f"Error reading rooms db: {e}")
-                return redirect(url_for('arena.waiting_room', room_id=room_id, time_limit=session['time_limit'], mode=session['collaborative'], show_live_score=session['live_scoreboard']))
+                return redirect(url_for('arena.waiting_room', room_id=room_id, time_limit=session['time_limit'], mode=session.get('mode', session.get('collaborative', 'competitive')), show_live_score=session['live_scoreboard']))
             else:
                 # Redirect back to math_arena with an error message
                 return redirect(url_for('arena.math_arena', error_message="Sorry, this room is currently busy."))
@@ -356,7 +364,7 @@ def arena_setup():
 @login_required
 def waiting_room():
     time_limit = request.args.get('time_limit', None)
-    mode = request.args.get('mode', None)
+    mode = request.args.get('mode', None) or session.get('mode', 'competitive')
     show_live_score = request.args.get('show_live_score', None)
     room_id = request.args.get('room_id')  # Get the room ID from the request
 
@@ -528,9 +536,15 @@ def start_contest(room_id):
             conn.execute(sqlalchemy.text('''
                 UPDATE rooms SET start_time = CURRENT_TIMESTAMP WHERE id = :room_id
             '''), {'room_id': room_id})
+            conn.execute(sqlalchemy.text('''
+                DELETE FROM room_demo_requests WHERE room_id = :room_id
+            '''), {'room_id': room_id})
+            conn.execute(sqlalchemy.text('''
+                DELETE FROM room_problem_solvers WHERE room_id = :room_id
+            '''), {'room_id': room_id})
             conn.commit()
     except Exception as e:
-        print(f"Error updating start_time: {e}")
+        print(f"Error updating start_time and clearing room demo requests: {e}")
 
     return redirect(url_for('arena.arena_problem'))
 
@@ -565,6 +579,12 @@ def leave_room_and_logout():
                     conn.execute(sqlalchemy.text('''
                         UPDATE rooms SET room_state = 'empty' WHERE id = :room_id
                     '''), {'room_id': room_id})
+                    conn.execute(sqlalchemy.text('''
+                        DELETE FROM room_demo_requests WHERE room_id = :room_id
+                    '''), {'room_id': room_id})
+                    conn.execute(sqlalchemy.text('''
+                        DELETE FROM room_problem_solvers WHERE room_id = :room_id
+                    '''), {'room_id': room_id})
                     conn.commit()
                     _stamp_state_change(conn, room_id)
         except Exception as e:
@@ -584,10 +604,12 @@ def arena_problem():
             with sql_db.connect() as conn:
                 room_id = session.get('room_id')
                 room = conn.execute(sqlalchemy.text('''
-                    SELECT collaborative, filter_name, time_limit, live_scoreboard FROM rooms WHERE id = :room_id
+                    SELECT collaborative, filter_name, time_limit, live_scoreboard, mode FROM rooms WHERE id = :room_id
                 '''), {'room_id': room_id}).fetchone()
             if room:
-                session['collaborative'] = 'collaborative' if room[0] == 1 else 'competitive'
+                room_mode = room[4] if len(room) > 4 and room[4] else ('collaborative' if room[0] == 1 else 'competitive')
+                session['collaborative'] = room_mode
+                session['mode'] = room_mode
                 filter_name_from_db = room[1]
                 session['filter_name'] = filter_name_from_db
                 session['time_limit'] = room[2]
@@ -719,6 +741,28 @@ def arena_problem():
             star_notification = session.pop('star_notification', None)
             allow_self_grade = session.get('allow_self_grade', False)
 
+            mode = session.get('mode')
+            if not mode and room_id:
+                try:
+                    r = conn.execute(sqlalchemy.text('SELECT mode, collaborative FROM rooms WHERE id = :room_id'), {'room_id': room_id}).fetchone()
+                    if r:
+                        mode = r[0] if r[0] else ('collaborative' if r[1] == 1 else 'competitive')
+                        session['mode'] = mode
+                except Exception:
+                    mode = 'competitive'
+
+            demo_requested = False
+            if mode == 'classroom' and room_id and my_id:
+                try:
+                    d_req = conn.execute(sqlalchemy.text('''
+                        SELECT id FROM room_demo_requests
+                        WHERE room_id = :room_id AND problem_id = :problem_id AND username = :username
+                    '''), {'room_id': int(room_id), 'problem_id': my_id, 'username': session.get('username')}).fetchone()
+                    if d_req:
+                        demo_requested = True
+                except Exception as e:
+                    print(f"Error checking demo request: {e}")
+
             return render_template(
                 'arena_problem.html',
                 question_number=question_number,
@@ -741,11 +785,44 @@ def arena_problem():
                 incorrect_message=incorrect_message,
                 allow_self_grade=allow_self_grade,
                 badge_notification=badge_notification,
-                star_notification=star_notification
+                star_notification=star_notification,
+                mode=mode,
+                demo_requested=demo_requested
             )
     except Exception as e:
         print(f"Error during display problem: {e}")
         return "An error occurred while displaying the problem."
+
+@arena_bp.route('/toggle_demo_request', methods=['POST'])
+@login_required
+def toggle_demo_request():
+    username = session.get('username')
+    data = request.get_json(silent=True) or {}
+    room_id = data.get('room_id') or session.get('room_id')
+    problem_id = data.get('problem_id')
+    requested = data.get('requested', True)
+
+    if not room_id or not problem_id or not username:
+        return jsonify({'success': False, 'error': 'Missing parameters'}), 400
+
+    try:
+        with sql_db.connect() as conn:
+            if requested:
+                conn.execute(sqlalchemy.text('''
+                    INSERT INTO room_demo_requests (room_id, problem_id, username)
+                    VALUES (:room_id, :problem_id, :username)
+                    ON DUPLICATE KEY UPDATE username = :username
+                '''), {'room_id': int(room_id), 'problem_id': int(problem_id), 'username': username})
+            else:
+                conn.execute(sqlalchemy.text('''
+                    DELETE FROM room_demo_requests
+                    WHERE room_id = :room_id AND problem_id = :problem_id AND username = :username
+                '''), {'room_id': int(room_id), 'problem_id': int(problem_id), 'username': username})
+            conn.commit()
+        return jsonify({'success': True, 'requested': requested})
+    except Exception as e:
+        print(f"Error toggling demo request: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @arena_bp.route('/contest_summary/<room_id>')
 @login_required
@@ -753,18 +830,109 @@ def contest_summary(room_id):
     room_color, room_name = id_to_color_and_name(room_id)
     try:
         with sql_db.connect() as conn:
+            room_info = conn.execute(sqlalchemy.text('''
+                SELECT collaborative, mode, start_time FROM rooms WHERE id = :room_id
+            '''), {'room_id': room_id}).fetchone()
+
+            room_mode = 'competitive'
+            room_start_time = None
+            if room_info:
+                room_mode = room_info[1] if (len(room_info) > 1 and room_info[1]) else ('collaborative' if room_info[0] == 1 else 'competitive')
+                room_start_time = room_info[2]
+
             room_number = room_id
             room_table_name = f"room{room_number}"
             scores_query = f'''
-                SELECT username, score FROM {room_table_name}
+                SELECT username, score FROM {room_table_name} ORDER BY score DESC
             '''
             scores_result = conn.execute(sqlalchemy.text(scores_query)).fetchall()
             scores = [(row[0], row[1]) for row in scores_result]
-    except Exception as e:
-        print(f"Error fetching scores from room {room_id}: {e}")
-        scores = []
+            users_in_room = [row[0] for row in scores_result]
 
-    return render_template('contest_summary.html', room_color=room_color, room_name=room_name, room_id=room_id, scores=scores)
+            demo_rows = conn.execute(sqlalchemy.text('''
+                SELECT problem_id, COUNT(*) as req_count, GROUP_CONCAT(username SEPARATOR ', ') as requesting_users
+                FROM room_demo_requests
+                WHERE room_id = :room_id
+                GROUP BY problem_id
+                ORDER BY req_count DESC, problem_id ASC
+            '''), {'room_id': room_id}).fetchall()
+
+            requested_problems = []
+            problem_ids_in_session = session.get('problem_ids', [])
+
+            for row in demo_rows:
+                prob_id = row[0]
+                req_count = row[1]
+                req_users = row[2]
+
+                prob_data = conn.execute(sqlalchemy.text('''
+                    SELECT year, format, level, question_number, classification, question_ref, answer_ref
+                    FROM problems WHERE id = :id
+                '''), {'id': prob_id}).fetchone()
+
+                solvers = conn.execute(sqlalchemy.text('''
+                    SELECT username FROM room_problem_solvers
+                    WHERE room_id = :room_id AND problem_id = :problem_id
+                '''), {'room_id': room_id, 'problem_id': prob_id}).fetchall()
+                solver_names = set([s[0] for s in solvers])
+
+                for u in users_in_room:
+                    if u not in solver_names and u.isalnum():
+                        try:
+                            u_res = conn.execute(sqlalchemy.text(f'''
+                                SELECT id FROM results_{u}
+                                WHERE problem_id = :problem_id AND result = 2
+                                {"AND time >= :start_time" if room_start_time else ""}
+                                LIMIT 1
+                            '''), {'problem_id': prob_id, 'start_time': room_start_time} if room_start_time else {'problem_id': prob_id}).fetchone()
+                            if u_res:
+                                solver_names.add(u)
+                        except Exception:
+                            pass
+
+                correct_users = sorted(list(solver_names))
+
+                contest_prob_num = None
+                if prob_id in problem_ids_in_session:
+                    contest_prob_num = problem_ids_in_session.index(prob_id) + 1
+
+                Q_url = None
+                A_url = None
+                if prob_data:
+                    Q_name = prob_data[5].replace('Questions/', '') if prob_data[5] else ''
+                    A_name = prob_data[6].replace('Answers/', '') if prob_data[6] else ''
+                    Q_url = url_for('serve_image', image_type='Questions', image_name=Q_name) if Q_name else ''
+                    A_url = url_for('serve_image', image_type='Answers', image_name=A_name) if A_name else ''
+
+                requested_problems.append({
+                    'problem_id': prob_id,
+                    'contest_prob_num': contest_prob_num,
+                    'request_count': req_count,
+                    'requested_users': req_users,
+                    'correct_users': correct_users,
+                    'year': prob_data[0] if prob_data else 'Unknown',
+                    'format': prob_data[1].capitalize() if prob_data and prob_data[1] else '',
+                    'level': prob_data[2].capitalize() if prob_data and prob_data[2] else '',
+                    'question_number': prob_data[3] if prob_data else '',
+                    'classification': prob_data[4] if prob_data else '',
+                    'Q_url': Q_url,
+                    'A_url': A_url
+                })
+    except Exception as e:
+        print(f"Error fetching scores or demos from room {room_id}: {e}")
+        scores = []
+        requested_problems = []
+        room_mode = 'competitive'
+
+    return render_template(
+        'contest_summary.html',
+        room_color=room_color,
+        room_name=room_name,
+        room_id=room_id,
+        scores=scores,
+        mode=room_mode,
+        requested_problems=requested_problems
+    )
 
 @arena_bp.route('/get_room_state/<room_id>')
 @login_required
@@ -891,9 +1059,12 @@ def arena_setup_post():
     mode = request.form['mode']
     show_live_score = 'show_live_score' in request.form
     session['time_limit'] = time_limit  # Store time_limit in session
+    session['mode'] = mode
+    session['collaborative'] = mode
 
     '''
         collaborative BOOLEAN,
+        mode VARCHAR(50),
         filter_name VARCHAR(255),
         time_limit INT,
         live_scoreboard BOOLEAN 
@@ -902,8 +1073,8 @@ def arena_setup_post():
     room_id = session.get('room_id')
     with sql_db.connect() as conn:
         conn.execute(sqlalchemy.text('''
-            UPDATE rooms SET collaborative = :collaborative, filter_name = :filter_name, time_limit = :time_limit, live_scoreboard = :live_scoreboard WHERE id = :room_id
-        '''), {'collaborative': mode == 'collaborative', 'filter_name': filter_name, 'time_limit': time_limit, 'live_scoreboard': show_live_score, 'room_id': room_id})
+            UPDATE rooms SET collaborative = :collaborative, mode = :mode, filter_name = :filter_name, time_limit = :time_limit, live_scoreboard = :live_scoreboard WHERE id = :room_id
+        '''), {'collaborative': mode == 'collaborative', 'mode': mode, 'filter_name': filter_name, 'time_limit': time_limit, 'live_scoreboard': show_live_score, 'room_id': room_id})
         conn.commit()
 
     # set room_status to joinable

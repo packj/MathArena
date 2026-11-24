@@ -62,6 +62,15 @@
         <p>Your answer was: <strong>{{ user_answer }}</strong></p>
     </div>
     {% endif %}
+    {% if mode == 'classroom' %}
+    <div style="text-align: center; margin: 15px auto; max-width: 350px; padding: 8px 16px; background-color: #f0f7ff; border: 2px solid #3498db; border-radius: 8px;">
+        <label style="font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; user-select: none;">
+            <input type="checkbox" id="demo-request-checkbox" style="width: 20px; height: 20px; cursor: pointer;" {% if demo_requested %}checked{% endif %} onchange="toggleDemoRequest(this.checked)">
+            <span>Request Demo</span>
+        </label>
+        <span id="demo-status-msg" style="font-size: 12px; color: #27ae60; display: none; margin-top: 4px;"></span>
+    </div>
+    {% endif %}
     {% if show_answer and allow_self_grade %}
     <div class="score-buttons" style="text-align: center;">
         <button class="wrong" onclick="window.location.href='/award_points/0'">I got it wrong</button>
@@ -121,11 +130,39 @@
             if (timeLimit < 0) {
                 clearInterval(timerInterval);
                 timerDisplay.textContent = "Time's up!";
+                window.location.href = "{{ url_for('arena.contest_summary', room_id=room_id) }}";
             }
         }
 
         updateTimer();
         var timerInterval = setInterval(updateTimer, 1000);
+
+        {% if mode == 'classroom' %}
+        function toggleDemoRequest(requested) {
+            const statusMsg = document.getElementById('demo-status-msg');
+            fetch('/arena/toggle_demo_request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    room_id: {{ room_id }},
+                    problem_id: {{ my_id }},
+                    requested: requested
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (statusMsg) {
+                    statusMsg.textContent = requested ? "Demo requested!" : "Demo request removed";
+                    statusMsg.style.color = requested ? "#27ae60" : "#666";
+                    statusMsg.style.display = "block";
+                    setTimeout(() => { statusMsg.style.display = "none"; }, 1500);
+                }
+            })
+            .catch(err => console.error("Error toggling demo request:", err));
+        }
+        {% endif %}
     </script>
 </body>
 </html>

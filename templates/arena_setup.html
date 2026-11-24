@@ -197,6 +197,8 @@
                 <label>Select Mode:</label><br>
                 <input type="radio" id="mode_competitive" name="mode" value="competitive" checked>
                 <label for="mode_competitive">Competitive</label>
+                <input type="radio" id="mode_classroom" name="mode" value="classroom">
+                <label for="mode_classroom">Classroom</label>
                 <input type="radio" id="mode_collaborative" name="mode" value="collaborative">
                 <label for="mode_collaborative">Collaborative (not implemented yet)</label>
 
@@ -237,6 +239,7 @@
         }
 
         const competitiveMode = document.getElementById('mode_competitive');
+        const classroomMode = document.getElementById('mode_classroom');
         const collaborativeMode = document.getElementById('mode_collaborative');
         const liveScoreVisibility = document.getElementById('live_score_visibility');
 
@@ -249,6 +252,7 @@
         }
 
         competitiveMode.addEventListener('change', toggleLiveScoreVisibility);
+        if (classroomMode) classroomMode.addEventListener('change', toggleLiveScoreVisibility);
         collaborativeMode.addEventListener('change', toggleLiveScoreVisibility);
         toggleLiveScoreVisibility();
     </script>
