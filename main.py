@@ -15,7 +15,7 @@ from admin_routes import admin_bp  # Import the Blueprint
 from arena import arena_bp, update_in_lobby_flag  # Import the Blueprint
 from contributions import contrib_bp
 from playlists import playlists_bp  # Import the playlists Blueprint
-from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set, check_answer_match  # Import from utils
+from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set, check_answer_match, is_unambiguous_math_answer  # Import from utils
 from badges import get_user_stats, evaluate_all_badges, ALL_BADGE_DEFINITIONS
 from db_aws import sql_db  # Import the SQLAlchemy engine
 import weekly_manager
@@ -827,6 +827,11 @@ def display_problem():
             if session.pop('auto_correct', False):
                 auto_correct_message = "✓ Correct! Points awarded."
 
+            # Check for incorrect feedback message
+            incorrect_message = None
+            if session.pop('incorrect', False):
+                incorrect_message = "✗ Incorrect."
+
             # Check for invalid response message
             invalid_response_message = None
             if session.pop('invalid_response', False):
@@ -834,6 +839,11 @@ def display_problem():
 
             # Check for badge unlock notification
             badge_notification = session.pop('badge_notification', None)
+
+            # Check for star notification
+            star_notification = session.pop('star_notification', None)
+
+            allow_self_grade = session.get('allow_self_grade', False)
 
             return render_template(
                 'display_problem.html',
@@ -856,7 +866,10 @@ def display_problem():
                 user_answer=user_answer,
                 invalid_response_message=invalid_response_message,
                 auto_correct_message=auto_correct_message,
-                badge_notification=badge_notification
+                incorrect_message=incorrect_message,
+                allow_self_grade=allow_self_grade,
+                badge_notification=badge_notification,
+                star_notification=star_notification
             )
 
     except Exception as e:
@@ -888,6 +901,7 @@ def submit_answer():
     problem_ids = session.get('problem_ids', [])
     problem_index = session.get('problem_index', 0)
     matched = False
+    is_unambiguous = False
 
     if problem_ids and problem_index < len(problem_ids):
         current_problem_id = problem_ids[problem_index]
@@ -901,17 +915,47 @@ def submit_answer():
                     true_answer = prob[1]
                     if (accepted_answers_json or true_answer) and check_answer_match(user_answer, accepted_answers_json, true_answer):
                         matched = True
+
+                    # Determine if the correct answer is non-ambiguous
+                    # Check true_answer or any accepted answer
+                    cand_answers = []
+                    if true_answer:
+                        cand_answers.append(true_answer)
+                    if accepted_answers_json:
+                        try:
+                            parsed = json.loads(accepted_answers_json)
+                            if isinstance(parsed, list):
+                                cand_answers.extend(parsed)
+                            elif isinstance(parsed, str):
+                                cand_answers.append(parsed)
+                        except Exception:
+                            cand_answers.append(accepted_answers_json)
+
+                    if cand_answers:
+                        is_unambiguous = any(is_unambiguous_math_answer(c) for c in cand_answers)
         except Exception as e:
             print(f"Error checking answer match: {e}")
 
     if matched:
-        # User is automatically verified correct! Award max points (button_factor = 2) and advance.
+        # User is automatically verified correct! Award max points (button_factor = 2) on current problem
         session['auto_correct'] = True
-        return award_points(button_factor=2)
+        session['show_answer'] = True
+        session['allow_self_grade'] = False
+        return award_points(button_factor=2, advance=False)
 
-    # If no match or not yet in database, fall back to review screen
-    session['show_answer'] = True  # Show answer after submission
-    url = next_question_url()  # Redirect to the question display
+    if is_unambiguous:
+        # Non-ambiguous answer and user did not match: definitely wrong!
+        # Do not allow self-grade/points cheating. Record as incorrect (0 points) on current problem.
+        session['incorrect'] = True
+        session['show_answer'] = True
+        session['allow_self_grade'] = False
+        return award_points(button_factor=0, advance=False)
+
+    # If ambiguous answer (e.g. 3*sqrt(2), 4+3i, 9pi) or answer not known in DB,
+    # show the answer and let the user select among the 3 options.
+    session['show_answer'] = True
+    session['allow_self_grade'] = True
+    url = next_question_url()
     return redirect(url)
 
 @app.route('/toggle_tags')
@@ -927,6 +971,7 @@ def decrement_problem():
     if problem_ids:
         session['problem_index'] = (session.get('problem_index', 0) - 1) % len(problem_ids)
         session['show_answer'] = False
+        session['allow_self_grade'] = False
         session['display_tags'] = False
     return redirect(request.referrer or url_for('arena.arena_problem'))
 
@@ -937,12 +982,18 @@ def increment_problem():
     if problem_ids:
         session['problem_index'] = (session.get('problem_index', 0) + 1) % len(problem_ids)
         session['show_answer'] = False
+        session['allow_self_grade'] = False
         session['display_tags'] = False
     return redirect(request.referrer or url_for('arena.arena_problem'))
 
 @app.route('/award_points/<int:button_factor>')
 @login_required
-def award_points(button_factor):
+def award_points_route(button_factor):
+    session['allow_self_grade'] = False
+    session['show_answer'] = False
+    return award_points(button_factor=button_factor, advance=True)
+
+def award_points(button_factor, advance=True):
     problem_ids = session.get('problem_ids', [])
     problem_index = session.get('problem_index', 0)
     user_answer = session.get('user_answer', '').strip()
@@ -1107,12 +1158,14 @@ def award_points(button_factor):
             except Exception as e:
                 print(f"Error updating scoreboard/leaderboard or fetching problem details: {e}")
 
-    # Automatically advance to the next problem
-    session['problem_index'] = (problem_index + 1) % len(problem_ids)
-    session['show_answer'] = False  # Hide answer
-    session['display_tags'] = False  # Hide tags
+    if advance:
+        # Automatically advance to the next problem
+        session['problem_index'] = (problem_index + 1) % len(problem_ids)
+        session['show_answer'] = False  # Hide answer
+        session['allow_self_grade'] = False
+        session['display_tags'] = False  # Hide tags
 
-    url = next_question_url()  # Redirect to the next question
+    url = next_question_url()  # Redirect to the question display
     return redirect(url)
 
 @app.route('/leaderboard')

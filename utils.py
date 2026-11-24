@@ -69,9 +69,55 @@ def normalize_math_answer(ans: str) -> str:
     return s
 
 
+def is_unambiguous_math_answer(ans: str) -> bool:
+    """
+    Returns True if an answer is non-ambiguous:
+    e.g. an integer (42, -5), a decimal (5.82, 0.32), or a simple fraction (4/5, -13/16),
+    with optional $, %, or commas.
+    Ambiguous answers like expressions (3*sqrt(2), 4+3i, 9\\pi, tuples, equations) return False.
+    """
+    if not ans:
+        return False
+    s = str(ans).strip().lower()
+    s = s.lstrip('$').rstrip('%')
+    s = re.sub(r'(?<=\d),(?=\d)', '', s)
+    s = re.sub(r'\s+', '', s)
+    # Integer or decimal
+    if re.fullmatch(r'-?\d+(\.\d+)?', s):
+        return True
+    # Simple fraction a/b
+    if re.fullmatch(r'-?\d+/\d+', s):
+        return True
+    return False
+
+
+def _parse_numeric_value(s: str):
+    """Parses a normalized string into float if it is a number or simple fraction."""
+    if not s:
+        return None
+    clean = s.lstrip('$').rstrip('%')
+    clean = re.sub(r'(?<=\d),(?=\d)', '', clean)
+    clean = re.sub(r'\s+', '', clean)
+    if re.fullmatch(r'-?\d+(\.\d+)?', clean):
+        try:
+            return float(clean)
+        except Exception:
+            return None
+    if re.fullmatch(r'-?\d+/\d+', clean):
+        try:
+            num, denom = clean.split('/')
+            denom_f = float(denom)
+            if denom_f != 0:
+                return float(num) / denom_f
+        except Exception:
+            return None
+    return None
+
+
 def check_answer_match(user_answer: str, accepted_answers_json: str, true_answer: str = None) -> bool:
     """
     Checks if user_answer matches any accepted answer for a problem.
+    Also handles equivalent numeric representations (e.g. 0.8 vs 4/5, 42.0 vs 42).
     """
     norm_user = normalize_math_answer(user_answer)
     if not norm_user:
@@ -91,11 +137,19 @@ def check_answer_match(user_answer: str, accepted_answers_json: str, true_answer
     if true_answer and true_answer not in candidates:
         candidates.append(true_answer)
 
+    user_val = _parse_numeric_value(norm_user)
+
     for cand in candidates:
-        if normalize_math_answer(cand) == norm_user:
+        norm_cand = normalize_math_answer(cand)
+        if norm_cand == norm_user:
             return True
+        if user_val is not None:
+            cand_val = _parse_numeric_value(norm_cand)
+            if cand_val is not None and abs(user_val - cand_val) < 1e-9:
+                return True
 
     return False
+
 
 
 def fetch_problems_by_filter(sql_db, filter_criteria, room_id=None):

@@ -711,7 +711,13 @@ def arena_problem():
             if session.pop('auto_correct', False):
                 auto_correct_message = "✓ Correct! Points awarded."
 
+            incorrect_message = None
+            if session.pop('incorrect', False):
+                incorrect_message = "✗ Incorrect."
+
             badge_notification = session.pop('badge_notification', None)
+            star_notification = session.pop('star_notification', None)
+            allow_self_grade = session.get('allow_self_grade', False)
 
             return render_template(
                 'arena_problem.html',
@@ -732,7 +738,10 @@ def arena_problem():
                 room_color=room_color,
                 room_name=room_name,
                 auto_correct_message=auto_correct_message,
-                badge_notification=badge_notification
+                incorrect_message=incorrect_message,
+                allow_self_grade=allow_self_grade,
+                badge_notification=badge_notification,
+                star_notification=star_notification
             )
     except Exception as e:
         print(f"Error during display problem: {e}")

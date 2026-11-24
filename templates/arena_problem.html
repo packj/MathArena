@@ -23,6 +23,12 @@
         <a href="/profile/{{ session['username'] }}" style="margin-left: 15px; color: #1a5276; text-decoration: underline;" target="_blank">View Profile</a>
     </div>
     {% endif %}
+    {% if star_notification %}
+    <div style="background: linear-gradient(135deg, #ffd700, #ffc107); color: #333; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+        🌟 <strong>Weekly Leaderboard Update!</strong> You have taken a top spot on this week's leaderboard: {{ star_notification.emoji }} <u>{{ star_notification.tier.capitalize() }} Star</u> ({{ star_notification.score }} weekly pts)!
+        <a href="/leaderboard" style="margin-left: 15px; color: #1a5276; text-decoration: underline;" target="_blank">View Leaderboard</a>
+    </div>
+    {% endif %}
     <div style="background-color: {{ room_color }}; padding: 20px; text-align: center;">
         <h1>{{ room_name }} Contest Room</h1>
     </div>
@@ -48,18 +54,21 @@
     {% if auto_correct_message %}
     <p style="color: #27ae60; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">{{ auto_correct_message }}</p>
     {% endif %}
+    {% if incorrect_message %}
+    <p style="color: #e74c3c; text-align: center; font-weight: bold; font-size: 18px; margin: 10px 0;">{{ incorrect_message }}</p>
+    {% endif %}
     {% if show_answer %}
     <div class="user-answer" style="text-align: center;">
         <p>Your answer was: <strong>{{ user_answer }}</strong></p>
     </div>
     {% endif %}
-    {% if show_answer %}
+    {% if show_answer and allow_self_grade %}
     <div class="score-buttons" style="text-align: center;">
         <button class="wrong" onclick="window.location.href='/award_points/0'">I got it wrong</button>
         <button class="figured" onclick="window.location.href='/award_points/1'">I figured it out after seeing the answer</button>
         <button class="right" onclick="window.location.href='/award_points/2'">I got it right</button>
     </div>
-    {% else %}
+    {% elif not show_answer %}
     <form method="post" action="/submit_answer">
         <label for="user-answer">Your Answer:</label>
         <input type="text" id="user-answer" name="user_answer" placeholder="Enter your answer here" autofocus>
@@ -74,6 +83,19 @@
                 submitAnswerButton.disabled = userAnswerInput.value.trim() === '';
             });
         }
+    </script>
+    {% endif %}
+    {% if show_answer and not allow_self_grade %}
+    <div style="text-align: center; margin: 15px 0;">
+        <button id="press-enter-next" class="prominent-button" onclick="window.location.href='/increment_problem'" style="background-color: #2e7d32; color: white; padding: 12px 24px; font-weight: bold;">Next Problem (Press Enter ↵)</button>
+    </div>
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                window.location.href = '/increment_problem';
+            }
+        });
     </script>
     {% endif %}
     <div class="bottom-buttons nav-buttons" style="text-align: center; margin-top: 30px;">
