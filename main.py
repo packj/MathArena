@@ -17,6 +17,7 @@ from playlists import playlists_bp  # Import the playlists Blueprint
 from utils import login_required, fetch_problems_by_filter, get_all_filters, get_sorted_tag_set, check_answer_match  # Import from utils
 from badges import get_user_stats, evaluate_all_badges, ALL_BADGE_DEFINITIONS
 from db_aws import sql_db  # Import the SQLAlchemy engine
+import weekly_manager
 
 app = Flask(__name__)
 
@@ -149,12 +150,33 @@ import secrets
 @app.route('/logout')
 def logout():
     username = session.get('username')
+    room_id = session.get('room_id')
+
+    # Clean up room membership so rooms don't get stuck when users log out mid-session.
+    if room_id:
+        try:
+            room_table_name = f"room{room_id}"
+            with sql_db.connect() as conn:
+                conn.execute(sqlalchemy.text(
+                    f'DELETE FROM {room_table_name} WHERE username = :username'
+                ), {'username': username})
+                conn.commit()
+                remaining = conn.execute(sqlalchemy.text(
+                    f'SELECT COUNT(*) FROM {room_table_name}'
+                )).fetchone()[0]
+                if remaining == 0:
+                    conn.execute(sqlalchemy.text(
+                        'UPDATE rooms SET room_state = :state WHERE id = :id'
+                    ), {'state': 'empty', 'id': room_id})
+                    conn.commit()
+        except Exception as e:
+            print(f"Error cleaning up room on logout: {e}")
+
     try:
         update_in_lobby_flag(username, False)
     except Exception as e:
         print(f"Error updating arena table: {e}")
-    session.pop('logged_in', None)
-    session.pop('username', None)  # Remove the username from the session
+    session.clear()
     return redirect(url_for('login'))
 
 
@@ -457,6 +479,7 @@ def main_landing():
     filters = get_all_filters(sql_db)
     filter_loaded_message = session.pop('filter_loaded_message', None)  # Retrieve and clear the success message
     badge_notification = session.pop('badge_notification', None)
+    star_notification = session.pop('star_notification', None)
 
     return render_template(
         'main_landing.html',
@@ -465,7 +488,8 @@ def main_landing():
         question_count=question_count,
         filters=filters,
         filter_loaded_message=filter_loaded_message,
-        badge_notification=badge_notification
+        badge_notification=badge_notification,
+        star_notification=star_notification
     )
 
 @app.route('/load_filter/<path:username>')
@@ -1031,6 +1055,19 @@ def award_points(button_factor):
                         })
                         conn.commit()
 
+                        # Update weekly leaderboard and check podium status (compared only against top 3)
+                        try:
+                            weekly_score, star_earned = weekly_manager.add_weekly_points(conn, uname, points_awarded)
+                            if star_earned:
+                                star_emoji = '⭐' if star_earned == 'gold' else ('🥈' if star_earned == 'silver' else '🥉')
+                                session['star_notification'] = {
+                                    'tier': star_earned,
+                                    'emoji': star_emoji,
+                                    'score': weekly_score
+                                }
+                        except Exception as we:
+                            print(f"Error updating weekly points: {we}")
+
                         # Evaluate badges after points & answer logging
                         stats_after = get_user_stats(conn, uname)
                         badges_after, _, _ = evaluate_all_badges(stats_after)
@@ -1062,32 +1099,71 @@ def award_points(button_factor):
 @login_required
 def leaderboard():
     """
-    Display the leaderboard with usernames and cumulative point totals.
+    Display the leaderboard with tabs for Weekly and All-Time practice points.
     """
+    active_tab = request.args.get('tab', 'weekly')  # default to weekly tab
+
     try:
         with sql_db.connect() as conn:
-            # Fetch leaderboard data sorted by points (descending) and username (alphabetically)
-            db_results = conn.execute(sqlalchemy.text('''
+            # 1. Ensure weekly cycle is current
+            weekly_manager.check_and_apply_weekly_reset(conn)
+
+            # 2. Fetch Weekly Leaderboard
+            weekly_db = conn.execute(sqlalchemy.text('''
+                SELECT username, points
+                FROM weekly_leaderboard
+                ORDER BY points DESC, username ASC
+            ''')).fetchall()
+
+            # Podium information for top 3 stars
+            podium = weekly_manager.get_weekly_podium(conn)
+            podium_stars = {}
+            for p in podium:
+                if p['username'] and p['score'] > 0:
+                    if p['rank_pos'] == 1:
+                        podium_stars[p['username']] = ('gold', '⭐ Gold Star (1st)')
+                    elif p['rank_pos'] == 2:
+                        podium_stars[p['username']] = ('silver', '🥈 Silver Star (2nd)')
+                    elif p['rank_pos'] == 3:
+                        podium_stars[p['username']] = ('bronze', '🥉 Bronze Star (3rd)')
+
+            weekly_results = []
+            for idx, row in enumerate(weekly_db):
+                uname = row[0]
+                pts = float(row[1]) if row[1] is not None else 0.0
+                star_info = podium_stars.get(uname)
+                weekly_results.append({
+                    'rank': idx + 1,
+                    'username': uname,
+                    'points': pts,
+                    'star_tier': star_info[0] if star_info else None,
+                    'star_label': star_info[1] if star_info else None
+                })
+
+            # Next reset time formatted in Eastern Time
+            next_reset = weekly_manager.get_next_cycle_reset()
+            next_reset_str = next_reset.strftime("%A, %b %d at %I:%M %p %Z")
+
+            # 3. Fetch All-Time Leaderboard
+            all_time_db = conn.execute(sqlalchemy.text('''
                 SELECT username, points
                 FROM leaderboard
                 ORDER BY points DESC, username ASC
             ''')).fetchall()
 
-            # Transform results with full badge evaluation
-            results = []
-            for row in db_results:
+            all_time_results = []
+            for row in all_time_db:
                 uname = row[0]
                 pts = float(row[1]) if row[1] is not None else 0.0
                 user_stats = get_user_stats(conn, uname)
                 _, count, tier = evaluate_all_badges(user_stats)
-                results.append({
+                all_time_results.append({
                     'username': uname,
                     'points': pts,
                     'badge_count': count,
-                    'tier': tier  # 'bronze', 'silver', 'gold', or None
+                    'tier': tier
                 })
     except Exception as e:
-        # Log the error details for debugging
         print(f"Error fetching leaderboard: {e}")
         return render_template_string('''
             <!doctype html>
@@ -1118,13 +1194,13 @@ def leaderboard():
                 opacity: 0.85;
             }
             .tier-bronze {
-                color: #b85d19 !important; /* Rich metallic bronze */
+                color: #b85d19 !important;
             }
             .tier-silver {
-                color: #5c6b73 !important; /* Cool polished silver */
+                color: #5c6b73 !important;
             }
             .tier-gold {
-                color: #c98a00 !important; /* Warm vibrant gold */
+                color: #c98a00 !important;
             }
             .tier-none {
                 color: #333333 !important;
@@ -1135,46 +1211,177 @@ def leaderboard():
                 margin-left: 6px;
                 color: #444;
             }
+            .tab-btn {
+                padding: 10px 24px;
+                font-size: 16px;
+                font-weight: bold;
+                border: 2px solid #8e44ad;
+                cursor: pointer;
+                border-radius: 6px;
+                margin: 0 5px;
+                transition: all 0.2s ease;
+            }
+            .tab-btn.active {
+                background-color: #8e44ad;
+                color: white;
+            }
+            .tab-btn.inactive {
+                background-color: white;
+                color: #8e44ad;
+            }
+            .tab-btn.inactive:hover {
+                background-color: #f4ecf7;
+            }
+            .star-badge-gold {
+                background: linear-gradient(135deg, #ffd700, #ffb300);
+                color: #5a3800;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+                margin-left: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            }
+            .star-badge-silver {
+                background: linear-gradient(135deg, #e0e0e0, #b0bec5);
+                color: #263238;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+                margin-left: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            }
+            .star-badge-bronze {
+                background: linear-gradient(135deg, #ffcc80, #d7ccc8);
+                color: #4e342e;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+                margin-left: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            }
+            .countdown-banner {
+                background-color: #fff9e6;
+                border: 1px solid #ffe082;
+                color: #6d4c41;
+                padding: 8px 16px;
+                border-radius: 6px;
+                display: inline-block;
+                margin: 10px auto;
+                font-size: 14px;
+            }
         </style>
         <div class="banner" style="display: flex; width: 100%; height: 50px; background-color: #333; color: white; align-items: center;">
             <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/main_landing'" title="Back to Home">Home</div>
             <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
         </div>
         <h1>Practice Leaderboard</h1>
-        <button onclick="window.location.href='/contributor_leaderboard'" style="background-color: #6C6F20; color: white; padding: 12px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; margin-bottom: 10px;">View Contributor Leaderboard</button>
-        <p>Points are awarded as follows:</p>
-        <ul style="padding-left: 20px; list-style-position: inside;">
-            <li><strong>Correct answers:</strong> Earn points based on the problem's difficulty level.</li>
-            <li><strong>Figuring out after seeing the answer:</strong> Earn partial points.</li>
-        </ul>
-        <p style="font-size: 14px; color: #555;">💡 Click on any username to view their profile and earned badges!</p>
-        <table border="1" style="border-collapse: collapse; width: 55%; margin: auto;">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Points</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in results %}
-                <tr>
-                    <td style="text-align: left; padding-left: 20px;">
-                        <a href="/profile/{{ row.username }}" class="user-link tier-{{ row.tier if row.tier else 'none' }}">
-                            {% if row.tier == 'bronze' %}🥉
-                            {% elif row.tier == 'silver' %}🥈
-                            {% elif row.tier == 'gold' %}🥇
-                            {% else %}👤{% endif %}
-                            {{ row.username }}
-                        </a>
-                        <span class="badge-count-tag">({{ row.badge_count }} badge{{ 's' if row.badge_count != 1 else '' }})</span>
-                    </td>
-                    <td>{{ row.points }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div style="margin: 15px 0;">
+            <button class="tab-btn {{ 'active' if active_tab == 'weekly' else 'inactive' }}" onclick="switchTab('weekly')">📅 Weekly Leaderboard</button>
+            <button class="tab-btn {{ 'active' if active_tab == 'all_time' else 'inactive' }}" onclick="switchTab('all_time')">🏆 All-Time Leaderboard</button>
+            <button onclick="window.location.href='/contributor_leaderboard'" style="background-color: #6C6F20; color: white; padding: 10px 18px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-left: 10px;">Contributor Leaderboard</button>
+        </div>
+
+        <!-- Weekly Leaderboard Tab -->
+        <div id="tab-weekly" style="display: {{ 'block' if active_tab == 'weekly' else 'none' }};">
+            <div class="countdown-banner">
+                ⏳ <strong>Weekly Cycle:</strong> Resets every <strong>Tuesday at 5:00 PM Eastern</strong>.<br>
+                Next reset: <strong>{{ next_reset_str }}</strong>
+            </div>
+            <p style="font-size: 14px; color: #555;">Live top 3 earn ⭐ Gold, 🥈 Silver, and 🥉 Bronze Star status!</p>
+            <table border="1" style="border-collapse: collapse; width: 60%; margin: auto;">
+                <thead>
+                    <tr style="background-color: #eae1d0;">
+                        <th style="width: 10%;">Rank</th>
+                        <th style="width: 60%;">Username</th>
+                        <th style="width: 30%;">Weekly Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if weekly_results %}
+                        {% for row in weekly_results %}
+                        <tr>
+                            <td>{{ row.rank }}</td>
+                            <td style="text-align: left; padding-left: 20px;">
+                                <a href="/profile/{{ row.username }}" class="user-link tier-none">
+                                    {{ row.username }}
+                                </a>
+                                {% if row.star_tier == 'gold' %}
+                                    <span class="star-badge-gold">⭐ Gold Star (1st)</span>
+                                {% elif row.star_tier == 'silver' %}
+                                    <span class="star-badge-silver">🥈 Silver Star (2nd)</span>
+                                {% elif row.star_tier == 'bronze' %}
+                                    <span class="star-badge-bronze">🥉 Bronze Star (3rd)</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ row.points }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="padding: 20px; color: #777;">No points earned yet in this week's cycle. Be the first to solve a problem and take 1st place!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- All-Time Leaderboard Tab -->
+        <div id="tab-all-time" style="display: {{ 'block' if active_tab == 'all_time' else 'none' }};">
+            <p>Cumulative points across all practice sessions.</p>
+            <p style="font-size: 14px; color: #555;">💡 Click on any username to view their profile and earned badges!</p>
+            <table border="1" style="border-collapse: collapse; width: 60%; margin: auto;">
+                <thead>
+                    <tr style="background-color: #eae1d0;">
+                        <th style="width: 65%;">Username</th>
+                        <th style="width: 35%;">Cumulative Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in all_time_results %}
+                    <tr>
+                        <td style="text-align: left; padding-left: 20px;">
+                            <a href="/profile/{{ row.username }}" class="user-link tier-{{ row.tier if row.tier else 'none' }}">
+                                {% if row.tier == 'bronze' %}🥉
+                                {% elif row.tier == 'silver' %}🥈
+                                {% elif row.tier == 'gold' %}🥇
+                                {% else %}👤{% endif %}
+                                {{ row.username }}
+                            </a>
+                            <span class="badge-count-tag">({{ row.badge_count }} badge{{ 's' if row.badge_count != 1 else '' }})</span>
+                        </td>
+                        <td>{{ row.points }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <br>
-    ''', results=results)
+        <script>
+            function switchTab(tabName) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', tabName);
+                window.history.replaceState({}, '', url);
+
+                document.getElementById('tab-weekly').style.display = tabName === 'weekly' ? 'block' : 'none';
+                document.getElementById('tab-all-time').style.display = tabName === 'all_time' ? 'block' : 'none';
+
+                const buttons = document.querySelectorAll('.tab-btn');
+                buttons[0].className = 'tab-btn ' + (tabName === 'weekly' ? 'active' : 'inactive');
+                buttons[1].className = 'tab-btn ' + (tabName === 'all_time' ? 'active' : 'inactive');
+            }
+        </script>
+    ''',
+    active_tab=active_tab,
+    weekly_results=weekly_results,
+    next_reset_str=next_reset_str,
+    all_time_results=all_time_results)
 
 
 @app.route('/profile')

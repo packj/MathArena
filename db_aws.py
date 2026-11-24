@@ -2,6 +2,7 @@ import sqlalchemy
 import pymysql # Ensure pymysql is imported for direct connection
 from sqlalchemy.pool import NullPool # Import NullPool for direct connections
 import yaml # Import yaml for reading config file
+import bcrypt  # Password hashing
 
 def load_db_config():
     """Loads database configuration from config.yaml."""
@@ -44,11 +45,11 @@ def init_connection_pool() -> sqlalchemy.engine.base.Engine:
         # Test the connection
         with sql_db.connect() as conn:
             conn.execute(sqlalchemy.text("SELECT 1"))
-        print("Successfully connected to AWS RDS database.")
+        print("Successfully connected to database.")
     except:
-        print("Error connecting to AWS RDS database.")
+        print("Error connecting to database.")
 
-    print("Connection pool initialized successfully for AWS RDS.")
+    print("Connection pool initialized successfully for local db.")
     return sql_db
 
 def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
@@ -58,14 +59,31 @@ def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
             conn.execute(sqlalchemy.text('''
                 CREATE TABLE IF NOT EXISTS rooms (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    room_state ENUM('empty', 'setup', 'joinable', 'busy') NOT NULL DEFAULT 'empty',
+                    room_state ENUM('empty', 'init', 'setup', 'joinable', 'busy') NOT NULL DEFAULT 'empty',
                     collaborative BOOLEAN,
                     filter_name VARCHAR(255),
                     time_limit INT,
                     start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    last_state_change TIMESTAMP NULL DEFAULT NULL,
                     live_scoreboard BOOLEAN )
             '''))
             conn.commit()
+            # Migrate existing tables: add 'init' to ENUM and add last_state_change if missing
+            try:
+                conn.execute(sqlalchemy.text(
+                    "ALTER TABLE rooms MODIFY COLUMN room_state "
+                    "ENUM('empty', 'init', 'setup', 'joinable', 'busy') NOT NULL DEFAULT 'empty'"
+                ))
+                conn.commit()
+            except Exception:
+                pass  # Column already has correct type
+            try:
+                conn.execute(sqlalchemy.text(
+                    'ALTER TABLE rooms ADD COLUMN last_state_change TIMESTAMP NULL DEFAULT NULL'
+                ))
+                conn.commit()
+            except Exception:
+                pass  # Column already exists
 
             # Check if the rooms table is empty and populate it if necessary
             result = conn.execute(sqlalchemy.text("SELECT COUNT(*) FROM rooms")).scalar()
@@ -357,6 +375,41 @@ def create_all_tables(sql_db: sqlalchemy.engine.base.Engine):
     except Exception as e:
         print(f"Error creating leaderboard table: {e}")
         raise # Re-raise the exception
+
+    try:
+        with sql_db.connect() as conn:
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS weekly_leaderboard (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL UNIQUE,
+                    points FLOAT NOT NULL DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            '''))
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS weekly_podium (
+                    rank_pos INT PRIMARY KEY,
+                    username VARCHAR(255) NULL,
+                    score FLOAT NOT NULL DEFAULT 0,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            '''))
+            conn.execute(sqlalchemy.text('''
+                CREATE TABLE IF NOT EXISTS weekly_reset_meta (
+                    id INT PRIMARY KEY,
+                    last_reset_time VARCHAR(64) NOT NULL
+                )
+            '''))
+            for r in (1, 2, 3):
+                conn.execute(sqlalchemy.text('''
+                    INSERT IGNORE INTO weekly_podium (rank_pos, username, score)
+                    VALUES (:r, NULL, 0)
+                '''), {'r': r})
+            conn.commit()
+    except Exception as e:
+        print(f"Error creating weekly leaderboard tables: {e}")
+        raise
 
     try:
         with sql_db.connect() as conn:

@@ -50,7 +50,23 @@
 <button onclick="window.location.href='/leaderboard'">Show Leaderboard</button>
 <button onclick="window.location.href='/admin/list_filters'">List Filters</button>
 <button onclick="window.location.href='/admin/list_tags'">List Tags</button>
-<button onclick="window.location.href='/admin/clear_rooms'">Clear Rooms</button>
+<button onclick="window.location.href='/admin/clear_rooms'">Clear All Rooms</button>
+
+<h3>Reset Individual Room</h3>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+{% for room_id, room_name, room_color in [
+    (1, 'Blue', '#3498db'), (2, 'Red', '#e74c3c'), (3, 'Purple', '#9b59b6'),
+    (4, 'Orange', '#f39c12'), (5, 'Green', '#16823e')] %}
+<form method="post" action="/admin/reset_room/{{ room_id }}" style="display:inline;"
+      onsubmit="return confirm('Reset {{ room_name }} room? This will clear all users and set it to empty.');">
+    <button type="submit"
+            style="background-color: {{ room_color }}; color: white; border: none;
+                   padding: 8px 14px; cursor: pointer; border-radius: 4px;">
+        Reset {{ room_name }}
+    </button>
+</form>
+{% endfor %}
+</div>
 <button onclick="window.location.href='/admin/show_live_scores'">Live Scores</button>
 <button onclick="window.location.href='/admin/temp_passwords'">View Temporary Passwords</button>
 

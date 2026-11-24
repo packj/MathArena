@@ -68,6 +68,12 @@
         <div class="banner-section" style="flex: 1; text-align: center; cursor: pointer;" onclick="window.location.href='/logout'">Logout</div>
     </div>
     <h1 style="text-align: center;">Welcome, {{ session['username'] }}, to Math Arena!</h1>
+    {% if star_notification %}
+    <div style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #222; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; border-radius: 8px; margin: 15px auto; max-width: 70%; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+        🌟 <strong>Weekly Leaderboard Update!</strong> You have taken a top spot on this week's leaderboard: {{ star_notification.emoji }} <u>{{ star_notification.tier.capitalize() }} Star</u> ({{ star_notification.score }} weekly pts)!
+        <a href="/leaderboard?tab=weekly" style="margin-left: 15px; color: #0d47a1; text-decoration: underline;">View Leaderboard</a>
+    </div>
+    {% endif %}
     {% if badge_notification %}
     <div style="background: linear-gradient(135deg, #ffd700, #ffae19); color: #333; padding: 12px 20px; text-align: center; font-size: 16px; font-weight: bold; border-radius: 8px; margin: 15px auto; max-width: 70%; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
         🎉 <strong>New Badge Unlocked!</strong> You earned {{ badge_notification.emoji }} <u>{{ badge_notification.name }}</u> ({{ "{:,}".format(badge_notification.points) }} pts)!

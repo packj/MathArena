@@ -19,6 +19,17 @@ def update_in_lobby_flag(username, set_flag):
         except Exception as e:
             print(f"Error updating arena table: {e}")
 
+def _stamp_state_change(conn, room_id):
+    """Attempt to stamp last_state_change; silently ignored if the column doesn't exist yet."""
+    try:
+        conn.execute(sqlalchemy.text(
+            'UPDATE rooms SET last_state_change = NOW() WHERE id = :room_id'
+        ), {'room_id': room_id})
+        conn.commit()
+    except Exception:
+        pass  # Column not yet migrated; harmless
+
+
 
 @arena_bp.route('/math_arena')
 @login_required
@@ -33,7 +44,10 @@ def math_arena():
     try:
         with sql_db.connect() as conn:
             dead_rooms = conn.execute(sqlalchemy.text('''
-                SELECT id FROM rooms WHERE room_state = 'busy' AND start_time < NOW() - INTERVAL 70 MINUTE
+                SELECT id FROM rooms WHERE
+                    (room_state = 'busy' AND start_time < NOW() - INTERVAL 70 MINUTE)
+                    OR (room_state IN ('init', 'setup', 'joinable')
+                        AND (last_state_change IS NULL OR last_state_change < NOW() - INTERVAL 10 MINUTE))
             ''')).fetchall()
             for room in dead_rooms:
                 room_id = room[0]
@@ -41,6 +55,7 @@ def math_arena():
                     UPDATE rooms SET room_state = 'empty' WHERE id = :room_id
                 '''), {'room_id': room_id})
                 conn.commit()
+                _stamp_state_change(conn, room_id)
                 # Remove users from the room table
                 room_table_name = f"room{room_id}"
                 conn.execute(sqlalchemy.text(f'''
@@ -69,6 +84,12 @@ def math_arena():
 
     try:
         with sql_db.connect() as conn:
+            # Expire lobby presence for users inactive for more than 2 minutes
+            conn.execute(sqlalchemy.text('''
+                UPDATE arena SET in_room = FALSE
+                WHERE in_room = TRUE AND last_active_time < NOW() - INTERVAL 2 MINUTE
+            '''))
+            conn.commit()
             users = conn.execute(sqlalchemy.text('''
                 SELECT username FROM arena WHERE in_room = TRUE
             ''')).fetchall()
@@ -169,6 +190,7 @@ def arena_setup():
                 conn.execute(sqlalchemy.text('''
                     UPDATE rooms SET room_state = 'init' WHERE id = :room_id
                 '''), {'room_id': room_id})
+                _stamp_state_change(conn, room_id)
                 # we remove all users and scores from the room
                 conn.execute(sqlalchemy.text(f'''
                     DELETE FROM {room_table_name}
@@ -186,6 +208,7 @@ def arena_setup():
                     UPDATE rooms SET room_state = 'setup' WHERE id = :room_id
                 '''), {'room_id': room_id})
                 conn.commit()
+                _stamp_state_change(conn, room_id)
             elif room and room[0] == 'setup':
                 print("Room is being set up...")
                 # check if the user is already in the room
@@ -374,6 +397,10 @@ def get_users_in_room_api(room_id):
 @login_required
 def lobby_state():
     """AJAX endpoint returning current room states and user lists for the lobby page."""
+    username = session.get('username')
+    if username:
+        update_in_lobby_flag(username, True)
+
     try:
         with sql_db.connect() as conn:
             rooms = conn.execute(sqlalchemy.text(
@@ -395,6 +422,12 @@ def lobby_state():
 
     try:
         with sql_db.connect() as conn:
+            # Expire stale lobby presence before returning the list
+            conn.execute(sqlalchemy.text(
+                'UPDATE arena SET in_room = FALSE '
+                'WHERE in_room = TRUE AND last_active_time < NOW() - INTERVAL 2 MINUTE'
+            ))
+            conn.commit()
             lobby_rows = conn.execute(sqlalchemy.text(
                 'SELECT username FROM arena WHERE in_room = TRUE'
             )).fetchall()
@@ -407,6 +440,27 @@ def lobby_state():
         'users_in_rooms': users_in_rooms,
         'lobby_users': lobby_users
     })
+
+
+@arena_bp.route('/lobby_heartbeat', methods=['POST'])
+@login_required
+def lobby_heartbeat():
+    """Lightweight endpoint called by the lobby page to keep user presence active."""
+    username = session.get('username')
+    if username:
+        update_in_lobby_flag(username, True)
+    return '', 204
+
+
+@arena_bp.route('/lobby_leave', methods=['POST'])
+@login_required
+def lobby_leave():
+    """Called on page unload/hide to clear user from lobby immediately."""
+    username = session.get('username')
+    if username:
+        update_in_lobby_flag(username, False)
+    return '', 204
+
 
 @arena_bp.route('/exit_room')
 @login_required
@@ -437,6 +491,7 @@ def exit_room():
                     UPDATE rooms SET room_state = 'empty' WHERE id = :room_id
                 '''), {'room_id': room_id})
                 conn.commit()
+                _stamp_state_change(conn, room_id)
     except Exception as e:
         print(f"Error checking users in room: {e}")
 
@@ -453,6 +508,7 @@ def start_contest(room_id):
                 UPDATE rooms SET room_state = 'busy' WHERE id = :room_id
             '''), {'room_id': room_id})
             conn.commit()
+            _stamp_state_change(conn, room_id)
     except Exception as e:
         print(f"Error updating room state: {e}")
     session['room_id'] = room_id
@@ -510,6 +566,7 @@ def leave_room_and_logout():
                         UPDATE rooms SET room_state = 'empty' WHERE id = :room_id
                     '''), {'room_id': room_id})
                     conn.commit()
+                    _stamp_state_change(conn, room_id)
         except Exception as e:
             print(f"Error checking users in room: {e}")
 
@@ -847,5 +904,6 @@ def arena_setup_post():
             UPDATE rooms SET room_state = 'joinable' WHERE id = :room_id
         '''), {'room_id': room_id})
         conn.commit()
+        _stamp_state_change(conn, room_id)
 
     return redirect(url_for('arena.waiting_room', time_limit=time_limit, mode=mode, show_live_score=show_live_score, room_id=room_id))

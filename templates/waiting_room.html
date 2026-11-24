@@ -54,11 +54,11 @@
                         <li>{{ user }}</li>
                     {% endfor %}
                 </ul>
-                {% if is_first_user %}
-                    <button onclick="window.location.href='{{ url_for('arena.start_contest', room_id=room_id) }}'" style="font-size: 18px; background-color: #4CAF50; color: white; padding: 12px 24px; border: none; cursor: pointer; border-radius: 5px;">Start Contest</button>
-                {% else %}
-                <h2>Be ready... the host may start the contest anytime now!</h2>
-                {% endif %}
+                <!-- Visibility is updated dynamically by updateUsers() below -->
+                <button id="startBtn"
+                        onclick="window.location.href='{{ url_for('arena.start_contest', room_id=room_id) }}'"
+                        style="font-size: 18px; background-color: #4CAF50; color: white; padding: 12px 24px; border: none; cursor: pointer; border-radius: 5px; display: {% if is_first_user %}inline-block{% else %}none{% endif %};">Start Contest</button>
+                <h2 id="waitingMsg" style="display: {% if is_first_user %}none{% else %}block{% endif %};">Be ready... the host may start the contest anytime now!</h2>
             </td>
         </tr>
 
@@ -66,6 +66,8 @@
 
 
     <script>
+        const myUsername = "{{ session['username'] }}";
+
         function updateUsers() {
             fetch('/arena/get_users_in_room/{{ room_id }}')
                 .then(response => response.json())
@@ -75,6 +77,11 @@
                         userListHTML += `<li>${user}</li>`;
                     });
                     document.querySelector('#userList').innerHTML = userListHTML;
+
+                    // Promote the next-in-line user to host if the original host left
+                    const isHost = data.length > 0 && data[0] === myUsername;
+                    document.getElementById('startBtn').style.display = isHost ? 'inline-block' : 'none';
+                    document.getElementById('waitingMsg').style.display = isHost ? 'none' : 'block';
                 });
         }
 

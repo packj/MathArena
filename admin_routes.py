@@ -1393,6 +1393,37 @@ def clear_rooms():
     return redirect(url_for('admin.admin_landing'))
 
 
+@admin_bp.route('/reset_room/<int:room_id>', methods=['POST'])
+@login_required
+def reset_room(room_id):
+    """
+    Reset a single stuck room: clear its users and set its state back to 'empty'.
+    """
+    if session.get('username') != 'admin':
+        return redirect(url_for('login'))
+    if room_id not in range(1, 6):
+        return 'Invalid room ID.', 400
+    try:
+        with sql_db.connect() as conn:
+            room_table_name = f'room{room_id}'
+            conn.execute(sqlalchemy.text(f'DELETE FROM {room_table_name}'))
+            conn.execute(sqlalchemy.text(
+                'UPDATE rooms SET room_state = :state WHERE id = :id'
+            ), {'state': 'empty', 'id': room_id})
+            conn.commit()
+            try:
+                conn.execute(sqlalchemy.text(
+                    'UPDATE rooms SET last_state_change = NOW() WHERE id = :id'
+                ), {'id': room_id})
+                conn.commit()
+            except Exception:
+                pass  # Column not yet migrated
+    except Exception as e:
+        print(f'Error resetting room {room_id}: {e}')
+        return f'Error resetting room {room_id}: {e}', 500
+    return redirect(url_for('admin.admin_landing'))
+
+
 @admin_bp.route('/temp_passwords')
 @login_required
 def temp_passwords():
@@ -1452,6 +1483,12 @@ def grant_points():
                 ON DUPLICATE KEY UPDATE points = points + :points
             '''), {'username': username, 'points': points})
             conn.commit()
+
+            try:
+                import weekly_manager
+                weekly_manager.add_weekly_points(conn, username, float(points))
+            except Exception as we:
+                print(f"Error updating weekly points in grant_points: {we}")
     except Exception as e:
         print(f"Error granting points: {e}")
         return "An error occurred while granting points.", 500

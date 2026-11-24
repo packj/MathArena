@@ -129,6 +129,22 @@
         }
 
         setInterval(refreshLobby, 5000); // Poll every 5 seconds (AJAX, no full reload)
+
+        // Heartbeat: keep this user's lobby presence alive while the page is open.
+        // The server expires users who haven't been seen in 2 minutes.
+        function sendHeartbeat() {
+            fetch('/arena/lobby_heartbeat', { method: 'POST' })
+                .catch(() => {}); // Silently ignore network errors
+        }
+        sendHeartbeat(); // Send immediately on page load
+        setInterval(sendHeartbeat, 20000); // Then every 20 seconds
+
+        // Notify server immediately when leaving the lobby tab/page
+        window.addEventListener('pagehide', function() {
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/arena/lobby_leave');
+            }
+        });
     </script>
 </body>
 </html>
