@@ -569,11 +569,7 @@ def ensure_accepted_answers_column(sql_db):
 sql_db = init_connection_pool()
 
 
-# Check if users table exists before creating all tables
-inspector = sqlalchemy.inspect(sql_db)
-if not inspector.has_table('users'):
-    create_all_tables(sql_db)
-
-# Always ensure the playlists table exists (even on existing databases)
+# Always ensure all tables and required migrations exist (even on existing databases)
+create_all_tables(sql_db)
 ensure_playlists_table(sql_db)
 ensure_accepted_answers_column(sql_db)
