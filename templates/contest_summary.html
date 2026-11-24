@@ -108,8 +108,8 @@ th {
                     </td>
                     <td>
                         {% if p.correct_users %}
-                            <span style="color: #27ae60; font-weight: bold;">{{ p.correct_users | join(', ') }}</span>
-                            <br><small style="color: #555;">(Can demonstrate at the board)</small>
+                            <span style="color: #27ae60; font-weight: bold; font-size: 15px;">{{ p.correct_users[0] }}</span>{% if p.correct_users|length > 1 %}<span style="color: #666; font-size: 13px;"> (or {{ p.correct_users[1:] | join(', ') }})</span>{% endif %}
+                            <br><small style="color: #777;">(First listed: recommended demonstrator)</small>
                         {% else %}
                             <span style="color: #c0392b; font-style: italic;">None</span>
                             <br><small style="color: #777;">(Instructor demo)</small>

@@ -206,7 +206,7 @@
 
                 <div id="live_score_visibility" style="display: none;">
                     <input type="checkbox" id="show_live_score" name="show_live_score">
-                    <label for="show_live_score">Show Live Scoreboard (not yet available)</label>
+                    <label for="show_live_score">Show Live Scoreboard</label>
                 </div>
 
                 <button
@@ -244,10 +244,10 @@
         const liveScoreVisibility = document.getElementById('live_score_visibility');
 
         function toggleLiveScoreVisibility() {
-            if (competitiveMode.checked) {
-                liveScoreVisibility.style.display = 'block';
-            } else {
+            if (collaborativeMode && collaborativeMode.checked) {
                 liveScoreVisibility.style.display = 'none';
+            } else {
+                liveScoreVisibility.style.display = 'block';
             }
         }
 

@@ -142,6 +142,18 @@ def add_weekly_points(conn, username: str, points: float) -> Tuple[float, Option
     podium_usernames = {p['username'] for p in podium if p['username']}
     bronze_score = podium[2]['score'] if len(podium) >= 3 else 0.0
 
+    # Determine previous star tier for this user before points were added
+    prev_tier = None
+    for p in podium:
+        if p['username'] == username and p['score'] > 0:
+            if p['rank_pos'] == 1:
+                prev_tier = 'gold'
+            elif p['rank_pos'] == 2:
+                prev_tier = 'silver'
+            elif p['rank_pos'] == 3:
+                prev_tier = 'bronze'
+            break
+
     # User affects podium if:
     # - User was already in the podium (their score increased, might change rank or solidify rank)
     # - OR user's new score is greater than the bronze score
@@ -178,15 +190,26 @@ def add_weekly_points(conn, username: str, points: float) -> Tuple[float, Option
                 '''), {'r': r})
         conn.commit()
 
-        # Determine user's star status
+        # Determine user's star status (only award banner if newly earned or upgraded)
+        new_tier = None
         for idx, entry in enumerate(current_entries[:3]):
             if entry['username'] == username:
                 if idx == 0:
-                    return new_score, 'gold'
+                    new_tier = 'gold'
                 elif idx == 1:
-                    return new_score, 'silver'
+                    new_tier = 'silver'
                 elif idx == 2:
-                    return new_score, 'bronze'
+                    new_tier = 'bronze'
+                break
+
+        tier_order = {'bronze': 1, 'silver': 2, 'gold': 3}
+        star_earned = None
+        if new_tier:
+            if prev_tier is None or tier_order.get(new_tier, 0) > tier_order.get(prev_tier, 0):
+                star_earned = new_tier
+
+        conn.commit()
+        return new_score, star_earned
 
     conn.commit()
     return new_score, None

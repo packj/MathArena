@@ -25,10 +25,8 @@
         <tr>
             <td style="width: 50%;">
                 <p>Time Limit: {{ time_limit }} minutes</p>
-                <p>Mode: {{ mode }}</p>
-                {% if mode == 'competitive' %}
-                    <p>Show Live Score: {{ show_live_score }}</p>
-                {% endif %}
+                <p>Mode: {{ mode.capitalize() if mode else 'Competitive' }}</p>
+                <p>Show Live Score: {{ 'Yes' if show_live_score else 'No' }}</p>
 
                 <h2>Filter Criteria:</h2>
                 {% if session['filter_criteria'] %}

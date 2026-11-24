@@ -400,6 +400,28 @@ def get_users_in_room_api(room_id):
     users = get_users_in_room(sql_db, room_id)
     return jsonify(users)
 
+@arena_bp.route('/get_room_scores/<room_id>')
+@login_required
+def get_room_scores_api(room_id):
+    try:
+        current_user = session.get('username')
+        with sql_db.connect() as conn:
+            room_table_name = f"room{room_id}"
+            scores_result = conn.execute(sqlalchemy.text(f'''
+                SELECT username, score FROM {room_table_name} ORDER BY score DESC, username ASC
+            ''')).fetchall()
+            scores_data = []
+            for row in scores_result:
+                scores_data.append({
+                    'username': row[0],
+                    'score': row[1] if row[1] is not None else 0,
+                    'is_current_user': (row[0] == current_user)
+                })
+            return jsonify(scores_data)
+    except Exception as e:
+        print(f"Error fetching room scores: {e}")
+        return jsonify([]), 500
+
 
 @arena_bp.route('/lobby_state')
 @login_required
@@ -763,6 +785,31 @@ def arena_problem():
                 except Exception as e:
                     print(f"Error checking demo request: {e}")
 
+            live_scoreboard = session.get('live_scoreboard')
+            if live_scoreboard is None and room_id:
+                try:
+                    ls = conn.execute(sqlalchemy.text('SELECT live_scoreboard FROM rooms WHERE id = :room_id'), {'room_id': room_id}).fetchone()
+                    if ls:
+                        live_scoreboard = bool(ls[0])
+                        session['live_scoreboard'] = live_scoreboard
+                except Exception:
+                    live_scoreboard = False
+
+            scores = []
+            if live_scoreboard and room_id:
+                try:
+                    scores_result = conn.execute(sqlalchemy.text(f'''
+                        SELECT username, score FROM room{room_id} ORDER BY score DESC, username ASC
+                    ''')).fetchall()
+                    current_user = session.get('username')
+                    scores = [{
+                        'username': r[0],
+                        'score': r[1] if r[1] is not None else 0,
+                        'is_current_user': (r[0] == current_user)
+                    } for r in scores_result]
+                except Exception as e:
+                    print(f"Error fetching live scores: {e}")
+
             return render_template(
                 'arena_problem.html',
                 question_number=question_number,
@@ -787,7 +834,9 @@ def arena_problem():
                 badge_notification=badge_notification,
                 star_notification=star_notification,
                 mode=mode,
-                demo_requested=demo_requested
+                demo_requested=demo_requested,
+                live_scoreboard=bool(live_scoreboard),
+                scores=scores
             )
     except Exception as e:
         print(f"Error during display problem: {e}")
@@ -823,6 +872,68 @@ def toggle_demo_request():
     except Exception as e:
         print(f"Error toggling demo request: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+def optimize_demonstrator_order(requested_problems):
+    """
+    Orders the `correct_users` list for each requested problem so that picking the first
+    student in each list maximizes the number of distinct demonstrators across all problems.
+    Uses maximum bipartite matching with load-balanced fallback for repeated assignments.
+    """
+    if not requested_problems:
+        return
+
+    valid_indices = [i for i, p in enumerate(requested_problems) if p.get('correct_users')]
+    if not valid_indices:
+        return
+
+    match_student = {}
+    match_problem = {}
+
+    def dfs(prob_idx, visited):
+        solvers = requested_problems[prob_idx]['correct_users']
+        # Pass 1: directly match an available solver
+        for s in solvers:
+            if s not in visited and s not in match_student:
+                visited.add(s)
+                match_student[s] = prob_idx
+                match_problem[prob_idx] = s
+                return True
+        # Pass 2: find an augmenting path by re-routing an already-matched solver
+        for s in solvers:
+            if s not in visited:
+                visited.add(s)
+                prev_prob = match_student[s]
+                if dfs(prev_prob, visited):
+                    match_student[s] = prob_idx
+                    match_problem[prob_idx] = s
+                    return True
+        return False
+
+    for idx in valid_indices:
+        visited = set()
+        dfs(idx, visited)
+
+    assignment_count = {s: 0 for p in requested_problems for s in p.get('correct_users', [])}
+    for prob_idx, student in match_problem.items():
+        assignment_count[student] += 1
+
+    # For any problem that could not be matched to a distinct student,
+    # assign the solver who has been chosen as first demonstrator the fewest times so far
+    for idx in valid_indices:
+        if idx not in match_problem:
+            solvers = requested_problems[idx]['correct_users']
+            best_solver = min(solvers, key=lambda s: (assignment_count.get(s, 0), s))
+            match_problem[idx] = best_solver
+            assignment_count[best_solver] = assignment_count.get(best_solver, 0) + 1
+
+    # Reorder each problem's correct_users:
+    # 1. Chosen primary demonstrator first
+    # 2. Remaining solvers sorted by (assignment_count, username) for maximum diversity on backup picks
+    for idx in valid_indices:
+        primary = match_problem[idx]
+        others = [s for s in requested_problems[idx]['correct_users'] if s != primary]
+        others.sort(key=lambda s: (assignment_count.get(s, 0), s))
+        requested_problems[idx]['correct_users'] = [primary] + others
 
 @arena_bp.route('/contest_summary/<room_id>')
 @login_required
@@ -918,6 +1029,8 @@ def contest_summary(room_id):
                     'Q_url': Q_url,
                     'A_url': A_url
                 })
+
+            optimize_demonstrator_order(requested_problems)
     except Exception as e:
         print(f"Error fetching scores or demos from room {room_id}: {e}")
         scores = []

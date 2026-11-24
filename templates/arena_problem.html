@@ -112,6 +112,44 @@
         <button id="next-problem" onclick="window.location.href='/increment_problem'">Next Problem</button>
     </div>
 
+    {% if live_scoreboard %}
+    <div class="live-scoreboard-container" style="max-width: 550px; margin: 35px auto 30px auto; padding: 15px 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid {{ room_color }};">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px;">
+            <h3 style="margin: 0; color: #2c3e50; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                🏆 Live Scoreboard
+            </h3>
+            <span style="font-size: 12px; color: #27ae60; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background-color: #27ae60; border-radius: 50%;"></span>
+                Live
+            </span>
+        </div>
+        <table id="live-scoreboard-table" style="width: 100%; border-collapse: collapse; font-size: 15px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; color: #7f8c8d; text-align: left; font-size: 13px; text-transform: uppercase;">
+                    <th style="padding: 8px 12px; width: 15%;">Rank</th>
+                    <th style="padding: 8px 12px; width: 55%;">Participant</th>
+                    <th style="padding: 8px 12px; width: 30%; text-align: right;">Score</th>
+                </tr>
+            </thead>
+            <tbody id="live-scoreboard-body">
+                {% for s in scores %}
+                <tr style="border-bottom: 1px solid #eee; {% if s.is_current_user %}background-color: #e8f4fc; font-weight: bold;{% endif %}">
+                    <td style="padding: 8px 12px;">{{ loop.index }}</td>
+                    <td style="padding: 8px 12px;">
+                        {{ s.username }} {% if s.is_current_user %}<span style="font-size: 12px; color: #3498db;">(You)</span>{% endif %}
+                    </td>
+                    <td style="padding: 8px 12px; text-align: right; color: #2c3e50;">{{ "{:g}".format(s.score) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 15px; color: #888;">No scores yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
     <script>
         var timeLimit = {{ time_limit|float }};
         var timerDisplay = document.getElementById("time");
@@ -162,6 +200,33 @@
             })
             .catch(err => console.error("Error toggling demo request:", err));
         }
+        {% endif %}
+
+        {% if live_scoreboard %}
+        const myUsername = "{{ session['username'] }}";
+        function updateLiveScoreboard() {
+            fetch('/arena/get_room_scores/{{ room_id }}')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('live-scoreboard-body');
+                    if (!tbody || !data || data.length === 0) return;
+                    let html = '';
+                    data.forEach((s, index) => {
+                        const isYou = s.is_current_user || (s.username === myUsername);
+                        const rowStyle = isYou ? 'background-color: #e8f4fc; font-weight: bold;' : '';
+                        const youBadge = isYou ? ' <span style="font-size: 12px; color: #3498db;">(You)</span>' : '';
+                        const scoreFormatted = Number(s.score).toString();
+                        html += `<tr style="border-bottom: 1px solid #eee; ${rowStyle}">
+                            <td style="padding: 8px 12px;">${index + 1}</td>
+                            <td style="padding: 8px 12px;">${s.username}${youBadge}</td>
+                            <td style="padding: 8px 12px; text-align: right; color: #2c3e50;">${scoreFormatted}</td>
+                        </tr>`;
+                    });
+                    tbody.innerHTML = html;
+                })
+                .catch(err => console.error('Error fetching live scores:', err));
+        }
+        setInterval(updateLiveScoreboard, 2500);
         {% endif %}
     </script>
 </body>
