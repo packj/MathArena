@@ -1,6 +1,7 @@
 from flask import Flask, send_file, abort, render_template_string, request, redirect, url_for, session, render_template, jsonify
 from datetime import timedelta
 from io import BytesIO
+import os
 import sqlalchemy
 import random
 import yaml # Import yaml
@@ -21,7 +22,26 @@ import weekly_manager
 
 app = Flask(__name__)
 
-app.secret_key = 'jdskdj393ueweh33238rhht3o'
+# Load secret key from environment or .env file
+def _get_secret_key() -> str:
+    key = os.environ.get('FLASK_SECRET_KEY') or os.environ.get('MATHARENA_SECRET_KEY')
+    if key:
+        return key
+    # Attempt to read from local .env if present
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith('FLASK_SECRET_KEY='):
+                        return line.split('=', 1)[1].strip().strip('"').strip("'")
+        except Exception:
+            pass
+    # Secure fallback if no env variable or .env file is found
+    return 'fallback_matharena_dev_secret_key_change_in_production'
+
+app.secret_key = _get_secret_key()
 
 @app.before_request
 def init_sql_db() -> None:
